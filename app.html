@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Homeschool Mastery 🏆</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2: #16213e;
+  --card: #1e2a4a;
+  --accent: #7c3aed;
+  --accent2: #06b6d4;
+  --gold: #fbbf24;
+  --green: #10b981;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --border: rgba(255,255,255,0.07);
+  --charlie: #7c3aed;
+  --chris: #0ea5e9;
+  --victor: #16a34a;
+  --radius: 20px;
+  --glow: 0 0 20px rgba(124,58,237,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Stars bg ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.10) 0%, transparent 40%),
+              radial-gradient(ellipse at 60% 80%, rgba(16,185,129,0.08) 0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── Utility ── */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.gap8 { gap: 8px; }
+.gap12 { gap: 12px; }
+.col { flex-direction: column; }
+.center { align-items: center; justify-content: center; }
+.wrap { flex-wrap: wrap; }
+
+/* ── Page container ── */
+#app { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 16px 16px 80px; }
+
+/* ──────────────────────────────────────────
+   LOGIN SCREEN
+──────────────────────────────────────────── */
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative; z-index: 1;
+}
+
+.login-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.4rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.login-sub {
+  color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; text-align: center;
+}
+
+.login-cards {
+  display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 360px;
+}
+
+.login-card {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 16px;
+}
+.login-card:hover { transform: translateY(-2px); }
+.login-card.charlie-card { border-color: rgba(124,58,237,0.4); }
+.login-card.charlie-card:hover { border-color: var(--charlie); box-shadow: 0 0 24px rgba(124,58,237,0.3); }
+.login-card.chris-card { border-color: rgba(14,165,233,0.4); }
+.login-card.chris-card:hover { border-color: var(--chris); box-shadow: 0 0 24px rgba(14,165,233,0.3); }
+.login-card.victor-card { border-color: rgba(22,163,74,0.4); }
+.login-card.victor-card:hover { border-color: var(--victor); box-shadow: 0 0 24px rgba(22,163,74,0.3); }
+
+.login-card .avi { font-size: 2.2rem; }
+.login-card .info h3 { font-size: 1.1rem; font-weight: 800; }
+.login-card .info p { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+/* PIN modal */
+#pinModal {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.pin-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 32px;
+  width: 100%; max-width: 340px;
+  text-align: center;
+}
+.pin-box h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+.pin-box p { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+.pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+.pin-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--border); border: 2px solid var(--muted); transition: all 0.15s; }
+.pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pin-key {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; font-size: 1.3rem; font-weight: 800;
+  cursor: pointer; transition: all 0.1s; color: var(--text); border: none;
+}
+.pin-key:active { background: var(--accent); transform: scale(0.95); }
+.pin-key.del { background: rgba(239,68,68,0.2); color: var(--red); }
+.pin-error { color: var(--red); font-size: 0.85rem; margin-top: 12px; min-height: 20px; }
+
+/* ──────────────────────────────────────────
+   MAIN APP
+──────────────────────────────────────────── */
+
+/* Top bar */
+.topbar {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+  position: sticky; top: 12px; z-index: 10;
+  backdrop-filter: blur(12px);
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-avatar { font-size: 1.6rem; }
+.topbar-name { font-family: 'Fredoka One', cursive; font-size: 1.1rem; }
+.topbar-level { font-size: 0.75rem; color: var(--muted); }
+
+.xp-bar-wrap { flex: 1; max-width: 200px; margin: 0 16px; }
+.xp-bar-label { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
+.xp-bar-track { height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s ease; }
+
+.logout-btn { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 40px; padding: 6px 14px; font-size: 0.75rem; cursor: pointer; font-family: 'Nunito', sans-serif; }
+.logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* Nav tabs */
+.nav {
+  display: flex; gap: 8px; margin-bottom: 20px;
+  background: var(--surface2); padding: 6px; border-radius: 40px;
+  border: 1px solid var(--border);
+}
+.nav-tab {
+  flex: 1; text-align: center; padding: 10px 8px;
+  border-radius: 40px; cursor: pointer;
+  font-weight: 700; font-size: 0.8rem;
+  color: var(--muted); transition: all 0.2s; border: none;
+  background: transparent; font-family: 'Nunito', sans-serif;
+}
+.nav-tab.active { background: var(--accent); color: white; }
+.nav-tab.teacher-tab.active { background: var(--victor); }
+
+/* ── Stats bar ── */
+.stats-row {
+  display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.stat-card {
+  flex: 1; min-width: 80px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px; text-align: center;
+}
+.stat-num { font-family: 'Fredoka One', cursive; font-size: 2rem; }
+.stat-lbl { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.stat-card.gold .stat-num { color: var(--gold); }
+.stat-card.green .stat-num { color: var(--green); }
+.stat-card.red .stat-num { color: var(--red); }
+.stat-card.purple .stat-num { color: var(--accent2); }
+
+/* ── Section title ── */
+.section-title {
+  font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--text);
+  margin: 24px 0 12px; letter-spacing: 0.5px;
+}
+
+/* ── Skill card ── */
+.skill-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--muted);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+.skill-card.mastered { border-left-color: var(--green); background: rgba(16,185,129,0.07); }
+.skill-card.needs_work { border-left-color: var(--yellow); background: rgba(245,158,11,0.07); }
+.skill-card.unseen { border-left-color: var(--muted); }
+
+.skill-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.skill-text { font-weight: 700; font-size: 0.95rem; line-height: 1.45; flex: 1; }
+.skill-badge {
+  font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 30px; white-space: nowrap;
+}
+.skill-badge.mastered { background: rgba(16,185,129,0.2); color: var(--green); }
+.skill-badge.needs_work { background: rgba(245,158,11,0.2); color: var(--yellow); }
+.skill-badge.unseen { background: rgba(148,163,184,0.15); color: var(--muted); }
+
+.skill-meta { font-size: 0.72rem; color: var(--muted); margin: 8px 0 12px; display: flex; gap: 12px; }
+
+.skill-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  padding: 7px 14px; border-radius: 40px; border: none;
+  font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+  font-family: 'Nunito', sans-serif;
+}
+.btn-quiz  { background: linear-gradient(135deg, var(--accent), #9333ea); color: white; }
+.btn-needs { background: rgba(245,158,11,0.2); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+.btn-master { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+.btn-reset { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.btn:hover { transform: scale(1.04); }
+.btn:active { transform: scale(0.97); }
+
+/* ── Filters ── */
+.filter-row {
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 6px 16px; border-radius: 40px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--muted);
+  font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+  font-family: 'Nunito', sans-serif;
+}
+.filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ──────────────────────────────────────────
+   QUIZ MODAL
+──────────────────────────────────────────── */
+#quizModal {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.quiz-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 28px;
+  width: 100%; max-width: 500px;
+}
+.quiz-progress { display: flex; gap: 6px; margin-bottom: 20px; }
+.quiz-pip { flex: 1; height: 6px; border-radius: 4px; background: var(--border); transition: background 0.3s; }
+.quiz-pip.done { background: var(--green); }
+.quiz-pip.active { background: var(--accent); }
+
+.quiz-q { font-weight: 800; font-size: 1.05rem; line-height: 1.5; margin-bottom: 20px; }
+.quiz-choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.quiz-choice {
+  background: var(--card); border: 2px solid var(--border);
+  border-radius: 14px; padding: 14px 18px;
+  cursor: pointer; font-weight: 700; font-size: 0.9rem;
+  transition: all 0.15s; text-align: left; color: var(--text);
+  font-family: 'Nunito', sans-serif; width: 100%;
+}
+.quiz-choice:hover:not(:disabled) { border-color: var(--accent); background: rgba(124,58,237,0.1); }
+.quiz-choice.correct { border-color: var(--green)!important; background: rgba(16,185,129,0.2)!important; }
+.quiz-choice.wrong { border-color: var(--red)!important; background: rgba(239,68,68,0.15)!important; }
+.quiz-feedback { font-size: 0.85rem; font-weight: 700; min-height: 24px; margin-bottom: 12px; }
+.quiz-next {
+  width: 100%; padding: 14px; border-radius: 40px; border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white; font-weight: 800; font-size: 1rem; cursor: pointer;
+  font-family: 'Nunito', sans-serif; transition: all 0.15s;
+}
+.quiz-next:hover { transform: scale(1.02); }
+
+/* Quiz result screen */
+.quiz-result { text-align: center; }
+.quiz-result .big-emoji { font-size: 4rem; margin-bottom: 12px; }
+.quiz-result h3 { font-family: 'Fredoka One', cursive; font-size: 1.8rem; margin-bottom: 8px; }
+.quiz-result p { color: var(--muted); margin-bottom: 20px; }
+.xp-earned { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 12px 20px; display: inline-block; margin-bottom: 16px; }
+.xp-earned span { color: var(--gold); font-weight: 800; font-size: 1.1rem; }
+
+/* ──────────────────────────────────────────
+   BADGES
+──────────────────────────────────────────── */
+.badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.badge-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 18px; text-align: center;
+  transition: all 0.2s;
+}
+.badge-card.earned { border-color: var(--gold); background: rgba(251,191,36,0.08); }
+.badge-card.earned:hover { box-shadow: 0 0 20px rgba(251,191,36,0.25); transform: translateY(-2px); }
+.badge-emoji { font-size: 2.2rem; margin-bottom: 8px; }
+.badge-name { font-weight: 800; font-size: 0.82rem; margin-bottom: 4px; }
+.badge-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
+.badge-card.locked { opacity: 0.4; filter: grayscale(0.8); }
+
+/* ──────────────────────────────────────────
+   TEACHER DASHBOARD
+──────────────────────────────────────────── */
+.teacher-header {
+  background: linear-gradient(135deg, rgba(22,163,74,0.15), rgba(6,182,212,0.1));
+  border: 1px solid rgba(22,163,74,0.3);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
+}
+.teacher-header h2 { font-family: 'Fredoka One', cursive; font-size: 1.4rem; margin-bottom: 4px; }
+.teacher-header p { color: var(--muted); font-size: 0.85rem; }
+
+.student-panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+}
+.student-panel-header {
+  padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.student-panel-header .avi { font-size: 1.6rem; }
+.student-panel-header h3 { font-weight: 800; font-size: 1rem; }
+.student-panel-header .grade { color: var(--muted); font-size: 0.8rem; }
+
+.student-skill-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.82rem;
+}
+.student-skill-row:last-child { border-bottom: none; }
+.skill-row-text { flex: 1; font-weight: 600; color: var(--text); line-height: 1.3; }
+.skill-row-subj { font-size: 0.7rem; color: var(--muted); margin-right: 12px; }
+.pill {
+  font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 20px;
+}
+.pill.mastered { background: rgba(16,185,129,0.2); color: var(--green); }
+.pill.needs_work { background: rgba(245,158,11,0.2); color: var(--yellow); }
+.pill.unseen { background: rgba(148,163,184,0.1); color: var(--muted); }
+
+.csv-btn {
+  display: block; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, rgba(22,163,74,0.3), rgba(6,182,212,0.3));
+  border: 1px solid rgba(22,163,74,0.4);
+  border-radius: 14px; color: white; font-weight: 800;
+  font-size: 0.9rem; cursor: pointer; text-align: center;
+  font-family: 'Nunito', sans-serif; transition: all 0.2s; margin-top: 16px;
+}
+.csv-btn:hover { transform: scale(1.01); box-shadow: 0 0 20px rgba(22,163,74,0.2); }
+
+/* ── Progress bars ── */
+.progress-wrap { margin: 12px 0; }
+.progress-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 5px; }
+.progress-track { height: 10px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+.progress-fill.math { background: linear-gradient(90deg, var(--accent), #9333ea); }
+.progress-fill.elar { background: linear-gradient(90deg, var(--accent2), #0284c7); }
+.progress-fill.total { background: linear-gradient(90deg, var(--green), #059669); }
+
+/* ── Toast ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 40px; padding: 12px 24px;
+  font-weight: 700; font-size: 0.9rem; z-index: 9999;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  white-space: nowrap; max-width: 90vw;
+}
+#toast.show { opacity: 1; }
+#toast.success { border-color: var(--green); color: var(--green); }
+#toast.badge { border-color: var(--gold); color: var(--gold); }
+#toast.error { border-color: var(--red); color: var(--red); }
+
+/* ── Badge popup ── */
+#badgePopup {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.7);
+  background: var(--surface); border: 2px solid var(--gold);
+  border-radius: 28px; padding: 36px 40px; text-align: center; z-index: 9999;
+  opacity: 0; pointer-events: none; transition: all 0.35s;
+  box-shadow: 0 0 60px rgba(251,191,36,0.4);
+}
+#badgePopup.show { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+#badgePopup .big { font-size: 4rem; margin-bottom: 8px; }
+#badgePopup h3 { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: var(--gold); margin-bottom: 6px; }
+#badgePopup p { color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; }
+#badgePopup button { background: var(--gold); color: #1a1100; font-weight: 800; border: none; border-radius: 40px; padding: 10px 28px; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 0.95rem; }
+
+/* ── Level up ── */
+#levelUp {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+#levelUp.show { opacity: 1; pointer-events: auto; }
+.level-up-box {
+  text-align: center; animation: pop 0.4s ease;
+}
+.level-up-box .big { font-size: 5rem; }
+.level-up-box h2 {
+  font-family: 'Fredoka One', cursive; font-size: 3rem;
+  background: linear-gradient(135deg, var(--gold), #fb923c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.level-up-box p { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; }
+
+@keyframes pop { from { transform: scale(0.5); } to { transform: scale(1); } }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+/* Skill card entrance */
+.skill-card { animation: fadeIn 0.2s ease both; }
+
+/* ── Empty state ── */
+.empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 0.9rem; }
+.empty .icon { font-size: 3rem; margin-bottom: 12px; }
+
+/* ── Connection dot ── */
+.conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); transition: background 0.3s; }
+.conn-dot.connected { background: var(--green); }
+
+/* Mobile */
+@media (max-width: 480px) {
+  .nav-tab { font-size: 0.72rem; padding: 9px 4px; }
+  .xp-bar-wrap { max-width: 120px; }
+  .badges-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Login Screen ── -->
+<div id="loginScreen">
+  <div class="login-logo">🏆 Homeschool Mastery</div>
+  <div class="login-sub">Diagnose · Learn · Level Up</div>
+  <div class="login-cards">
+    <div class="login-card charlie-card" onclick="openPin('charlie')">
+      <div class="avi">🧒</div>
+      <div class="info">
+        <h3>Charlie</h3>
+        <p>6th Grade · Student</p>
+      </div>
+    </div>
+    <div class="login-card chris-card" onclick="openPin('chris')">
+      <div class="avi">🧑</div>
+      <div class="info">
+        <h3>Chris</h3>
+        <p>7th Grade · Student</p>
+      </div>
+    </div>
+    <div class="login-card victor-card" onclick="openPin('victor')">
+      <div class="avi">🏫</div>
+      <div class="info">
+        <h3>Victor</h3>
+        <p>Homeschool Teacher</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PIN Modal ── -->
+<div id="pinModal" class="hidden">
+  <div class="pin-box">
+    <div id="pinEmoji" style="font-size:2.5rem;margin-bottom:8px">🧒</div>
+    <h3 id="pinTitle">Enter PIN</h3>
+    <p id="pinSub">4-digit PIN to sign in</p>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key" onclick="pinCancel()">✕</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+  </div>
+</div>
+
+<!-- ── Main App ── -->
+<div id="mainApp" class="hidden">
+  <div id="app">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="conn-dot" id="connDot"></div>
+        <div class="topbar-avatar" id="topAvatar">🧒</div>
+        <div>
+          <div class="topbar-name" id="topName">Charlie</div>
+          <div class="topbar-level" id="topLevel">Level 1 · 0 XP</div>
+        </div>
+      </div>
+      <div class="xp-bar-wrap" id="xpBarWrap">
+        <div class="xp-bar-label">
+          <span id="xpCur">0</span><span id="xpNext">XP to next level</span>
+        </div>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav" id="nav">
+      <!-- student nav -->
+      <button class="nav-tab active" data-view="skills" onclick="switchView('skills')">📋 Skills</button>
+      <button class="nav-tab" data-view="quiz" onclick="switchView('quiz')">🎯 Quiz</button>
+      <button class="nav-tab" data-view="badges" onclick="switchView('badges')">🏅 Badges</button>
+    </div>
+
+    <!-- Skills View -->
+    <div id="view-skills">
+      <div class="stats-row" id="statsRow"></div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>📐 Math</span><span id="mathPct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill math" id="mathBar" style="width:0%"></div></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>📖 ELAR</span><span id="elarPct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill elar" id="elarBar" style="width:0%"></div></div>
+      </div>
+      <div class="filter-row">
+        <button class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">All</button>
+        <button class="filter-chip" data-filter="needs_work" onclick="setFilter('needs_work', this)">⚠️ Focus</button>
+        <button class="filter-chip" data-filter="unseen" onclick="setFilter('unseen', this)">📌 Unseen</button>
+        <button class="filter-chip" data-filter="mastered" onclick="setFilter('mastered', this)">✅ Mastered</button>
+        <button class="filter-chip" data-filter="Math" onclick="setFilter('Math', this)">📐 Math</button>
+        <button class="filter-chip" data-filter="ELAR" onclick="setFilter('ELAR', this)">📖 ELAR</button>
+      </div>
+      <div id="skillList"></div>
+    </div>
+
+    <!-- Quiz View -->
+    <div id="view-quiz" class="hidden">
+      <div class="section-title">🎯 Ready to Quiz?</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">Pick a skill to take the diagnostic quiz. Answer correctly to earn XP and mark it mastered!</p>
+      <div id="quizSkillList"></div>
+    </div>
+
+    <!-- Badges View -->
+    <div id="view-badges" class="hidden">
+      <div class="section-title">🏅 Your Badges</div>
+      <p style="color:var(--muted);font-size:.82rem;margin-bottom:16px">Earn badges by leveling up your skills. Keep going!</p>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </div>
+
+    <!-- Teacher View -->
+    <div id="view-teacher" class="hidden">
+      <div class="teacher-header">
+        <h2>🏫 Teacher Dashboard</h2>
+        <p>Hi Victor! Here's a live overview of Charlie and Chris's progress.</p>
+      </div>
+      <div id="teacherPanels"></div>
+      <button class="csv-btn" onclick="downloadCSV()">⬇️ Export CSV for Airtable / Google Sheets</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Quiz Modal ── -->
+<div id="quizModal" class="hidden">
+  <div class="quiz-box">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<!-- ── Badge Popup ── -->
+<div id="badgePopup">
+  <div class="big" id="badgePopEmoji">🏅</div>
+  <h3>Badge Earned!</h3>
+  <p id="badgePopName">First Win</p>
+  <p id="badgePopDesc">Mastered your first skill</p>
+  <button onclick="closeBadgePop()">Awesome! 🎉</button>
+</div>
+
+<!-- ── Level Up ── -->
+<div id="levelUp">
+  <div class="level-up-box">
+    <div class="big">⚡</div>
+    <h2>LEVEL UP!</h2>
+    <p id="levelUpText">You reached Level 2!</p>
+    <button class="quiz-next" style="max-width:200px;margin:0 auto;display:block" onclick="closeLevelUp()">Keep Going! 🚀</button>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast"></div>
+
+<script>
+// ─── State ──────────────────────────────────────────────────────────────────
+let ws, currentUser = null, currentRole = null;
+let studentData = null, allData = null, allBadges = [], allQuizzes = {};
+let currentFilter = 'all', currentView = 'skills';
+let pendingPin = null, pinBuffer = '';
+let activeQuiz = null; // { skillId, questions, currentQ, score }
+let prevLevel = 1;
+
+const WS_URL = `ws://${location.host}/ws`;
+
+// ─── WebSocket ──────────────────────────────────────────────────────────────
+function connect() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen = () => { document.getElementById('connDot').classList.add('connected'); };
+  ws.onclose = () => {
+    document.getElementById('connDot').classList.remove('connected');
+    setTimeout(connect, 2000);
+  };
+  ws.onerror = () => {};
+  ws.onmessage = e => handleServerMsg(JSON.parse(e.data));
+}
+
+function send(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+
+function handleServerMsg(msg) {
+  if (msg.type === 'auth_ok') {
+    currentRole = msg.role;
+    allBadges = msg.badges || [];
+    allQuizzes = msg.quizzes || {};
+    if (msg.role === 'student') {
+      studentData = msg.studentData;
+      prevLevel = studentData.level || 1;
+      showApp();
+    } else {
+      allData = msg.allData;
+      showTeacherApp(msg.users);
+    }
+  }
+  if (msg.type === 'auth_fail') { showPinError('Wrong PIN. Try again.'); pinBuffer = ''; updateDots(); }
+
+  if (msg.type === 'skill_updated' || msg.type === 'quiz_done') {
+    if (currentRole === 'student' && studentData && msg.studentId === currentUser) {
+      const skill = studentData.skills.find(s => s.id === msg.skillId);
+      if (skill) {
+        skill.status = msg.newStatus || msg.status;
+      }
+      studentData.xp = msg.xp;
+      studentData.level = msg.level;
+      studentData.badges = msg.badges;
+      updateXPBar();
+      renderSkills();
+      renderBadges();
+      checkLevelUp(msg.level);
+      if (msg.newBadges && msg.newBadges.length) {
+        showBadgePopup(msg.newBadges[0]);
+      }
+    }
+    if (currentRole === 'teacher' && allData) {
+      if (msg.studentId && allData[msg.studentId]) {
+        const skill = allData[msg.studentId].skills.find(s => s.id === msg.skillId);
+        if (skill) skill.status = msg.newStatus || msg.status;
+        allData[msg.studentId].xp = msg.xp;
+        allData[msg.studentId].level = msg.level;
+        allData[msg.studentId].badges = msg.badges;
+      }
+      renderTeacher();
+    }
+  }
+
+  if (msg.type === 'csv_data') {
+    const blob = new Blob([msg.csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'homeschool_mastery.csv';
+    a.click();
+    toast('📥 CSV downloaded!', 'success');
+  }
+}
+
+// ─── PIN ────────────────────────────────────────────────────────────────────
+function openPin(userId) {
+  pendingPin = userId;
+  pinBuffer = '';
+  const map = { charlie: ['🧒','Charlie – 6th Grade'], chris: ['🧑','Chris – 7th Grade'], victor: ['🏫','Victor – Teacher'] };
+  document.getElementById('pinEmoji').textContent = map[userId][0];
+  document.getElementById('pinTitle').textContent = `Hey ${userId.charAt(0).toUpperCase() + userId.slice(1)}!`;
+  document.getElementById('pinSub').textContent = map[userId][1];
+  document.getElementById('pinError').textContent = '';
+  updateDots();
+  document.getElementById('pinModal').classList.remove('hidden');
+}
+
+function pinKey(d) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  updateDots();
+  if (pinBuffer.length === 4) {
+    setTimeout(() => { send({ type: 'auth', userId: pendingPin, pin: pinBuffer }); }, 150);
+  }
+}
+function pinDel() { pinBuffer = pinBuffer.slice(0, -1); updateDots(); }
+function pinCancel() {
+  document.getElementById('pinModal').classList.add('hidden');
+  pendingPin = null; pinBuffer = '';
+}
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+function showPinError(msg) {
+  document.getElementById('pinError').textContent = msg;
+  setTimeout(() => { document.getElementById('pinError').textContent = ''; }, 2000);
+}
+
+// ─── Show App ───────────────────────────────────────────────────────────────
+function showApp() {
+  currentUser = pendingPin;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('pinModal').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+
+  // Setup nav for student
+  document.getElementById('nav').innerHTML = `
+    <button class="nav-tab active" data-view="skills" onclick="switchView('skills')">📋 Skills</button>
+    <button class="nav-tab" data-view="quiz" onclick="switchView('quiz')">🎯 Quiz</button>
+    <button class="nav-tab" data-view="badges" onclick="switchView('badges')">🏅 Badges</button>
+  `;
+
+  const userMap = { charlie: { emoji:'🧒', name:'Charlie' }, chris: { emoji:'🧑', name:'Chris' }, victor: { emoji:'🏫', name:'Victor' } };
+  const u = userMap[currentUser];
+  document.getElementById('topAvatar').textContent = u.emoji;
+  document.getElementById('topName').textContent = u.name;
+  updateXPBar();
+  renderSkills();
+  renderBadges();
+  switchView('skills');
+}
+
+function showTeacherApp(users) {
+  currentUser = 'victor';
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('pinModal').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('topAvatar').textContent = '🏫';
+  document.getElementById('topName').textContent = 'Victor';
+  document.getElementById('topLevel').textContent = 'Teacher View';
+  document.getElementById('xpBarWrap').classList.add('hidden');
+  document.getElementById('nav').innerHTML = `
+    <button class="nav-tab teacher-tab active" onclick="switchView('teacher')">📊 Overview</button>
+  `;
+  renderTeacher();
+  switchView('teacher');
+}
+
+function logout() {
+  currentUser = null; currentRole = null; studentData = null; allData = null;
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('xpBarWrap').classList.remove('hidden');
+  pinBuffer = '';
+}
+
+// ─── XP Bar ─────────────────────────────────────────────────────────────────
+function updateXPBar() {
+  if (!studentData) return;
+  const xp = studentData.xp || 0;
+  const lvl = studentData.level || 1;
+  const xpPerLevel = 500;
+  const xpInLevel = xp % xpPerLevel;
+  const pct = (xpInLevel / xpPerLevel) * 100;
+  document.getElementById('topLevel').textContent = `Level ${lvl} · ${xp} XP`;
+  document.getElementById('xpCur').textContent = xpInLevel;
+  document.getElementById('xpNext').textContent = `/ ${xpPerLevel}`;
+  document.getElementById('xpFill').style.width = pct + '%';
+}
+
+function checkLevelUp(newLevel) {
+  if (newLevel > prevLevel) {
+    prevLevel = newLevel;
+    document.getElementById('levelUpText').textContent = `You reached Level ${newLevel}!`;
+    document.getElementById('levelUp').classList.add('show');
+    setTimeout(closeLevelUp, 4000);
+  }
+}
+function closeLevelUp() { document.getElementById('levelUp').classList.remove('show'); }
+
+// ─── Views ──────────────────────────────────────────────────────────────────
+function switchView(v) {
+  currentView = v;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === v || (v === 'teacher' && t.textContent.includes('Overview'))));
+  ['skills','quiz','badges','teacher'].forEach(id => {
+    const el = document.getElementById('view-' + id);
+    if (el) el.classList.toggle('hidden', id !== v);
+  });
+  if (v === 'quiz') renderQuizList();
+  if (v === 'teacher') renderTeacher();
+}
+
+// ─── Render Skills ──────────────────────────────────────────────────────────
+function renderSkills() {
+  if (!studentData) return;
+  const skills = studentData.skills;
+  const mastered = skills.filter(s => s.status === 'mastered').length;
+  const needsWork = skills.filter(s => s.status === 'needs_work').length;
+  const unseen = skills.filter(s => s.status === 'unseen').length;
+  const math = skills.filter(s => s.subject === 'Math');
+  const elar = skills.filter(s => s.subject === 'ELAR');
+  const mathM = math.filter(s => s.status === 'mastered').length;
+  const elarM = elar.filter(s => s.status === 'mastered').length;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card gold"><div class="stat-num">${studentData.level||1}</div><div class="stat-lbl">Level</div></div>
+    <div class="stat-card green"><div class="stat-num">${mastered}</div><div class="stat-lbl">Mastered</div></div>
+    <div class="stat-card red"><div class="stat-num">${needsWork}</div><div class="stat-lbl">Focus</div></div>
+    <div class="stat-card purple"><div class="stat-num">${unseen}</div><div class="stat-lbl">Unseen</div></div>
+  `;
+
+  const mathPct = math.length ? Math.round(mathM/math.length*100) : 0;
+  const elarPct = elar.length ? Math.round(elarM/elar.length*100) : 0;
+  document.getElementById('mathBar').style.width = mathPct + '%';
+  document.getElementById('mathPct').textContent = mathPct + '%';
+  document.getElementById('elarBar').style.width = elarPct + '%';
+  document.getElementById('elarPct').textContent = elarPct + '%';
+
+  let filtered = skills;
+  if (currentFilter === 'needs_work') filtered = skills.filter(s => s.status === 'needs_work');
+  else if (currentFilter === 'unseen') filtered = skills.filter(s => s.status === 'unseen');
+  else if (currentFilter === 'mastered') filtered = skills.filter(s => s.status === 'mastered');
+  else if (currentFilter === 'Math') filtered = skills.filter(s => s.subject === 'Math');
+  else if (currentFilter === 'ELAR') filtered = skills.filter(s => s.subject === 'ELAR');
+
+  const container = document.getElementById('skillList');
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty"><div class="icon">🎯</div>No skills here — ${currentFilter === 'needs_work' ? 'all weak skills mastered! 🎉' : 'switch filter.'}</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map((skill, i) => {
+    const statusLabel = { mastered: '✅ Mastered', needs_work: '⚠️ Needs Work', unseen: '📌 Unseen' }[skill.status];
+    const hasQuiz = !!allQuizzes[skill.id];
+    return `
+    <div class="skill-card ${skill.status}" style="animation-delay:${i*0.04}s">
+      <div class="skill-header">
+        <div class="skill-text">${skill.text}</div>
+        <span class="skill-badge ${skill.status}">${statusLabel}</span>
+      </div>
+      <div class="skill-meta"><span>📖 ${skill.subject}</span></div>
+      <div class="skill-actions">
+        ${hasQuiz ? `<button class="btn btn-quiz" onclick="startQuiz('${skill.id}')">🎯 Take Quiz</button>` : ''}
+        <button class="btn btn-needs" onclick="updateSkill('${skill.id}','needs_work')">⚠️ Needs Work</button>
+        <button class="btn btn-master" onclick="updateSkill('${skill.id}','mastered')">✅ Mastered</button>
+        <button class="btn btn-reset" onclick="updateSkill('${skill.id}','unseen')">🔄 Reset</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  renderSkills();
+}
+
+function updateSkill(skillId, status) {
+  send({ type: 'update_skill', studentId: currentUser, skillId, status });
+  // optimistic
+  const skill = studentData.skills.find(s => s.id === skillId);
+  if (skill) { skill.status = status; renderSkills(); }
+  toast(status === 'mastered' ? '✅ Marked Mastered! +100 XP' : status === 'needs_work' ? '⚠️ Added to Focus list' : '🔄 Reset', status === 'mastered' ? 'success' : 'success');
+}
+
+// ─── Quiz ───────────────────────────────────────────────────────────────────
+function renderQuizList() {
+  if (!studentData) return;
+  const skills = studentData.skills.filter(s => allQuizzes[s.id]);
+  const container = document.getElementById('quizSkillList');
+  container.innerHTML = skills.map(skill => {
+    const lastAttempt = skill.quizHistory && skill.quizHistory.length ? skill.quizHistory[skill.quizHistory.length-1] : null;
+    const lastScore = lastAttempt ? `Last: ${lastAttempt.score}/${lastAttempt.total}` : 'Not attempted';
+    return `
+    <div class="skill-card ${skill.status}">
+      <div class="skill-header">
+        <div class="skill-text">${skill.text}</div>
+        <span class="skill-badge ${skill.status}">${skill.status === 'mastered' ? '✅' : skill.status === 'needs_work' ? '⚠️' : '📌'}</span>
+      </div>
+      <div class="skill-meta"><span>📖 ${skill.subject}</span><span>${lastScore}</span></div>
+      <button class="btn btn-quiz" onclick="startQuiz('${skill.id}')">🎯 Start Quiz</button>
+    </div>`;
+  }).join('');
+}
+
+function startQuiz(skillId) {
+  const questions = allQuizzes[skillId];
+  if (!questions) return;
+  activeQuiz = { skillId, questions, currentQ: 0, score: 0, answered: false };
+  document.getElementById('quizModal').classList.remove('hidden');
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const { questions, currentQ, score } = activeQuiz;
+  const q = questions[currentQ];
+  const pips = questions.map((_, i) => `<div class="quiz-pip ${i < currentQ ? 'done' : i === currentQ ? 'active' : ''}"></div>`).join('');
+
+  document.getElementById('quizContent').innerHTML = `
+    <div class="quiz-progress">${pips}</div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px">Question ${currentQ+1} of ${questions.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-choices">
+      ${q.choices.map((c, i) => `<button class="quiz-choice" id="qc${i}" onclick="answerQuiz(${i})">${c}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next hidden" id="quizNext" onclick="nextQuestion()">
+      ${currentQ + 1 < questions.length ? 'Next Question →' : 'See Results!'}
+    </button>
+  `;
+  activeQuiz.answered = false;
+}
+
+function answerQuiz(idx) {
+  if (activeQuiz.answered) return;
+  activeQuiz.answered = true;
+  const q = activeQuiz.questions[activeQuiz.currentQ];
+  const correct = idx === q.answer;
+  if (correct) activeQuiz.score++;
+  document.querySelectorAll('.quiz-choice').forEach((el, i) => {
+    el.disabled = true;
+    if (i === q.answer) el.classList.add('correct');
+    else if (i === idx && !correct) el.classList.add('wrong');
+  });
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = correct ? '✅ Correct! Nice work!' : `❌ Not quite — the answer was: ${q.choices[q.answer]}`;
+  fb.style.color = correct ? 'var(--green)' : 'var(--red)';
+  document.getElementById('quizNext').classList.remove('hidden');
+}
+
+function nextQuestion() {
+  activeQuiz.currentQ++;
+  if (activeQuiz.currentQ >= activeQuiz.questions.length) {
+    showQuizResult();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function showQuizResult() {
+  const { score, questions, skillId } = activeQuiz;
+  const total = questions.length;
+  const pct = score / total;
+  const xpEarned = score * 30 + (pct === 1 ? 50 : 0);
+  const emoji = pct === 1 ? '🏆' : pct >= 0.67 ? '🎉' : pct >= 0.33 ? '💪' : '😤';
+  const msg = pct === 1 ? 'PERFECT SCORE!' : pct >= 0.67 ? 'Skill Mastered!' : 'Keep Practicing!';
+  const newStatus = pct >= 0.67 ? 'mastered' : 'needs_work';
+
+  document.getElementById('quizContent').innerHTML = `
+    <div class="quiz-result">
+      <div class="big-emoji">${emoji}</div>
+      <h3>${msg}</h3>
+      <p>You got <strong>${score} out of ${total}</strong> correct</p>
+      <div class="xp-earned">+<span>${xpEarned} XP</span> earned</div>
+      <p style="margin-bottom:20px;font-size:.85rem">Skill is now: <strong style="color:${newStatus === 'mastered' ? 'var(--green)' : 'var(--yellow)'}">${newStatus === 'mastered' ? '✅ Mastered' : '⚠️ Needs Work'}</strong></p>
+      <button class="quiz-next" onclick="closeQuiz()">Done! 🚀</button>
+    </div>`;
+
+  // Send result to server
+  send({ type: 'quiz_result', studentId: currentUser, skillId, score, total });
+  // optimistic update
+  if (studentData) {
+    const skill = studentData.skills.find(s => s.id === skillId);
+    if (skill) {
+      skill.status = newStatus;
+      if (!skill.quizHistory) skill.quizHistory = [];
+      skill.quizHistory.push({ score, total, ts: Date.now() });
+    }
+    studentData.xp = (studentData.xp || 0) + xpEarned;
+    studentData.level = Math.floor(studentData.xp / 500) + 1;
+    updateXPBar();
+    renderSkills();
+  }
+}
+
+function closeQuiz() {
+  document.getElementById('quizModal').classList.add('hidden');
+  activeQuiz = null;
+  if (currentView === 'quiz') renderQuizList();
+}
+
+// ─── Badges ─────────────────────────────────────────────────────────────────
+function renderBadges() {
+  if (!studentData || !allBadges.length) return;
+  const earned = new Set(studentData.badges || []);
+  document.getElementById('badgesGrid').innerHTML = allBadges.map(b => `
+    <div class="badge-card ${earned.has(b.id) ? 'earned' : 'locked'}">
+      <div class="badge-emoji">${b.emoji}</div>
+      <div class="badge-name">${b.label}</div>
+      <div class="badge-desc">${b.desc}</div>
+      ${earned.has(b.id) ? '<div style="color:var(--gold);font-size:.7rem;margin-top:6px;font-weight:800">✨ EARNED</div>' : '<div style="color:var(--muted);font-size:.68rem;margin-top:6px">🔒 Locked</div>'}
+    </div>`).join('');
+}
+
+function showBadgePopup(badge) {
+  document.getElementById('badgePopEmoji').textContent = badge.emoji;
+  document.getElementById('badgePopName').textContent = badge.label;
+  document.getElementById('badgePopDesc').textContent = badge.desc;
+  document.getElementById('badgePopup').classList.add('show');
+}
+function closeBadgePop() { document.getElementById('badgePopup').classList.remove('show'); }
+
+// ─── Teacher ─────────────────────────────────────────────────────────────────
+function renderTeacher() {
+  if (!allData) return;
+  const container = document.getElementById('teacherPanels');
+  const students = [
+    { id: 'charlie', emoji: '🧒', name: 'Charlie', grade: '6th Grade' },
+    { id: 'chris',   emoji: '🧑', name: 'Chris',   grade: '7th Grade' },
+  ];
+  container.innerHTML = students.map(s => {
+    const d = allData[s.id];
+    if (!d) return '';
+    const skills = d.skills;
+    const mastered = skills.filter(x => x.status === 'mastered').length;
+    const needsWork = skills.filter(x => x.status === 'needs_work').length;
+    const math = skills.filter(x => x.subject === 'Math');
+    const elar = skills.filter(x => x.subject === 'ELAR');
+    const mathM = math.filter(x => x.status === 'mastered').length;
+    const elarM = elar.filter(x => x.status === 'mastered').length;
+    const mathPct = math.length ? Math.round(mathM/math.length*100) : 0;
+    const elarPct = elar.length ? Math.round(elarM/elar.length*100) : 0;
+    const totalPct = skills.length ? Math.round(mastered/skills.length*100) : 0;
+    const earnedBadges = (d.badges||[]).length;
+
+    const rows = skills.map(sk => `
+      <div class="student-skill-row">
+        <span class="skill-row-subj">${sk.subject}</span>
+        <span class="skill-row-text">${sk.text}</span>
+        <span class="pill ${sk.status}">${sk.status === 'mastered' ? '✅' : sk.status === 'needs_work' ? '⚠️' : '📌'} ${sk.status.replace('_',' ')}</span>
+      </div>`).join('');
+
+    return `
+    <div class="student-panel">
+      <div class="student-panel-header">
+        <div class="avi">${s.emoji}</div>
+        <div>
+          <h3>${s.name} · Lv.${d.level||1} · ${d.xp||0} XP · 🏅 ${earnedBadges} badges</h3>
+          <div class="grade">${s.grade} — ${mastered}/${skills.length} mastered · ${needsWork} need work</div>
+        </div>
+      </div>
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+        <div class="progress-wrap" style="margin:0 0 10px">
+          <div class="progress-label"><span>Total</span><span>${totalPct}%</span></div>
+          <div class="progress-track"><div class="progress-fill total" style="width:${totalPct}%"></div></div>
+        </div>
+        <div class="progress-wrap" style="margin:0 0 10px">
+          <div class="progress-label"><span>📐 Math</span><span>${mathPct}%</span></div>
+          <div class="progress-track"><div class="progress-fill math" style="width:${mathPct}%"></div></div>
+        </div>
+        <div class="progress-wrap" style="margin:0">
+          <div class="progress-label"><span>📖 ELAR</span><span>${elarPct}%</span></div>
+          <div class="progress-track"><div class="progress-fill elar" style="width:${elarPct}%"></div></div>
+        </div>
+      </div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
+function downloadCSV() { send({ type: 'get_csv' }); }
+
+// ─── Toast ──────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 2500);
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+connect();
+</script>
+</body>
+</html>
