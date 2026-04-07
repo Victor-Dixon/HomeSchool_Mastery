@@ -10,6 +10,7 @@ const http = require("http");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { composeQuizzes, generateQuizzesFromSkills } = require("./quiz-engine");
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const PORT = 3000;
@@ -67,7 +68,7 @@ const SKILLS_DB = {
 };
 
 // ─── Quiz Questions (2-3 per skill) ───────────────────────────────────────────
-const QUIZZES = {
+const MANUAL_QUIZZES = {
   "c6-ela-1": [
     { q: "In the sentence 'The luminous, or glowing, moon lit the path,' what does 'luminous' mean?", choices: ["Dark","Glowing","Tiny","Loud"], answer: 1 },
     { q: "Which is an example of a definition context clue?", choices: ["She felt elated, sad about the loss.","The carburetor, which is the engine part that mixes air and fuel, failed.","He ran quickly.","The dog barked."], answer: 1 },
@@ -220,6 +221,8 @@ const QUIZZES = {
     { q: "For compound events A and B that are independent, P(A and B) = ?", choices: ["P(A)+P(B)","P(A)×P(B)","P(A)-P(B)","P(A)÷P(B)"], answer: 1 },
   ],
 };
+const AUTO_QUIZZES = generateQuizzesFromSkills(SKILLS_DB, 3);
+const QUIZZES = composeQuizzes(AUTO_QUIZZES, MANUAL_QUIZZES);
 
 // ─── Badge Definitions ────────────────────────────────────────────────────────
 const BADGES = [
