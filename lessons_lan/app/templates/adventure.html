@@ -1,0 +1,72 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/adventure.html
+Purpose: RPG-style progress page (XP/level and next boss).
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Adventure</h1>
+      <div class="muted">Your learning quest, told like a story.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.feedback') }}">Feedback</a>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <div class="card p-3 p-md-4">
+        <h2 class="h5 mb-2">Hero stats</h2>
+        <div class="muted mb-3">Every completed lesson earns XP.</div>
+
+        <div class="d-flex flex-wrap gap-3">
+          <div>
+            <div class="muted">Level</div>
+            <div class="fs-2 fw-semibold">{{ state["level"] }}</div>
+          </div>
+          <div>
+            <div class="muted">XP</div>
+            <div class="fs-2 fw-semibold">{{ state["xp"] }}</div>
+          </div>
+        </div>
+
+        <div class="mt-3 muted small">
+          Level 100 means: mastery of grade TEKS under STAAR-like conditions (not just grinding).
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card p-3 p-md-4">
+        <h2 class="h5 mb-2">Next boss</h2>
+        <div class="muted mb-3">
+          Boss fights are STAAR-style practice sets. You level up by proving mastery, not just participation.
+        </div>
+        <div class="border rounded-3 p-3 mb-3" style="border-color: rgba(255,255,255,.10) !important;">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="muted">Mastery gate</div>
+            {% if gate_ok %}
+              <span class="badge text-bg-success">Unlocked</span>
+            {% else %}
+              <span class="badge text-bg-warning">Locked</span>
+            {% endif %}
+          </div>
+          <div class="muted small mt-2">{{ gate_reason }}</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+          <div>
+            <div class="muted">Boss level</div>
+            <div class="fs-2 fw-semibold">{{ next_boss_level }}</div>
+            <div class="muted mt-1">Boss: <strong class="text-white">{{ next_boss_subject }}</strong></div>
+          </div>
+          <a class="btn btn-light btn-fat" href="{{ url_for('routes.boss_fight', boss_level=next_boss_level) }}">Enter boss fight</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,33 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/login.html
+Purpose: Login screen for students and admin.
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-7 col-lg-5">
+    <div class="card p-4">
+      <h1 class="h3 mb-2">Log in</h1>
+      <p class="muted mb-4">Pick your name and get started.</p>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input class="form-control form-control-lg" name="username" placeholder="charlie" autocomplete="username"
+            required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input class="form-control form-control-lg" name="password" type="password" autocomplete="current-password"
+            required />
+        </div>
+        <button class="btn btn-light btn-fat w-100" type="submit">Log in</button>
+        <div class="mt-3 muted small">
+          Default accounts are listed in the README.
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

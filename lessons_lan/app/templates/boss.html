@@ -1,0 +1,58 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/boss.html
+Purpose: Boss Fight interactive quiz (STAAR-style practice set).
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="text-white opacity-75 mb-1">Boss Fight</div>
+      <h1 class="h3 mb-1 text-white">Level {{ boss_level }} — {{ subject }}</h1>
+      <div class="text-white">Pass condition: <strong class="text-white">80%</strong> or higher.</div>
+    </div>
+    <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.adventure') }}">Back</a>
+  </div>
+
+  {% if questions|length == 0 %}
+    <div class="card p-4">
+      <p class="text-white mb-3">No boss questions loaded (question bank may be empty). Go back to Adventure or ask a parent to run reset-db / check the database.</p>
+      <a class="btn btn-light btn-fat" href="{{ url_for('routes.adventure') }}">Back</a>
+    </div>
+  {% else %}
+  <form method="post" class="vstack gap-3">
+    {% for q in questions %}
+      <div class="card p-3 p-md-4">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+          <span class="badge badge-soft">TEKS {{ q["teks_tag"] }}</span>
+          <span class="badge badge-soft">Skill: {{ q["skill"] }}</span>
+          <span class="badge badge-soft">Difficulty: {{ q["difficulty"] }}</span>
+        </div>
+        <div class="lesson-notes mb-3 text-white">{{ q["prompt"] }}</div>
+
+        {% set choices = q["choices_json"] | fromjson %}
+        {% set letters = ["A","B","C","D","E","F"] %}
+
+        <div class="vstack gap-2">
+          {% for c in choices %}
+            <label class="border rounded-3 p-3 d-flex gap-2 align-items-start text-white" style="border-color: rgba(255,255,255,.10) !important;">
+              <input class="form-check-input mt-1" type="radio" name="q_{{ q['id'] }}" value="{{ letters[loop.index0] }}" required />
+              <div>
+                <div class="fw-semibold text-white">{{ letters[loop.index0] }}.</div>
+                <div class="text-white">{{ c }}</div>
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-light btn-fat" type="submit">Submit boss fight</button>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.feedback') }}">Feedback</a>
+    </div>
+  </form>
+  {% endif %}
+{% endblock %}
+

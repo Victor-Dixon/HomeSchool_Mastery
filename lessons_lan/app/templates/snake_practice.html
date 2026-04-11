@@ -1,0 +1,808 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/snake_practice.html
+Purpose: Snake minigame + TEKS MCQ pickups (lesson-scoped question bank).
+-#}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ opponent.page_title }} — {{ opponent.arena_name }}</title>
+  <style>
+    :root {
+      --bg: #071226;
+      --panel: #0d1b34;
+      --panel-2: #122445;
+      --line: #29436d;
+      --text: #e9f0ff;
+      --muted: #9fb4d9;
+      --good: #2ecc71;
+      --bad: #ff5f6d;
+      --warn: #f5c451;
+      --accent: #67b7ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(6, auto);
+      gap: 12px;
+      align-items: center;
+      justify-content: start;
+      font-size: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .question-box h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .question-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .prompt {
+      font-size: 20px;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) 330px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .board-wrap {
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      background: #091427;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background: rgba(4, 8, 16, 0.74);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .overlay-inner {
+      max-width: 560px;
+    }
+
+    .overlay h3 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .overlay p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    button, .btn-link {
+      border: 1px solid var(--line);
+      background: #13284c;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: none;
+    }
+
+    button:hover, .btn-link:hover {
+      background: #18325f;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .choice-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .choice-card.correct {
+      border-color: rgba(46, 204, 113, 0.9);
+      background: rgba(46, 204, 113, 0.12);
+    }
+
+    .choice-card.wrong {
+      border-color: rgba(255, 95, 109, 0.9);
+      background: rgba(255, 95, 109, 0.12);
+    }
+
+    .choice-card .label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .feedback {
+      min-height: 56px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+    .warn { color: var(--warn); }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .mobile-controls {
+      display: none;
+      grid-template-columns: repeat(3, 72px);
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .mobile-controls button {
+      height: 56px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .mobile-controls .blank {
+      visibility: hidden;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .hud {
+        grid-template-columns: repeat(2, auto);
+      }
+
+      .prompt {
+        font-size: 18px;
+      }
+
+      .mobile-controls {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="card question-box">
+        <div class="question-meta">
+          <span class="pill">Lesson #<span id="lesson-id">{{ lesson['id'] }}</span></span>
+          <span class="pill">Opponent: {{ opponent.boss_name }} {{ opponent.emoji }}</span>
+          <span class="pill">Skill: <span id="skill-tag">Loading...</span></span>
+          <span class="pill">TEKS: <span id="teks-tag">Loading...</span></span>
+        </div>
+        <h2>{{ opponent.arena_name }}</h2>
+        <p class="prompt" id="prompt-text">Loading question...</p>
+      </div>
+
+      <div class="card">
+        <div class="hud">
+          <div class="pill">Score <strong id="score">0</strong></div>
+          <div class="pill">XP <strong id="xp">0</strong></div>
+          <div class="pill">Lives <strong id="lives">3</strong></div>
+          <div class="pill">Question <strong id="question-count">0</strong></div>
+          <div class="pill">Correct <strong id="correct-count">0</strong></div>
+          <div class="pill">Streak <strong id="streak">0</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="board-wrap">
+        <canvas id="game" width="800" height="800"></canvas>
+
+        <div id="overlay" class="overlay show">
+          <div class="overlay-inner">
+            <h3>{{ opponent.page_title }} {{ opponent.emoji }}</h3>
+            <p>{{ opponent.intro_lead }}</p>
+            <p class="small">{{ opponent.intro_detail }} Use arrow keys or WASD. Correct = grow + XP + streak. Wrong = lose a life and streak resets.</p>
+            <div class="btn-row">
+              <button id="start-btn" type="button">Start</button>
+              <a class="btn-link" href="{{ url_for('routes.today') }}">Back to Today</a>
+              <a class="btn-link" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Lesson</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-controls">
+          <div class="blank"></div>
+          <button type="button" data-dir="up">▲</button>
+          <div class="blank"></div>
+          <button type="button" data-dir="left">◀</button>
+          <button type="button" data-dir="down">▼</button>
+          <button type="button" data-dir="right">▶</button>
+        </div>
+      </div>
+
+      <div class="sidebar card">
+        <h3>Answer Choices</h3>
+        <div id="choices" class="choices"></div>
+
+        <h3>Feedback</h3>
+        <div id="feedback" class="feedback">
+          {% if opponent.boss_id == 'equation_warden' %}Steer into the Warden's true orb.{% elif opponent.boss_id == 'reading_dragon' %}Strike the Dragon's correct orb.{% else %}Pick up the correct answer orb.{% endif %}
+        </div>
+
+        <h3>How it works</h3>
+        <div class="legend">
+          <div>• Correct orb vs <strong>{{ opponent.boss_name }}</strong>: <strong>+10 XP</strong> (saved)</div>
+          <div>• Wrong orb: lose <strong>1 life</strong> ({{ opponent.boss_name }} scores a hit)</div>
+          <div>• 3 lives total</div>
+          <div>• 5 correct answers clears the round</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var lessonId = {{ lesson['id'] | tojson }};
+    var URL_TODAY = {{ url_for('routes.today') | tojson }};
+    var URL_LESSON = {{ url_for('routes.lesson_detail', lesson_id=lesson['id']) | tojson }};
+    var API_SNAKE_QUESTION = {{ url_for('routes.api_snake_question', lesson_id=lesson['id']) | tojson }};
+    var API_SNAKE_ANSWER = {{ url_for('routes.api_snake_answer', lesson_id=lesson['id']) | tojson }};
+    var SNAKE_OPPONENT = {{ opponent | tojson }};
+
+    var GRID_SIZE = 20;
+    var CELL_SIZE = 40;
+    var BOARD_SIZE = GRID_SIZE * CELL_SIZE;
+    var INITIAL_SPEED_MS = 150;
+    var WIN_CORRECT_TARGET = 5;
+
+    function orbPalette() {
+      var id = (SNAKE_OPPONENT && SNAKE_OPPONENT.boss_id) || "";
+      if (id === "equation_warden") {
+        return ["#f5c451", "#67b7ff", "#b388ff", "#ff7a59"];
+      }
+      if (id === "reading_dragon") {
+        return ["#5dff9a", "#67b7ff", "#f5c451", "#ff5f6d"];
+      }
+      return ["#67b7ff", "#2ecc71", "#f5c451", "#ff7a59"];
+    }
+
+    function startOverlayInnerHtml() {
+      var o = SNAKE_OPPONENT || {};
+      var title = escapeHtml(o.page_title || "Snake Practice");
+      var em = o.emoji || "";
+      var lead = escapeHtml(o.intro_lead || "");
+      var detail = escapeHtml(o.intro_detail || "");
+      return (
+        '<div class="overlay-inner">' +
+        "<h3>" + title + (em ? " " + em : "") + "</h3>" +
+        "<p>" + lead + "</p>" +
+        '<p class="small">' + detail + " Use arrow keys or WASD. Correct = grow + XP + streak. Wrong = lose a life and streak resets.</p>' +
+        '<div class="btn-row">' +
+        '<button type="button" id="start-btn">Start</button>' +
+        '<a class="btn-link" href="' + URL_TODAY + '">Back to Today</a>' +
+        '<a class="btn-link" href="' + URL_LESSON + '">Lesson</a>' +
+        "</div></div>"
+      );
+    }
+
+    function steerHint() {
+      var id = (SNAKE_OPPONENT && SNAKE_OPPONENT.boss_id) || "";
+      if (id === "equation_warden") return "Steer into the Warden's true orb.";
+      if (id === "reading_dragon") return "Strike the Dragon's correct orb.";
+      return "Steer into the correct answer orb.";
+    }
+
+    var canvas = document.getElementById("game");
+    var ctx = canvas.getContext("2d");
+
+    var overlay = document.getElementById("overlay");
+    var startBtn = document.getElementById("start-btn");
+
+    var promptText = document.getElementById("prompt-text");
+    var skillTag = document.getElementById("skill-tag");
+    var teksTag = document.getElementById("teks-tag");
+    var choicesEl = document.getElementById("choices");
+    var feedbackEl = document.getElementById("feedback");
+
+    var scoreEl = document.getElementById("score");
+    var xpEl = document.getElementById("xp");
+    var livesEl = document.getElementById("lives");
+    var questionCountEl = document.getElementById("question-count");
+    var correctCountEl = document.getElementById("correct-count");
+    var streakEl = document.getElementById("streak");
+
+    var palette = orbPalette();
+
+    var gameTimer = null;
+    var currentQuestion = null;
+    var currentChoices = [];
+    var snake = [];
+    var direction = { x: 1, y: 0 };
+    var nextDirection = { x: 1, y: 0 };
+    var lives = 3;
+    var score = 0;
+    var xp = 0;
+    var correctCount = 0;
+    var questionCount = 0;
+    var streak = 0;
+    var gameRunning = false;
+    var acceptingAnswer = true;
+    var choiceOrbs = [];
+
+    function resetSnake() {
+      snake = [
+        { x: 5, y: 10 },
+        { x: 4, y: 10 },
+        { x: 3, y: 10 }
+      ];
+      direction = { x: 1, y: 0 };
+      nextDirection = { x: 1, y: 0 };
+    }
+
+    function updateHud() {
+      scoreEl.textContent = String(score);
+      xpEl.textContent = String(xp);
+      livesEl.textContent = String(lives);
+      questionCountEl.textContent = String(questionCount);
+      correctCountEl.textContent = String(correctCount);
+      streakEl.textContent = String(streak);
+    }
+
+    function setFeedback(message, status) {
+      if (status === undefined) status = "neutral";
+      feedbackEl.className = "feedback";
+      if (status === "good") feedbackEl.classList.add("good");
+      if (status === "bad") feedbackEl.classList.add("bad");
+      if (status === "warn") feedbackEl.classList.add("warn");
+      feedbackEl.textContent = message;
+    }
+
+    function randomEmptyCell(used) {
+      while (true) {
+        const cell = {
+          x: Math.floor(Math.random() * GRID_SIZE),
+          y: Math.floor(Math.random() * GRID_SIZE)
+        };
+        const key = cell.x + "," + cell.y;
+        if (!used.has(key)) return cell;
+      }
+    }
+
+    function renderChoices() {
+      choicesEl.innerHTML = "";
+      currentChoices.forEach(function (choice, index) {
+        const div = document.createElement("div");
+        div.className = "choice-card";
+        div.id = "choice-card-" + index;
+        div.innerHTML =
+          '<div class="label">Choice ' + (index + 1) + '</div>' +
+          "<div>" + escapeHtml(choice.text) + "</div>";
+        choicesEl.appendChild(div);
+      });
+    }
+
+    function markChoiceResult(index, isCorrect) {
+      const el = document.getElementById("choice-card-" + index);
+      if (!el) return;
+      el.classList.remove("correct", "wrong");
+      el.classList.add(isCorrect ? "correct" : "wrong");
+    }
+
+    function placeChoiceOrbs() {
+      const used = new Set(snake.map(function (seg) { return seg.x + "," + seg.y; }));
+      choiceOrbs = currentChoices.map(function (choice, index) {
+        const cell = randomEmptyCell(used);
+        used.add(cell.x + "," + cell.y);
+        return {
+          x: cell.x,
+          y: cell.y,
+          index: index,
+          text: choice.text,
+          isCorrect: choice.is_correct,
+          color: palette[index % palette.length]
+        };
+      });
+    }
+
+    function loadQuestion() {
+      return fetch(API_SNAKE_QUESTION, {
+        method: "GET",
+        headers: { Accept: "application/json" }
+      }).then(function (res) {
+        if (!res.ok) throw new Error("Question load failed: " + res.status);
+        return res.json();
+      }).then(function (data) {
+        if (data.error) throw new Error(data.error || "load error");
+        currentQuestion = data;
+        currentChoices = currentQuestion.choices || [];
+        promptText.textContent = currentQuestion.prompt || "Answer the question.";
+        skillTag.textContent = currentQuestion.skill || "Unknown";
+        teksTag.textContent = currentQuestion.teks || "N/A";
+        renderChoices();
+        placeChoiceOrbs();
+        acceptingAnswer = true;
+        setFeedback(steerHint());
+      });
+    }
+
+    function postResult(payload) {
+      return fetch(API_SNAKE_ANSWER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        if (!res.ok) {
+          console.error("Answer save failed", res.status);
+          return null;
+        }
+        return res.json();
+      });
+    }
+
+    function handleOrbCollision(orb) {
+      if (!acceptingAnswer) return;
+      acceptingAnswer = false;
+
+      questionCount += 1;
+      const resultPayload = {
+        question_id: currentQuestion.question_id,
+        selected_index: orb.index,
+        selected_text: orb.text,
+        correct: orb.isCorrect,
+        teks: currentQuestion.teks,
+        skill: currentQuestion.skill
+      };
+
+      markChoiceResult(orb.index, orb.isCorrect);
+
+      if (orb.isCorrect) {
+        score += 100;
+        xp += 10;
+        correctCount += 1;
+        streak += 1;
+        snake.push({ x: snake[snake.length - 1].x, y: snake[snake.length - 1].y });
+        setFeedback("Correct: " + orb.text, "good");
+      } else {
+        lives -= 1;
+        streak = 0;
+        setFeedback("Wrong: " + orb.text, "bad");
+      }
+
+      updateHud();
+      postResult(resultPayload);
+
+      if (lives <= 0) {
+        endGame(false);
+        return;
+      }
+
+      if (correctCount >= WIN_CORRECT_TARGET) {
+        endGame(true);
+        return;
+      }
+
+      setTimeout(function () {
+        loadQuestion().catch(function (err) {
+          console.error(err);
+          endGame(false, "Could not load the next question.");
+        });
+      }, 900);
+    }
+
+    function endGame(won, customMessage) {
+      if (customMessage === undefined) customMessage = "";
+      gameRunning = false;
+      clearInterval(gameTimer);
+      gameTimer = null;
+
+      var oid = (SNAKE_OPPONENT && SNAKE_OPPONENT.boss_id) || "";
+      var winTitle = "Round cleared";
+      if (oid === "equation_warden") winTitle = "You held the line against the Warden";
+      if (oid === "reading_dragon") winTitle = "You outpaced the Dragon";
+      var title = won ? winTitle : "Game over";
+      var body = customMessage || (won
+        ? "You answered " + correctCount + " correctly and earned " + xp + " XP."
+        : "You ended with " + correctCount + " correct answers and " + xp + " XP.");
+
+      overlay.innerHTML =
+        '<div class="overlay-inner">' +
+        "<h3>" + escapeHtml(title) + "</h3>" +
+        "<p>" + escapeHtml(body) + "</p>" +
+        '<div class="btn-row">' +
+        '<button type="button" id="restart-btn">Play again</button>' +
+        '<a class="btn-link" href="' + URL_TODAY + '">Back to Today</a>' +
+        '<a class="btn-link" href="' + URL_LESSON + '">Lesson</a>' +
+        "</div></div>";
+      overlay.classList.add("show");
+
+      const restartBtn = document.getElementById("restart-btn");
+      if (restartBtn) restartBtn.addEventListener("click", restartGame);
+    }
+
+    function restartGame() {
+      overlay.classList.remove("show");
+      overlay.innerHTML = startOverlayInnerHtml();
+
+      var newStartBtn = document.getElementById("start-btn");
+      newStartBtn.addEventListener("click", startGame);
+
+      lives = 3;
+      score = 0;
+      xp = 0;
+      correctCount = 0;
+      questionCount = 0;
+      streak = 0;
+      updateHud();
+      setFeedback("Press Start to begin.");
+    }
+
+    function drawGrid() {
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= GRID_SIZE; i++) {
+        const pos = i * CELL_SIZE;
+
+        ctx.beginPath();
+        ctx.moveTo(pos, 0);
+        ctx.lineTo(pos, BOARD_SIZE);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, pos);
+        ctx.lineTo(BOARD_SIZE, pos);
+        ctx.stroke();
+      }
+    }
+
+    function drawSnake() {
+      snake.forEach(function (seg, index) {
+        ctx.fillStyle = index === 0 ? "#84fba3" : "#35c46a";
+        ctx.fillRect(
+          seg.x * CELL_SIZE + 2,
+          seg.y * CELL_SIZE + 2,
+          CELL_SIZE - 4,
+          CELL_SIZE - 4
+        );
+      });
+    }
+
+    function drawChoiceOrbs() {
+      choiceOrbs.forEach(function (orb, index) {
+        const centerX = orb.x * CELL_SIZE + CELL_SIZE / 2;
+        const centerY = orb.y * CELL_SIZE + CELL_SIZE / 2;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, CELL_SIZE / 2 - 5, 0, Math.PI * 2);
+        ctx.fillStyle = orb.color;
+        ctx.fill();
+
+        ctx.fillStyle = "#05111f";
+        ctx.font = "bold 18px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(String(index + 1), centerX, centerY);
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, BOARD_SIZE, BOARD_SIZE);
+      drawGrid();
+      drawChoiceOrbs();
+      drawSnake();
+    }
+
+    function moveSnake() {
+      direction = nextDirection;
+      const head = snake[0];
+      const newHead = {
+        x: head.x + direction.x,
+        y: head.y + direction.y
+      };
+
+      if (
+        newHead.x < 0 ||
+        newHead.y < 0 ||
+        newHead.x >= GRID_SIZE ||
+        newHead.y >= GRID_SIZE
+      ) {
+        endGame(false, "You hit the wall.");
+        return;
+      }
+
+      if (snake.some(function (seg) { return seg.x === newHead.x && seg.y === newHead.y; })) {
+        endGame(false, "You ran into yourself.");
+        return;
+      }
+
+      snake.unshift(newHead);
+
+      const collidedOrb = choiceOrbs.find(function (orb) {
+        return orb.x === newHead.x && orb.y === newHead.y;
+      });
+
+      if (collidedOrb) {
+        handleOrbCollision(collidedOrb);
+      } else {
+        snake.pop();
+      }
+    }
+
+    function tick() {
+      if (!gameRunning) return;
+      moveSnake();
+      draw();
+    }
+
+    function setDirection(newDir) {
+      if (newDir.x === -direction.x && newDir.y === -direction.y) {
+        return;
+      }
+      nextDirection = newDir;
+    }
+
+    document.addEventListener("keydown", function (e) {
+      const key = e.key.toLowerCase();
+
+      if (key === "arrowup" || key === "w") setDirection({ x: 0, y: -1 });
+      if (key === "arrowdown" || key === "s") setDirection({ x: 0, y: 1 });
+      if (key === "arrowleft" || key === "a") setDirection({ x: -1, y: 0 });
+      if (key === "arrowright" || key === "d") setDirection({ x: 1, y: 0 });
+    });
+
+    document.querySelectorAll(".mobile-controls button[data-dir]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const dir = btn.getAttribute("data-dir");
+        if (dir === "up") setDirection({ x: 0, y: -1 });
+        if (dir === "down") setDirection({ x: 0, y: 1 });
+        if (dir === "left") setDirection({ x: -1, y: 0 });
+        if (dir === "right") setDirection({ x: 1, y: 0 });
+      });
+    });
+
+    function startGame() {
+      overlay.classList.remove("show");
+      lives = 3;
+      score = 0;
+      xp = 0;
+      correctCount = 0;
+      questionCount = 0;
+      streak = 0;
+      resetSnake();
+      updateHud();
+
+      loadQuestion()
+        .then(function () {
+          gameRunning = true;
+          clearInterval(gameTimer);
+          gameTimer = setInterval(tick, INITIAL_SPEED_MS);
+          draw();
+        })
+        .catch(function (err) {
+          console.error(err);
+          endGame(false, "Could not load question data.");
+        });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    startBtn.addEventListener("click", startGame);
+    resetSnake();
+    updateHud();
+    draw();
+  </script>
+</body>
+</html>

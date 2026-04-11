@@ -1,0 +1,67 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/practice.html
+Purpose: Lesson practice game (question bank rendering + submit).
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">Practice Game</div>
+      <h1 class="h3 mb-1">{{ subject }}</h1>
+      <div class="muted">Lesson: <strong class="text-white">{{ lesson["title"] }}</strong></div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Back</a>
+    </div>
+  </div>
+
+  {% if questions|length == 0 %}
+    <div class="card p-4">
+      <h2 class="h5 mb-2">No quiz loaded for this subject</h2>
+      <p class="muted mb-3">
+        Try a <strong class="text-white">Math</strong> or <strong class="text-white">Reading (ELAR)</strong> lesson from Today,
+        or go back and open a different lesson. If Today is empty, open Today again — backup lessons may appear automatically.
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Back to lesson</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+      </div>
+    </div>
+  {% else %}
+  <form method="post" class="vstack gap-3">
+    {% for q in questions %}
+      <div class="card p-3 p-md-4">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+          <span class="badge badge-soft">TEKS {{ q["teks_tag"] }}</span>
+          <span class="badge badge-soft">Skill: {{ q["skill"] }}</span>
+          <span class="badge badge-soft">Difficulty: {{ q["difficulty"] }}</span>
+        </div>
+        <div class="lesson-notes mb-3">{{ q["prompt"] }}</div>
+
+        {% set choices = q["choices_json"] | fromjson %}
+        {% set letters = ["A","B","C","D","E","F"] %}
+
+        <div class="vstack gap-2">
+          {% for c in choices %}
+            <label class="border rounded-3 p-3 d-flex gap-2 align-items-start" style="border-color: rgba(255,255,255,.10) !important;">
+              <input class="form-check-input mt-1" type="radio" name="q_{{ q['id'] }}" value="{{ letters[loop.index0] }}" required />
+              <div>
+                <div class="fw-semibold">{{ letters[loop.index0] }}.</div>
+                <div class="muted">{{ c }}</div>
+              </div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-light btn-fat" type="submit">Submit practice</button>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.feedback') }}">Feedback</a>
+    </div>
+  </form>
+  {% endif %}
+{% endblock %}
+

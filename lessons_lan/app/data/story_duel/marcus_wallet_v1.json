@@ -1,0 +1,71 @@
+{
+  "id": "marcus_wallet_v1",
+  "version": "1.0",
+  "kind": "story_duel",
+  "title": "Story Duel — Marcus & the wallet",
+  "description": "Example narrative reading duel.",
+  "subtitle": "Reading = combat. Answers are checked by Ollama when it is running, with keyword backup if offline.",
+  "read_phase_seconds": 18,
+  "passage": "Marcus found a wallet on the ground. No one was around. He looked inside and saw money and an ID. He paused, then walked toward the office.",
+  "opponent_name": "Fog Reader",
+  "grading": "auto",
+  "metadata": { "source_notes": ["Schema v1 bundle."] },
+  "rounds": [
+    {
+      "id": "main_idea",
+      "kind": "comprehension",
+      "title": "Main Idea Strike",
+      "prompt": "What is the main idea of the passage?",
+      "rubric": "Valid if the student states that Marcus finds a wallet and is deciding what to do, or is going to return it / go to the office to turn it in. Accept paraphrases.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "marcus finds a wallet",
+        "wallet and decides",
+        "finds a wallet",
+        "do the right thing",
+        "walked toward the office",
+        "return the wallet"
+      ],
+      "keywords": ["wallet", "marcus", "office", "return", "right", "id", "money", "owner"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "inference",
+      "kind": "inference",
+      "title": "Inference Shield",
+      "prompt": "What is Marcus most likely thinking or planning to do? Use evidence from the text.",
+      "rubric": "Valid if the answer implies returning the wallet, finding the owner, or going to a responsible adult/office. Must connect to evidence (wallet, ID, office).",
+      "accept_substrings": true,
+      "substring_hints": [
+        "return",
+        "office",
+        "owner",
+        "give back",
+        "turn in",
+        "honest",
+        "right thing"
+      ],
+      "keywords": ["return", "office", "owner", "wallet", "honest", "because", "evidence"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "theme",
+      "kind": "comprehension",
+      "title": "Theme Finisher",
+      "prompt": "What theme or life lesson does the passage suggest?",
+      "rubric": "Valid for themes like honesty, integrity, responsibility, doing the right thing when no one is watching.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "honesty",
+        "honest",
+        "integrity",
+        "doing the right",
+        "right thing",
+        "responsibility",
+        "kindness"
+      ],
+      "keywords": ["honest", "right", "good", "choice", "help", "responsible"],
+      "min_keyword_hits": 2
+    }
+  ]
+}

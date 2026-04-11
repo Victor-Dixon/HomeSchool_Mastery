@@ -1,0 +1,5 @@
+# Project: Homeschool Lessons (Dream.OS)
+# File: requirements-dev.txt
+# Purpose: Developer/testing dependencies.
+# Owner: Local family deployment (homeschool)
+pytest>=8.0

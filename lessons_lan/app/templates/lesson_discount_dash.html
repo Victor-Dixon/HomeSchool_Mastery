@@ -1,0 +1,207 @@
+{#
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/lesson_discount_dash.html
+Purpose: Discount Dash — timed percent-off, coins-as-HP duel, method bonus XP.
+#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">{% if lesson %}{{ lesson["lesson_date"] }}{% else %}Demo{% endif %}</div>
+      <h1 class="h3 mb-1">Discount Dash</h1>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="badge badge-soft">{% if lesson %}{{ lesson["subject"] }}{% else %}Math{% endif %}</span>
+        <span class="badge text-bg-warning text-dark">Speed economy</span>
+      </div>
+      <p class="muted small mt-2 mb-0">{% if lesson %}{{ lesson["title"] }}{% else %}Flash sale survival — same XP profile as Practice.{% endif %}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      {% if lesson %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Back</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_games', lesson_id=lesson['id']) }}">Games</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson['id']) }}">Practice</a>
+        {% set subjl = lesson['subject']|lower %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.snake_practice', lesson_id=lesson['id']) }}">
+          {%- if 'math' in subjl -%}Warden{%- elif 'read' in subjl or 'elar' in subjl or 'ela' in subjl -%}Dragon{%- else -%}Snake{%- endif -%}
+        </a>
+        <form method="post" action="{{ url_for('routes.toggle_lesson', lesson_id=lesson['id']) }}" class="m-0">
+          <button type="submit" class="btn {% if lesson['is_done'] %}btn-success{% else %}btn-light{% endif %} btn-fat">
+            {% if lesson['is_done'] %}Done{% else %}Mark done{% endif %}
+          </button>
+        </form>
+      {% else %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.games_hub') }}">Games</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if lesson %}
+    {% include "_lesson_ai_coach.html" %}
+  {% endif %}
+
+  {% if is_demo %}
+    <p class="muted small">Demo round — banked XP uses <code>add_xp</code> and your shared <code>player_state</code>.</p>
+  {% endif %}
+
+  <div class="card p-3 p-md-4 mb-3">
+    <div id="dd-phase-intro">
+      <p class="mb-2" id="dd-tagline">Items roll in with a discount tag. Beat the final price under pressure — then pick how you calculated it.</p>
+      <button type="button" class="btn btn-light btn-fat" id="dd-begin">Enter shop</button>
+    </div>
+    <div id="dd-phase-shop" class="d-none">
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <div class="small muted">You (coins)</div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-success" id="dd-hp-you" style="width: 100%;"></div>
+          </div>
+          <div class="small" id="dd-hp-you-lbl">100</div>
+        </div>
+        <div class="col-md-6">
+          <div class="small muted">Rival shopper</div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-danger" id="dd-hp-ai" style="width: 100%;"></div>
+          </div>
+          <div class="small" id="dd-hp-ai-lbl">100</div>
+        </div>
+      </div>
+      <div class="border border-secondary rounded p-3 mb-3 bg-dark bg-opacity-25">
+        <div class="text-uppercase small text-warning mb-1">Flash item</div>
+        <div class="fs-4 mb-1" id="dd-item-line"></div>
+        <div class="fw-semibold text-danger mb-2" id="dd-disc-line"></div>
+        <div class="display-6 text-info" id="dd-timer">8</div>
+      </div>
+      <label class="form-label">Final price ($)</label>
+      <div class="input-group mb-2" style="max-width: 280px;">
+        <span class="input-group-text">$</span>
+        <input type="text" class="form-control" id="dd-ans" inputmode="decimal" autocomplete="off" placeholder="0.00">
+      </div>
+      <button type="button" class="btn btn-light btn-fat" id="dd-ring">Ring up</button>
+      <p class="muted small mt-3 mb-0" id="dd-log"></p>
+      <p class="small mb-0"><span class="text-muted">Streak:</span> <span id="dd-streak">0</span></p>
+    </div>
+    <div id="dd-phase-method" class="d-none">
+      <p class="fw-semibold mb-2">Which method did you use most?</p>
+      <p class="muted small mb-3">Bonus XP — not graded for correctness of labels.</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <button type="button" class="btn btn-outline-light btn-fat" data-method="subtract_discount">Subtract the discount from price</button>
+        <button type="button" class="btn btn-outline-light btn-fat" data-method="multiply_remaining">Multiply by the remaining % (e.g. pay 75%)</button>
+      </div>
+      <button type="button" class="btn btn-success btn-fat" id="dd-finish">Bank XP &amp; exit</button>
+      <p class="muted small mt-2 mb-0" id="dd-method-out"></p>
+    </div>
+  </div>
+
+  {% if lesson %}
+  <div class="card p-3 p-md-4">
+    <h2 class="h6 text-uppercase muted small mb-2">Lesson notes</h2>
+    {% if lesson["notes"] %}<div class="lesson-notes">{{ lesson["notes"] }}</div>{% else %}<div class="muted">No notes.</div>{% endif %}
+  </div>
+  {% endif %}
+
+  <script>
+(function () {
+  var URL_S = {{ url_start | tojson }};
+  var URL_A = {{ url_answer | tojson }};
+  var URL_M = {{ url_method | tojson }};
+  var URL_F = {{ url_finish | tojson }};
+  var roundStart = 0;
+  var timerId = null;
+
+  function show(id) { document.getElementById(id).classList.remove("d-none"); }
+  function hide(id) { document.getElementById(id).classList.add("d-none"); }
+
+  function setHp(py, ai) {
+    py = Math.max(0, Math.min(100, py));
+    ai = Math.max(0, Math.min(100, ai));
+    document.getElementById("dd-hp-you").style.width = py + "%";
+    document.getElementById("dd-hp-ai").style.width = ai + "%";
+    document.getElementById("dd-hp-you-lbl").textContent = String(py);
+    document.getElementById("dd-hp-ai-lbl").textContent = String(ai);
+  }
+
+  function renderItem(it) {
+    document.getElementById("dd-item-line").textContent = "Item — $" + it.price;
+    document.getElementById("dd-disc-line").textContent = it.discount_pct + "% OFF";
+    document.getElementById("dd-ans").value = "";
+    roundStart = Date.now();
+    var t = 8;
+    var el = document.getElementById("dd-timer");
+    el.textContent = String(t);
+    if (timerId) clearInterval(timerId);
+    timerId = setInterval(function () {
+      t -= 1;
+      el.textContent = String(Math.max(0, t));
+      if (t <= 0) clearInterval(timerId);
+    }, 1000);
+  }
+
+  document.getElementById("dd-begin").addEventListener("click", function () {
+    fetch(URL_S, { method: "POST", headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.ok) throw new Error(d.error || "start failed");
+        var intro = d.intro || {};
+        if (intro.tagline) document.getElementById("dd-tagline").textContent = intro.tagline;
+        hide("dd-phase-intro");
+        show("dd-phase-shop");
+        setHp(100, 100);
+        renderItem(d.item);
+      })
+      .catch(function (e) { alert(e.message); });
+  });
+
+  document.getElementById("dd-ring").addEventListener("click", function () {
+    var ms = Date.now() - roundStart;
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    fetch(URL_A, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ answer: document.getElementById("dd-ans").value, ms_elapsed: ms }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.error) throw new Error(d.error);
+        setHp(d.player_hp, d.ai_hp);
+        document.getElementById("dd-streak").textContent = String(d.streak || 0);
+        document.getElementById("dd-log").textContent = d.narrative || "";
+        if (d.done) {
+          hide("dd-phase-shop");
+          show("dd-phase-method");
+          return;
+        }
+        if (d.next_item) renderItem(d.next_item);
+      })
+      .catch(function (e) { alert(e.message); });
+  });
+
+  document.querySelectorAll("[data-method]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var m = btn.getAttribute("data-method");
+      fetch(URL_M, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ method: m }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          document.getElementById("dd-method-out").textContent = d.ok
+            ? "Method bonus +" + (d.xp || 0) + " XP (banked with round XP when you finish)."
+            : (d.error || "failed");
+        });
+    });
+  });
+
+  document.getElementById("dd-finish").addEventListener("click", function () {
+    fetch(URL_F, { method: "POST", headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        document.getElementById("dd-method-out").textContent = d.ok
+          ? "Total XP awarded: " + (d.xp_awarded != null ? d.xp_awarded : 0) + ". Head to Today to see your level."
+          : (d.error || "failed");
+      });
+  });
+})();
+  </script>
+{% endblock %}

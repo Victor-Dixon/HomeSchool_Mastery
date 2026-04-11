@@ -1,0 +1,278 @@
+{#-
+Spelling Lab — mobile-friendly spelling practice over the LAN.
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Spelling Lab</h1>
+      <p class="muted mb-0">
+        Spelling only — works on phones &amp; tablets on the same Wi‑Fi as this computer.
+        Use the big text box; tap <strong>Check</strong> or Enter.
+      </p>
+    </div>
+    <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.games_hub') }}">Games</a>
+  </div>
+
+  <div id="sl-hub" class="card p-3 p-md-4 mb-3">
+    <h2 class="h5 mb-3">Pick a game</h2>
+    <div class="row g-2">
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-light btn-fat w-100 text-start" data-mode="flash">
+          <strong>Flash &amp; spell</strong><br />
+          <span class="small muted">Word flashes — then type it from memory.</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-light btn-fat w-100 text-start" data-mode="scramble">
+          <strong>Letter scramble</strong><br />
+          <span class="small muted">Unscramble the letters.</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-light btn-fat w-100 text-start" data-mode="gaps">
+          <strong>Fill the gaps</strong><br />
+          <span class="small muted">Missing letters — spell the full word.</span>
+        </button>
+      </div>
+      <div class="col-12 col-md-6">
+        <button type="button" class="btn btn-light btn-fat w-100 text-start" data-mode="sprint">
+          <strong>Spelling sprint</strong><br />
+          <span class="small muted">Flash, then type fast — time shrinks each round.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sl-play" class="card p-3 p-md-4 d-none">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <button type="button" class="btn btn-outline-secondary btn-fat" id="sl-quit">← Menu</button>
+      <span class="badge badge-soft" id="sl-progress"></span>
+    </div>
+    <div id="sl-stage" class="text-center py-2"></div>
+    <div class="mt-3">
+      <label for="sl-input" class="form-label fw-semibold d-none" id="sl-input-label">Your spelling</label>
+      <input
+        type="text"
+        id="sl-input"
+        class="form-control form-control-lg"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="text"
+        placeholder=""
+        style="font-size: 1.35rem; min-height: 52px;"
+      />
+    </div>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <button type="button" class="btn btn-primary btn-fat" id="sl-submit" disabled>Check spelling</button>
+    </div>
+    <p class="mt-3 mb-0 fw-semibold" id="sl-feedback" aria-live="polite"></p>
+  </div>
+
+  <script>
+(function () {
+  const hub = document.getElementById("sl-hub");
+  const play = document.getElementById("sl-play");
+  const stage = document.getElementById("sl-stage");
+  const input = document.getElementById("sl-input");
+  const feedback = document.getElementById("sl-feedback");
+  const progress = document.getElementById("sl-progress");
+  const submitBtn = document.getElementById("sl-submit");
+  const quitBtn = document.getElementById("sl-quit");
+  const inputLabel = document.getElementById("sl-input-label");
+
+  let timerId = null;
+  let sprintTimerId = null;
+  let currentMode = null;
+
+  function api(path, opts) {
+    return fetch(path, Object.assign({ credentials: "same-origin", headers: { "Content-Type": "application/json" } }, opts));
+  }
+
+  function clearTimers() {
+    if (timerId) clearTimeout(timerId);
+    if (sprintTimerId) clearInterval(sprintTimerId);
+    timerId = null;
+    sprintTimerId = null;
+  }
+
+  function showHub() {
+    clearTimers();
+    hub.classList.remove("d-none");
+    play.classList.add("d-none");
+    feedback.textContent = "";
+    currentMode = null;
+  }
+
+  function showPlay() {
+    hub.classList.add("d-none");
+    play.classList.remove("d-none");
+  }
+
+  async function startMode(mode) {
+    feedback.textContent = "";
+    const r = await api("/api/spelling-lab/start", { method: "POST", body: JSON.stringify({ mode }) });
+    const d = await r.json();
+    if (!r.ok) {
+      feedback.textContent = d.error || "Could not start.";
+      return;
+    }
+    currentMode = mode;
+    showPlay();
+    await loadChallenge();
+  }
+
+  async function loadChallenge() {
+    clearTimers();
+    feedback.textContent = "";
+    feedback.classList.remove("text-danger", "text-success");
+    input.value = "";
+    input.classList.remove("d-none");
+    inputLabel.classList.add("d-none");
+    submitBtn.disabled = true;
+    stage.innerHTML = '<p class="muted">Loading…</p>';
+
+    const r = await api("/api/spelling-lab/challenge", { method: "GET" });
+    const d = await r.json();
+    if (!r.ok) {
+      stage.innerHTML = "";
+      feedback.textContent = d.error || "Error.";
+      return;
+    }
+    if (d.done) {
+      let msg = "Session complete! ";
+      if (d.mode === "flash") {
+        msg += "Longest streak: " + (d.best || 0);
+      } else {
+        msg += "Score: " + (d.score || 0) + " / " + (d.total || 0);
+      }
+      stage.innerHTML = "<p class=\"h4\">" + msg + "</p>";
+      input.classList.add("d-none");
+      submitBtn.disabled = true;
+      progress.textContent = "";
+      return;
+    }
+
+    progress.textContent = "Word " + d.index + " / " + d.total;
+
+    if (d.kind === "flash") {
+      stage.innerHTML =
+        '<p class="muted mb-2">Memorize — then type</p>' +
+        '<p class="display-6 fw-bold text-info" style="font-size:2.2rem;letter-spacing:.06em;" id="sl-flash-word">' +
+        String(d.word).toUpperCase() +
+        "</p>";
+      input.classList.add("d-none");
+      inputLabel.classList.add("d-none");
+      timerId = setTimeout(function () {
+        const el = document.getElementById("sl-flash-word");
+        if (el) el.textContent = "• • •";
+        input.classList.remove("d-none");
+        inputLabel.classList.remove("d-none");
+        input.placeholder = "Type the word";
+        submitBtn.disabled = false;
+        input.focus();
+      }, d.flash_ms || 2000);
+      return;
+    }
+
+    if (d.kind === "scramble") {
+      stage.innerHTML =
+        '<p class="muted mb-2">Unscramble</p><p class="font-monospace display-6 fw-bold" style="font-size:2rem;">' +
+        String(d.scrambled) +
+        "</p>";
+      inputLabel.classList.remove("d-none");
+      input.placeholder = "Type the word";
+      submitBtn.disabled = false;
+      input.focus();
+      return;
+    }
+
+    if (d.kind === "gaps") {
+      stage.innerHTML =
+        '<p class="muted mb-2">Fill in</p><p class="font-monospace display-6 fw-bold" style="font-size:1.75rem;">' +
+        String(d.skeleton) +
+        "</p>";
+      inputLabel.classList.remove("d-none");
+      input.placeholder = "Full word";
+      submitBtn.disabled = false;
+      input.focus();
+      return;
+    }
+
+    if (d.kind === "sprint") {
+      const lim = d.type_limit_sec != null ? d.type_limit_sec : 18;
+      stage.innerHTML =
+        '<p class="muted mb-2">Read it aloud — then spell fast</p>' +
+        '<p class="display-6 fw-bold text-info mb-2" style="font-size:2.2rem;" id="sl-sprint-word">' +
+        String(d.word).toUpperCase() +
+        '</p>' +
+        '<p class="h5 text-warning mb-0" id="sl-sprint-clock"></p>';
+      input.classList.add("d-none");
+      submitBtn.disabled = true;
+      timerId = setTimeout(function () {
+        const w = document.getElementById("sl-sprint-word");
+        if (w) w.textContent = "• • •";
+        input.classList.remove("d-none");
+        inputLabel.classList.remove("d-none");
+        input.placeholder = "Spell it!";
+        submitBtn.disabled = false;
+        input.focus();
+        const clock = document.getElementById("sl-sprint-clock");
+        const end = Date.now() + lim * 1000;
+        sprintTimerId = setInterval(function () {
+          const sec = Math.max(0, (end - Date.now()) / 1000);
+          if (clock) clock.textContent = sec.toFixed(1) + "s";
+          if (sec <= 0) {
+            clearInterval(sprintTimerId);
+            sprintTimerId = null;
+          }
+        }, 100);
+      }, d.flash_ms || 2000);
+      return;
+    }
+  }
+
+  async function submitAnswer() {
+    const guess = input.value.trim();
+    if (!guess) return;
+    submitBtn.disabled = true;
+    const r = await api("/api/spelling-lab/answer", { method: "POST", body: JSON.stringify({ guess }) });
+    const d = await r.json();
+    if (!r.ok) {
+      feedback.textContent = d.error || "Error.";
+      submitBtn.disabled = false;
+      return;
+    }
+    if (d.try_again) {
+      feedback.textContent = "Not quite — try again.";
+      submitBtn.disabled = false;
+      input.select();
+      return;
+    }
+    if (d.correct) {
+      feedback.textContent = "✓ Nice!";
+      feedback.classList.remove("text-danger");
+      feedback.classList.add("text-success");
+    } else {
+      feedback.textContent = "Answer: " + (d.answer || "") + (d.timed_out ? " (time's up)" : "");
+      feedback.classList.add("text-danger");
+      feedback.classList.remove("text-success");
+    }
+    setTimeout(loadChallenge, d.correct ? 450 : 900);
+  }
+
+  document.querySelectorAll("#sl-hub [data-mode]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      startMode(btn.getAttribute("data-mode"));
+    });
+  });
+  quitBtn.addEventListener("click", showHub);
+  submitBtn.addEventListener("click", submitAnswer);
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") submitAnswer();
+  });
+})();
+  </script>
+{% endblock %}

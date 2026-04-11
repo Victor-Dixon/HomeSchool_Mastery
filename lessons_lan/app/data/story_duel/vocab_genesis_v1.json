@@ -1,0 +1,214 @@
+{
+  "id": "vocab_genesis_v1",
+  "version": "1.0",
+  "kind": "vocabulary",
+  "title": "Genesis Vocabulary v1",
+  "description": "Starter vocabulary practice pack — early Genesis language and concepts.",
+  "grading": "auto",
+  "metadata": {
+    "source_notes": [
+      "Seeded from starter list: structure, saw, void, energy, spirit, alright, separated, everything, mixed, waters, gather, gathered, valid, vegetation.",
+      "Corrected 'vegatation' → 'vegetation' if ever typed that way in source.",
+      "Kept 'alright' and 'valid' as requested; swap to 'light' / 'divide' / 'firmament' in v2 if lesson should track KJV wording more tightly."
+    ],
+    "word_bank": [
+      "genesis",
+      "structure",
+      "saw",
+      "void",
+      "energy",
+      "spirit",
+      "alright",
+      "separated",
+      "everything",
+      "mixed",
+      "water",
+      "waters",
+      "gather",
+      "gathered",
+      "valid",
+      "vegetation"
+    ]
+  },
+  "read_phase_seconds": 18,
+  "passage": "Genesis means beginning or origin. In the beginning, the world lacked structure over deep waters — a void before separation. Spirit and energy are lesson words for God’s moving work: separated light from darkness, gathered waters, water and seas, vegetation on the land. God saw that the design was good. Words in this pack also practice informal discussion words like alright and valid, and big ideas like everything, mixed, and gathered.",
+  "opponent_name": "Genesis Gatekeeper",
+  "rounds": [
+    {
+      "id": "genesis_genesis_define",
+      "kind": "vocabulary_define",
+      "title": "Define: genesis",
+      "prompt": "In this lesson, what does 'genesis' (or Genesis) mean?",
+      "rubric": "A valid answer connects genesis to a beginning, start, origin, or the first part of creation.",
+      "accept_substrings": true,
+      "substring_hints": ["beginning", "start", "origin", "first"],
+      "keywords": ["beginning", "start", "origin", "creation", "first"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_void_define",
+      "kind": "vocabulary_define",
+      "title": "Define: void",
+      "prompt": "What does 'void' mean in this lesson?",
+      "rubric": "A valid answer explains that void means empty space, nothingness, or a place without form or contents yet.",
+      "accept_substrings": true,
+      "substring_hints": ["empty", "nothing", "without form", "no shape"],
+      "keywords": ["empty", "nothing", "space", "without", "form"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_spirit_define",
+      "kind": "vocabulary_define",
+      "title": "Define: spirit",
+      "prompt": "What does 'spirit' mean in this lesson?",
+      "rubric": "A valid answer explains spirit as a living presence, breath, wind, or unseen power moving over creation.",
+      "accept_substrings": true,
+      "substring_hints": ["presence", "breath", "wind", "power"],
+      "keywords": ["presence", "breath", "power", "god", "moving"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_separated_use",
+      "kind": "vocabulary_use",
+      "title": "Use: separated",
+      "prompt": "Use the word 'separated' in a sentence about creation.",
+      "rubric": "A valid answer uses separated to show things being divided or set apart (light/dark, waters, etc.).",
+      "accept_substrings": true,
+      "substring_hints": ["separated"],
+      "keywords": ["separated", "apart", "light", "dark", "waters", "divide"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_waters_define",
+      "kind": "vocabulary_define",
+      "title": "Define: waters",
+      "prompt": "What are 'waters' in this lesson?",
+      "rubric": "A valid answer connects waters to the deep, seas, or gathered bodies of water in the creation narrative.",
+      "accept_substrings": true,
+      "substring_hints": ["deep", "sea", "ocean"],
+      "keywords": ["water", "deep", "gathered", "seas"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_water_define",
+      "kind": "vocabulary_define",
+      "title": "Define: water",
+      "prompt": "What does 'water' mean in the creation story? (How is it related to 'waters' or the deep?)",
+      "rubric": "A valid answer names water as the liquid, seas, deep, or the stuff God gathers or separates in creation.",
+      "accept_substrings": true,
+      "substring_hints": ["liquid", "sea", "deep", "ocean"],
+      "keywords": ["water", "deep", "sea", "gathered", "creation"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_gather_define",
+      "kind": "vocabulary_define",
+      "title": "Define: gather",
+      "prompt": "What does 'gather' mean?",
+      "rubric": "A valid answer explains gather as bringing things together into one place.",
+      "accept_substrings": true,
+      "substring_hints": ["bring together", "collect", "together"],
+      "keywords": ["together", "collect", "bring", "place"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_gathered_use",
+      "kind": "vocabulary_use",
+      "title": "Use: gathered",
+      "prompt": "Use 'gathered' in a sentence about the waters or land in creation.",
+      "rubric": "A valid answer uses gathered to show things being collected or brought together (waters, creatures, etc.).",
+      "accept_substrings": true,
+      "substring_hints": ["gathered"],
+      "keywords": ["gathered", "waters", "together", "land", "creation"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_vegetation_define",
+      "kind": "vocabulary_define",
+      "title": "Define: vegetation",
+      "prompt": "What does 'vegetation' mean?",
+      "rubric": "A valid answer explains vegetation as plant life — grass, herbs, trees, green growth.",
+      "accept_substrings": true,
+      "substring_hints": ["plants", "grass", "trees"],
+      "keywords": ["plant", "grass", "trees", "green", "growth"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_structure_use",
+      "kind": "vocabulary_use",
+      "title": "Use: structure",
+      "prompt": "Use the word 'structure' in a sentence about the world taking shape.",
+      "rubric": "A valid answer uses structure to show order, arrangement, or form emerging in creation.",
+      "accept_substrings": true,
+      "substring_hints": ["structure"],
+      "keywords": ["structure", "order", "shape", "form", "arrangement"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_mixed_define",
+      "kind": "vocabulary_define",
+      "title": "Define: mixed",
+      "prompt": "What does 'mixed' mean?",
+      "rubric": "A valid answer explains mixed as combined or blended rather than fully separated.",
+      "accept_substrings": true,
+      "substring_hints": ["combined", "blended", "together"],
+      "keywords": ["mixed", "together", "combined", "blend"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_saw_define",
+      "kind": "vocabulary_define",
+      "title": "Define: saw",
+      "prompt": "In Bible-style language, what does it often mean when it says God 'saw' something?",
+      "rubric": "A valid answer connects saw to noticing, observing, or approving what was made — not just eyesight in a cartoon sense.",
+      "accept_substrings": true,
+      "substring_hints": ["noticed", "observed", "good", "looked"],
+      "keywords": ["saw", "good", "noticed", "god", "made"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_energy_define",
+      "kind": "vocabulary_define",
+      "title": "Define: energy",
+      "prompt": "What does 'energy' suggest in this lesson’s creation vocabulary?",
+      "rubric": "A valid answer ties energy to power, life-force, movement, or God’s creative activity (student-level wording is fine).",
+      "accept_substrings": true,
+      "substring_hints": ["power", "force", "movement"],
+      "keywords": ["energy", "power", "movement", "life", "create"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_everything_define",
+      "kind": "vocabulary_define",
+      "title": "Define: everything",
+      "prompt": "What does 'everything' mean in the phrase 'over everything' or 'all creation'?",
+      "rubric": "A valid answer explains everything as all things, the whole creation, or the full set of what exists in context.",
+      "accept_substrings": true,
+      "substring_hints": ["all things", "whole", "all creation"],
+      "keywords": ["everything", "all", "whole", "creation"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_alright_define",
+      "kind": "vocabulary_define",
+      "title": "Define: alright",
+      "prompt": "In everyday English, what does 'alright' usually mean? (This lesson uses it as a casual word — not the same as theological 'light'.)",
+      "rubric": "A valid answer explains alright as okay, acceptable, or good enough in casual speech.",
+      "accept_substrings": true,
+      "substring_hints": ["okay", "ok", "fine", "acceptable"],
+      "keywords": ["alright", "okay", "fine", "good", "acceptable"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "genesis_valid_define",
+      "kind": "vocabulary_define",
+      "title": "Define: valid",
+      "prompt": "What does 'valid' mean when we say an answer or reason is valid?",
+      "rubric": "A valid answer explains valid as reasonable, well-supported, acceptable, or logically sound.",
+      "accept_substrings": true,
+      "substring_hints": ["reasonable", "sound", "acceptable", "makes sense"],
+      "keywords": ["valid", "reasonable", "sound", "support", "correct"],
+      "min_keyword_hits": 2
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{#
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/lesson_text_detective.html
+Purpose: Text Detective — Case Battle (purpose, structure, evidence, reflection XP).
+#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">{% if lesson %}{{ lesson["lesson_date"] }}{% else %}Demo{% endif %}</div>
+      <h1 class="h3 mb-1">Text Detective: Case Battle</h1>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="badge badge-soft">{% if lesson %}{{ lesson["subject"] }}{% else %}Reading{% endif %}</span>
+        <span class="badge text-bg-info text-dark">Investigation mode</span>
+        {% if lesson and lesson.get("is_done") %}
+          <span class="badge text-bg-success">Completed</span>
+        {% endif %}
+      </div>
+      <p class="muted small mt-2 mb-0">{% if lesson %}{{ lesson["title"] }}{% else %}Standalone demo — XP still goes to your profile.{% endif %}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      {% if lesson %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Back</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_games', lesson_id=lesson['id']) }}">Games</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson['id']) }}">Practice</a>
+        {% set subjl = lesson['subject']|lower %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.snake_practice', lesson_id=lesson['id']) }}">
+          {%- if 'math' in subjl -%}Warden{%- elif 'read' in subjl or 'elar' in subjl or 'ela' in subjl -%}Dragon{%- else -%}Snake{%- endif -%}
+        </a>
+        <form method="post" action="{{ url_for('routes.toggle_lesson', lesson_id=lesson['id']) }}" class="m-0">
+          <button type="submit" class="btn {% if lesson['is_done'] %}btn-success{% else %}btn-light{% endif %} btn-fat">
+            {% if lesson['is_done'] %}Done{% else %}Mark done{% endif %}
+          </button>
+        </form>
+      {% else %}
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+        <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.games_hub') }}">Games</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if lesson %}
+    {% include "_lesson_ai_coach.html" %}
+  {% endif %}
+
+  {% if is_demo %}
+    <p class="muted small">Demo — same case file as lesson mode. Answers + evidence are graded on the server; XP uses <code>add_xp</code> + <code>player_state</code>.</p>
+  {% endif %}
+
+  <div class="card p-3 p-md-4 mb-3">
+    <div id="td-phase-intro">
+      <p class="mb-2">Open the case file, scan the passage, then answer under time pressure. Strong proof hits harder.</p>
+      <button type="button" class="btn btn-light btn-fat" id="td-begin">Open case file</button>
+    </div>
+    <div id="td-phase-read" class="d-none">
+      <p class="text-uppercase small muted mb-2">Case file</p>
+      <p class="lesson-notes fs-5 mb-3" id="td-passage"></p>
+      <div class="display-6 text-warning mb-2" id="td-read-ct"></div>
+      <p class="muted small">Timer mimics test pressure — faster correct answers deal more damage.</p>
+    </div>
+    <div id="td-phase-fight" class="d-none">
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <div class="small muted">You</div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-success" id="td-hp-you" style="width: 100%;"></div>
+          </div>
+          <div class="small" id="td-hp-you-lbl">100</div>
+        </div>
+        <div class="col-md-6">
+          <div class="small muted">Rival reader</div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-danger" id="td-hp-ai" style="width: 100%;"></div>
+          </div>
+          <div class="small" id="td-hp-ai-lbl">100</div>
+        </div>
+      </div>
+      <div class="text-warning text-uppercase small mb-1" id="td-round-title"></div>
+      <p class="fw-semibold mb-3" id="td-prompt"></p>
+      <div id="td-mcq" class="d-none"></div>
+      <div id="td-ev" class="d-none"></div>
+      <button type="button" class="btn btn-light btn-fat mt-2" id="td-submit">Submit evidence</button>
+      <p class="muted small mt-3 mb-0" id="td-log"></p>
+    </div>
+    <div id="td-phase-reflect" class="d-none">
+      <p class="fw-semibold mb-2" id="td-ref-prompt"></p>
+      <textarea class="form-control mb-2" id="td-ref-text" rows="3" maxlength="1200" placeholder="Optional — short reflection (XP bonus, not pass/fail)."></textarea>
+      <button type="button" class="btn btn-success btn-fat" id="td-ref-btn">Log reflection &amp; bank XP</button>
+      <p class="muted small mt-2 mb-0" id="td-ref-out"></p>
+    </div>
+  </div>
+
+  {% if lesson %}
+  <div class="card p-3 p-md-4">
+    <h2 class="h6 text-uppercase muted small mb-2">Lesson notes</h2>
+    {% if lesson["notes"] %}<div class="lesson-notes">{{ lesson["notes"] }}</div>{% else %}<div class="muted">No notes.</div>{% endif %}
+  </div>
+  {% endif %}
+
+  <script>
+(function () {
+  var URL_S = {{ url_start | tojson }};
+  var URL_T = {{ url_step | tojson }};
+  var URL_R = {{ url_reflect | tojson }};
+  var bundle = null;
+  var roundIndex = 0;
+  var roundStart = 0;
+  var picked = {};
+
+  function show(id) { document.getElementById(id).classList.remove("d-none"); }
+  function hide(id) { document.getElementById(id).classList.add("d-none"); }
+
+  function setHp(py, ai) {
+    py = Math.max(0, Math.min(100, py));
+    ai = Math.max(0, Math.min(100, ai));
+    document.getElementById("td-hp-you").style.width = py + "%";
+    document.getElementById("td-hp-ai").style.width = ai + "%";
+    document.getElementById("td-hp-you-lbl").textContent = String(py);
+    document.getElementById("td-hp-ai-lbl").textContent = String(ai);
+  }
+
+  function renderRound() {
+    var r = bundle.rounds[roundIndex];
+    document.getElementById("td-round-title").textContent = r.title || "";
+    document.getElementById("td-prompt").textContent = r.prompt || "";
+    var mcq = document.getElementById("td-mcq");
+    var ev = document.getElementById("td-ev");
+    mcq.innerHTML = "";
+    ev.innerHTML = "";
+    picked = {};
+    if (r.input === "mcq") {
+      mcq.classList.remove("d-none");
+      ev.classList.add("d-none");
+      (r.choices || []).forEach(function (ch) {
+        var id = "tdc-" + ch.value;
+        var div = document.createElement("div");
+        div.className = "form-check";
+        div.innerHTML = '<input class="form-check-input" type="radio" name="tdmcq" id="' + id + '" value="' + ch.value + '">' +
+          '<label class="form-check-label" for="' + id + '">' + ch.label + "</label>";
+        mcq.appendChild(div);
+      });
+    } else {
+      mcq.classList.add("d-none");
+      ev.classList.remove("d-none");
+      (r.snippets || []).forEach(function (s) {
+        var div = document.createElement("div");
+        div.className = "form-check";
+        div.innerHTML = '<input class="form-check-input" type="checkbox" data-id="' + s.id + '" id="tds-' + s.id + '">' +
+          '<label class="form-check-label" for="tds-' + s.id + '">' + s.text + "</label>";
+        ev.appendChild(div);
+      });
+    }
+    roundStart = Date.now();
+  }
+
+  document.getElementById("td-begin").addEventListener("click", function () {
+    fetch(URL_S, { method: "POST", headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.ok) throw new Error(d.error || "start failed");
+        bundle = d.bundle;
+        document.getElementById("td-passage").textContent = bundle.passage;
+        document.getElementById("td-ref-prompt").textContent = bundle.reflection_prompt || "";
+        hide("td-phase-intro");
+        show("td-phase-read");
+        var sec = bundle.read_seconds || 16;
+        var el = document.getElementById("td-read-ct");
+        el.textContent = String(sec);
+        var t = setInterval(function () {
+          sec -= 1;
+          el.textContent = String(Math.max(0, sec));
+          if (sec <= 0) {
+            clearInterval(t);
+            hide("td-phase-read");
+            show("td-phase-fight");
+            roundIndex = 0;
+            renderRound();
+          }
+        }, 1000);
+      })
+      .catch(function (e) { alert(e.message); });
+  });
+
+  document.getElementById("td-submit").addEventListener("click", function () {
+    var r = bundle.rounds[roundIndex];
+    var ms = Date.now() - roundStart;
+    var body = { ms_elapsed: ms };
+    if (r.input === "mcq") {
+      var sel = document.querySelector("input[name=tdmcq]:checked");
+      body.value = sel ? sel.value : "";
+    } else {
+      var ids = [];
+      document.querySelectorAll("#td-ev input[type=checkbox]").forEach(function (x) {
+        if (x.checked) ids.push(x.getAttribute("data-id"));
+      });
+      body.picked = ids;
+    }
+    fetch(URL_T, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.ok) throw new Error(d.error || "step failed");
+        setHp(d.player_hp, d.ai_hp);
+        document.getElementById("td-log").textContent = d.narrative || "";
+        if (d.battle_over) {
+          hide("td-phase-fight");
+          show("td-phase-reflect");
+          return;
+        }
+        if (typeof d.next_round_index === "number") roundIndex = d.next_round_index;
+        renderRound();
+      })
+      .catch(function (e) { alert(e.message); });
+  });
+
+  document.getElementById("td-ref-btn").addEventListener("click", function () {
+    fetch(URL_R, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body:JSON.stringify({ note: document.getElementById("td-ref-text").value }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        document.getElementById("td-ref-out").textContent = d.ok
+          ? "XP banked: " + (d.xp_awarded || 0) + " (same profile as Practice / Boss)."
+          : (d.error || "failed");
+      });
+  });
+})();
+  </script>
+{% endblock %}

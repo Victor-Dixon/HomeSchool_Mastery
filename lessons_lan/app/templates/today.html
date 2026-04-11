@@ -1,0 +1,64 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/today.html
+Purpose: Student "Today" checklist view for lessons.
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Today</h1>
+      <div class="muted">{{ today }}</div>
+    </div>
+    <div class="muted">
+      {% set done = lessons | selectattr("is_done") | list | length %}
+      {% set total = lessons | length %}
+      Progress: <strong class="text-white">{{ done }}</strong>/<strong class="text-white">{{ total }}</strong>
+    </div>
+  </div>
+
+  {% if lessons|length == 0 %}
+    <div class="card p-4">
+      <h2 class="h5 mb-2">No lessons yet</h2>
+      <p class="muted mb-0">Ask your parent to add lessons for today.</p>
+    </div>
+  {% else %}
+    <div class="row g-3">
+      {% for l in lessons %}
+        <div class="col-12">
+          <div class="card p-3 p-md-4">
+            <div class="d-flex gap-3 align-items-start">
+              <form method="post" action="{{ url_for('routes.toggle_lesson', lesson_id=l['id']) }}" class="m-0">
+                <button type="submit" class="btn {% if l['is_done'] %}btn-success{% else %}btn-outline-light{% endif %} btn-fat">
+                  {% if l['is_done'] %}Done{% else %}Mark done{% endif %}
+                </button>
+              </form>
+              <div class="flex-grow-1">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-1">
+                  <span class="badge badge-soft">{{ l["subject"] }}</span>
+                  {% if l["is_done"] %}
+                    <span class="badge text-bg-success">Completed</span>
+                  {% endif %}
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                  <div class="fs-5">
+                    <a
+                      class="lesson-title-tap"
+                      href="{{ url_for('routes.lesson_detail', lesson_id=l['id']) }}"
+                    >{{ l["title"] }}</a>
+                  </div>
+                  <a class="btn btn-primary btn-fat btn-sm px-3 py-2" href="{{ url_for('routes.practice', lesson_id=l['id']) }}">Practice</a>
+                </div>
+                {% if l["notes"] %}
+                  <div class="muted mt-2 lesson-notes">{{ l["notes"] }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}
+

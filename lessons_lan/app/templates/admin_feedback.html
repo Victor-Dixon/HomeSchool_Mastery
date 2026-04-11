@@ -1,0 +1,40 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/admin_feedback.html
+Purpose: Admin inbox for reading submitted feedback.
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Feedback inbox</h1>
+      <div class="muted">Latest feedback from the kids (and you).</div>
+    </div>
+    <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.admin_home') }}">Admin home</a>
+  </div>
+
+  <div class="card p-3 p-md-4">
+    {% if items|length == 0 %}
+      <div class="muted">No feedback yet.</div>
+    {% else %}
+      <div class="vstack gap-3">
+        {% for f in items %}
+          <div class="border rounded-3 p-3" style="border-color: rgba(255,255,255,.10) !important;">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+              <div class="muted small">
+                {{ f["created_at"] }}
+                {% if f["display_name"] %} — <strong class="text-white">{{ f["display_name"] }}</strong> (<code class="text-white">{{ f["username"] }}</code>){% endif %}
+              </div>
+              {% if f["rating"] %}
+                <span class="badge text-bg-info">Rating: {{ f["rating"] }}/5</span>
+              {% endif %}
+            </div>
+            <div class="lesson-notes mt-2">{{ f["message"] }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+

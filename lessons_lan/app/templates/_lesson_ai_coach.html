@@ -1,0 +1,121 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/_lesson_ai_coach.html
+Purpose: Reusable AI lesson coach panel + client script.
+Expects: lesson (dict with id), ai_history, ai_chat_url
+-#}
+  <div class="card p-3 p-md-4 mb-3 border-info border-opacity-25" style="border-width: 2px;">
+    <h2 class="h5 mb-2">AI lesson coach</h2>
+    <p class="muted small mb-3">
+      Chat about <strong class="text-white">this lesson only</strong>. Runs on your home PC when
+      <strong class="text-white">Ollama</strong> is up (<code class="text-info">ollama serve</code>).
+      Model: set <code class="text-info">OLLAMA_MODEL</code> if needed (default <code class="text-info">gemma3</code>).
+    </p>
+    <div
+      id="ai-lesson-log"
+      class="rounded-3 p-3 mb-3"
+      style="max-height: 320px; overflow-y: auto; background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.1);"
+    >
+      {% for m in ai_history %}
+        {% if m.role == "user" %}
+          <div class="mb-2"><strong class="text-info">You:</strong> <span class="lesson-notes d-inline">{{ m.content }}</span></div>
+        {% else %}
+          <div class="mb-2"><strong class="text-success">Coach:</strong> <span class="lesson-notes d-inline">{{ m.content }}</span></div>
+        {% endif %}
+      {% endfor %}
+      <div id="ai-lesson-typing" class="muted small d-none">Thinking…</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 align-items-start">
+      <textarea
+        id="ai-lesson-input"
+        class="form-control flex-grow-1"
+        rows="2"
+        maxlength="8000"
+        placeholder="Ask a question about this lesson…"
+      ></textarea>
+      <div class="d-flex flex-column gap-2">
+        <button type="button" class="btn btn-light btn-fat" id="ai-lesson-send">Send</button>
+        <button type="button" class="btn btn-outline-light btn-sm" id="ai-lesson-clear">Clear chat</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var url = {{ ai_chat_url | tojson }};
+      var logEl = document.getElementById("ai-lesson-log");
+      var inputEl = document.getElementById("ai-lesson-input");
+      var sendBtn = document.getElementById("ai-lesson-send");
+      var clearBtn = document.getElementById("ai-lesson-clear");
+      var typingEl = document.getElementById("ai-lesson-typing");
+
+      function appendLine(role, text) {
+        var row = document.createElement("div");
+        row.className = "mb-2";
+        var strong = document.createElement("strong");
+        strong.className = role === "user" ? "text-info" : "text-success";
+        strong.textContent = role === "user" ? "You: " : "Coach: ";
+        var span = document.createElement("span");
+        span.className = "lesson-notes d-inline";
+        span.style.whiteSpace = "pre-wrap";
+        span.textContent = text;
+        row.appendChild(strong);
+        row.appendChild(span);
+        logEl.insertBefore(row, typingEl);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function setBusy(on) {
+        sendBtn.disabled = on;
+        inputEl.disabled = on;
+        typingEl.classList.toggle("d-none", !on);
+        if (on) logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      async function postJson(body) {
+        var r = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(body),
+        });
+        var data = {};
+        try {
+          data = await r.json();
+        } catch (e) {}
+        if (!r.ok) throw new Error(data.error || "request failed");
+        return data;
+      }
+
+      sendBtn.addEventListener("click", async function () {
+        var text = (inputEl.value || "").trim();
+        if (!text) return;
+        inputEl.value = "";
+        appendLine("user", text);
+        setBusy(true);
+        try {
+          var data = await postJson({ message: text });
+          appendLine("assistant", data.reply || "");
+        } catch (e) {
+          appendLine("assistant", "Something went wrong. Try again.");
+        }
+        setBusy(false);
+      });
+
+      inputEl.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" && !ev.shiftKey) {
+          ev.preventDefault();
+          sendBtn.click();
+        }
+      });
+
+      clearBtn.addEventListener("click", async function () {
+        try {
+          await postJson({ reset: true });
+        } catch (e) {}
+        var kids = logEl.querySelectorAll(".mb-2");
+        kids.forEach(function (n) {
+          if (n.id !== "ai-lesson-typing") n.remove();
+        });
+      });
+    })();
+  </script>

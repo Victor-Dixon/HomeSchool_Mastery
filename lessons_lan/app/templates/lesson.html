@@ -1,0 +1,46 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/lesson.html
+Purpose: Full lesson view + local AI lesson coach (Ollama).
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">{{ lesson["lesson_date"] }}</div>
+      <h1 class="h3 mb-1">{{ lesson["title"] }}</h1>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="badge badge-soft">{{ lesson["subject"] }}</span>
+        {% if lesson["is_done"] %}
+          <span class="badge text-bg-success">Completed</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Back</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_games', lesson_id=lesson['id']) }}">Games</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson['id']) }}">Practice</a>
+      {% set subjl = lesson['subject']|lower %}
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.snake_practice', lesson_id=lesson['id']) }}">
+        {%- if 'math' in subjl -%}Warden{%- elif 'read' in subjl or 'elar' in subjl or 'ela' in subjl -%}Dragon{%- else -%}Snake{%- endif -%}
+      </a>
+      <form method="post" action="{{ url_for('routes.toggle_lesson', lesson_id=lesson['id']) }}" class="m-0">
+        <button type="submit" class="btn {% if lesson['is_done'] %}btn-success{% else %}btn-light{% endif %} btn-fat">
+          {% if lesson['is_done'] %}Done{% else %}Mark done{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {% include "_lesson_ai_coach.html" %}
+
+  <div class="card p-3 p-md-4">
+    <h2 class="h6 mb-3 muted text-uppercase small">Lesson notes</h2>
+    {% if lesson["notes"] %}
+      <div class="lesson-notes">{{ lesson["notes"] }}</div>
+    {% else %}
+      <div class="muted">No details were added for this lesson.</div>
+    {% endif %}
+  </div>
+{% endblock %}

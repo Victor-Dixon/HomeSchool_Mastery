@@ -1,0 +1,15 @@
+{
+  "$comment": "Documentation mirror of Python rules in app/story_duel_schema.py (authoritative).",
+  "bundle": {
+    "required": ["id", "title", "kind", "passage", "rounds"],
+    "kind_enum": ["story_duel", "vocabulary"],
+    "grading_enum": ["auto", "heuristic_only", "ollama_only"],
+    "optional_top": ["version", "description", "subtitle", "read_phase_seconds", "opponent_name", "grading", "metadata"]
+  },
+  "round": {
+    "required": ["id", "title", "prompt"],
+    "kind_enum": ["comprehension", "inference", "vocabulary_define", "vocabulary_use", "vocabulary_match"],
+    "grading_inputs": "at least one non-empty rubric | keywords[] | answer | answers[]",
+    "accept_substrings": "boolean only; phrase lists live in substring_hints[]"
+  }
+}

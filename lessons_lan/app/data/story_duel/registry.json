@@ -1,0 +1,10 @@
+{
+  "default": "vocab_genesis_v1",
+  "description": "Story Duel bundles are validated on load (see app/story_duel_schema.py). Swap via STORY_DUEL_BUNDLE_ID or lesson notes story_duel_bundle:slug.",
+  "bundles": [
+    { "id": "marcus_wallet_v1", "file": "marcus_wallet_v1.json", "label": "Marcus & the wallet (reading)" },
+    { "id": "storm_library_v1", "file": "storm_library_v1.json", "label": "Storm at the library (reading)" },
+    { "id": "vocab_ocean_v1", "file": "vocab_ocean_v1.json", "label": "Ocean vocabulary (blueprint)" },
+    { "id": "vocab_genesis_v1", "file": "vocab_genesis_v1.json", "label": "Genesis vocabulary v1" }
+  ]
+}

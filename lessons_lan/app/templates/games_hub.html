@@ -1,0 +1,80 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/games_hub.html
+Purpose: Fallback landing when lesson IDs don't match + entry to lesson-agnostic demos.
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Games</h1>
+      <p class="muted mb-0">
+        Lesson links like <code class="text-info">/lesson/2</code> only work if that row is <strong>your</strong> lesson in this app’s database.
+        If a link shows a message and brings you here, use <strong>Today</strong> or start a demo below.
+      </p>
+    </div>
+    <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h5 mb-2">Story Duel</h2>
+        <p class="muted small mb-3">
+          Reading battle: main idea → inference → theme. Standalone demo uses the same XP profile as lesson play.
+        </p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.story_duel_demo') }}">Play demo</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h5 mb-2">Text Detective</h2>
+        <p class="muted small mb-3">
+          Case file → purpose, structure, evidence lock → reflection XP. Proof-based reading combat.
+        </p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.text_detective_demo') }}">Play demo</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h5 mb-2">Discount Dash</h2>
+        <p class="muted small mb-3">
+          Timed percent-off prices vs a rival shopper; method bonus — real-world math combat.
+        </p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.discount_dash_demo') }}">Play demo</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100 border border-info border-opacity-25">
+        <h2 class="h5 mb-2">Spelling Lab</h2>
+        <p class="muted small mb-3">
+          Flash, scramble, gaps, sprint — same Wi‑Fi as this PC. Phones &amp; tablets use the browser (log in first).
+        </p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('spelling_lab.spelling_lab_page') }}">Open Spelling Lab</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h5 mb-2">Vocabulary Signal Breaker</h2>
+        <p class="muted small mb-3">
+          Definition match game (from <code class="text-info">vocabulary_game.py</code>) — solo or 2-player pass-and-play.
+        </p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('vocab_signal.vocabulary_signal_breaker') }}">Play</a>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h5 mb-2">Your reading lesson</h2>
+        {% if reading_first %}
+          <p class="muted small mb-3">Today’s first Reading item (if any) — open its game hub.</p>
+          <a class="btn btn-light btn-fat" href="{{ url_for('routes.lesson_games', lesson_id=reading_first['id']) }}">
+            {{ reading_first["title"][:48] }}{% if reading_first["title"]|length > 48 %}…{% endif %}
+          </a>
+        {% else %}
+          <p class="muted small mb-3">No reading lesson queued for {{ today_s }} yet. Open Today or ask a parent to add lessons.</p>
+          <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Open Today</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+# Node (Mastery)
+node_modules/
+npm-debug.log*
+
+# Python — Flask LAN app (lessons_lan/)
+lessons_lan/.venv/
+lessons_lan/**/__pycache__/
+lessons_lan/**/.pytest_cache/
+lessons_lan/.benchmarks/
+lessons_lan/instance/*.db
+lessons_lan/instance/*.log
+lessons_lan/**/*.pyc
+lessons_lan/app.db
+lessons_lan/.coverage
+lessons_lan/htmlcov/
+
+# OS / editor
+.DS_Store
+Thumbs.db

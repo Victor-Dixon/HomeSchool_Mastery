@@ -1,0 +1,40 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/feedback.html
+Purpose: In-app feedback form to improve lessons/games and UX.
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Feedback</h1>
+      <div class="muted">Tell us what would make this better.</div>
+    </div>
+    <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Back</a>
+  </div>
+
+  <div class="card p-3 p-md-4">
+    <form method="post" class="row g-3">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Rating (optional)</label>
+        <select class="form-select form-select-lg" name="rating">
+          <option value="">—</option>
+          <option value="5">5 (love it)</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1 (needs work)</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Message</label>
+        <textarea class="form-control" name="message" rows="6" placeholder="Example: The reading game should have a timer and fun sound effects..."></textarea>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-light btn-fat" type="submit">Send feedback</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+

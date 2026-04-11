@@ -1,0 +1,74 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/lesson_games.html
+Purpose: One hub for all minigames tied to a lesson (templatized entry point).
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">{{ lesson["lesson_date"] }} · {{ lesson["subject"] }}</div>
+      <h1 class="h3 mb-1">Games — {{ lesson["title"] }}</h1>
+      <p class="muted small mb-0">Pick a mode. All of these use this lesson for XP and routing.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Lesson</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Quiz</h2>
+        <p class="mb-3">Multiple-choice practice from the TEKS bank.</p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson['id']) }}">Practice</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Snake pickups</h2>
+        <p class="mb-3">Steer into the right answer orb (Warden on Math, Dragon on Reading).</p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.snake_practice', lesson_id=lesson['id']) }}">Snake</a>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Story Duel</h2>
+        <p class="mb-3">Timed reading battle (main idea → inference → theme).</p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.story_duel_play', lesson_id=lesson['id']) }}">Story Duel</a>
+      </div>
+    </div>
+    {% if uses_fraction_battle %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Fraction battle (Tetris)</h2>
+        <p class="mb-3">Math combat — skill gates and blocks; XP syncs to your profile on win/loss.</p>
+        <a class="btn btn-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Play</a>
+      </div>
+    </div>
+    {% endif %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Text Detective</h2>
+        <p class="mb-3">Purpose, structure, and evidence — proof-based reading combat.</p>
+        {% if primary_mode == 'text_detective' %}
+          <a class="btn btn-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Open lesson game</a>
+        {% else %}
+          <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.text_detective_demo') }}">Demo</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card p-3 p-md-4 h-100">
+        <h2 class="h6 text-uppercase muted small">Discount Dash</h2>
+        <p class="mb-3">Percent-off under the timer; coins as pressure; method bonus XP.</p>
+        {% if primary_mode == 'discount_dash' %}
+          <a class="btn btn-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Open lesson game</a>
+        {% else %}
+          <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.discount_dash_demo') }}">Demo</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

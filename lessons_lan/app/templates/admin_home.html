@@ -1,0 +1,50 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/admin_home.html
+Purpose: Admin dashboard (users, lessons, feedback).
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h1 class="h3 mb-1">Admin</h1>
+      <div class="muted">Manage users and daily lessons.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.admin_lessons') }}">Lessons</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.admin_feedback') }}">Feedback</a>
+    </div>
+  </div>
+
+  <div class="card p-3 p-md-4">
+    <h2 class="h5 mb-3">Users</h2>
+    <div class="table-responsive">
+      <table class="table table-dark table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Role</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td><code class="text-white">{{ u["username"] }}</code></td>
+              <td>{{ u["display_name"] }}</td>
+              <td>{% if u["grade"] %}{{ u["grade"] }}{% else %}-{% endif %}</td>
+              <td>{% if u["is_admin"] == 1 %}Admin{% else %}Student{% endif %}</td>
+              <td class="text-end">
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('routes.admin_user', user_id=u['id']) }}">Change password</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+

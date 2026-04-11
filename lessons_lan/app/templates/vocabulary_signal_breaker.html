@@ -1,0 +1,733 @@
+{#-
+Vocabulary Signal Breaker — based on Signal Breaker; uses vocabulary_game word list.
+Solo or 2-player alternating on one device (pass-and-play).
+-#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>{{ title or "Vocabulary Signal Breaker" }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #060912;
+  --surface: #0d1426;
+  --surface2: #111e38;
+  --cyan: #00f5ff;
+  --cyan-dim: rgba(0,245,255,0.15);
+  --cyan-glow: rgba(0,245,255,0.4);
+  --amber: #ffb800;
+  --red: #ff3a5c;
+  --red-dim: rgba(255,58,92,0.15);
+  --green: #00ff88;
+  --green-dim: rgba(0,255,136,0.12);
+  --text: #e0f0ff;
+  --muted: #4a6a8a;
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Exo 2', sans-serif;
+}
+html, body {
+  width: 100%; min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  touch-action: manipulation;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+  pointer-events: none;
+  z-index: 1000;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.nav-top {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  padding: 10px 16px;
+  background: rgba(6,9,18,0.92);
+  border-bottom: 1px solid rgba(0,245,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.nav-top a {
+  color: #9cc3ff;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.screen {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 20px 24px;
+  gap: 20px;
+}
+.screen.hidden { display: none; }
+.logo-sub { font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--cyan); opacity: 0.7; margin-bottom: 6px; text-align: center; }
+.logo-main {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 8vw, 3.2rem);
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 0 20px var(--cyan-glow);
+}
+.logo-accent { color: var(--cyan); }
+.tagline { font-size: 0.9rem; color: var(--muted); text-align: center; }
+.mission-box {
+  background: var(--surface);
+  border: 1px solid rgba(0,245,255,0.15);
+  border-radius: 16px;
+  padding: 18px 22px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+.mission-box strong { color: var(--cyan); }
+.level-select { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 380px; }
+.level-btn {
+  background: var(--surface);
+  border: 1px solid rgba(0,245,255,0.15);
+  border-radius: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  text-align: left;
+  width: 100%;
+  transition: all 0.2s;
+}
+.level-btn:hover, .level-btn:active {
+  background: var(--cyan-dim);
+  border-color: var(--cyan);
+}
+.level-icon { font-size: 1.3rem; flex-shrink: 0; }
+.level-name { font-weight: 700; }
+.level-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.hud {
+  position: fixed;
+  top: 48px;
+  left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(6,9,18,0.92);
+  border-bottom: 1px solid rgba(0,245,255,0.1);
+  z-index: 50;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hud.hidden { display: none; }
+.hud-label { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); font-family: var(--font-display); }
+.hud-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--cyan); }
+.hud-value.amber { color: var(--amber); }
+.xp-bar-wrap { flex: 1; min-width: 120px; max-width: 200px; }
+.xp-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), #00ffcc); border-radius: 10px; transition: width 0.4s; }
+.lives-row { display: flex; gap: 4px; }
+.life-heart { font-size: 0.95rem; transition: 0.3s; }
+.life-heart.lost { opacity: 0.2; transform: scale(0.85); filter: grayscale(1); }
+#screen-game { padding-top: 120px; align-items: stretch; }
+.game-inner { width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding: 8px; }
+.round-type { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--cyan); text-align: center; margin-bottom: 6px; }
+.turn-banner {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--amber);
+  letter-spacing: 0.12em;
+}
+.definition-box {
+  background: var(--surface);
+  border: 1px solid rgba(0,245,255,0.2);
+  border-radius: 18px;
+  padding: 18px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.definition-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+.definition-text {
+  font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+  line-height: 1.5;
+  color: var(--text);
+}
+.hint-line { font-size: 0.75rem; color: var(--muted); margin-top: 10px; }
+.speak-btn {
+  background: transparent;
+  border: 1px solid rgba(0,245,255,0.25);
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: var(--cyan);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.timer-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
+.timer-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.1s linear; }
+.timer-fill.warn { background: linear-gradient(90deg, var(--red), var(--amber)); }
+.choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice-btn {
+  background: var(--surface);
+  border: 2px solid rgba(0,245,255,0.12);
+  border-radius: 14px;
+  padding: clamp(12px, 3vw, 18px) 8px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 3.5vw, 1.25rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  transition: 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.choice-btn:hover, .choice-btn:active { border-color: var(--cyan); }
+.choice-btn.correct { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.choice-btn.wrong { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+.choice-btn:disabled { cursor: not-allowed; opacity: 0.85; }
+.feedback-bar {
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feedback-bar.correct-fb { background: var(--green-dim); border: 1px solid rgba(0,255,136,0.3); color: var(--green); }
+.feedback-bar.wrong-fb { background: var(--red-dim); border: 1px solid rgba(255,58,92,0.3); color: var(--red); }
+.feedback-bar.neutral-fb { background: var(--surface); border: 1px solid var(--surface2); color: var(--muted); }
+.combo-display { font-family: var(--font-display); font-size: 0.72rem; color: var(--amber); text-align: center; min-height: 18px; }
+#screen-gameover .gameover-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 7vw, 2.6rem);
+  font-weight: 900;
+  text-align: center;
+}
+.gameover-title.win { color: var(--green); }
+.gameover-title.lose { color: var(--red); }
+.result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 400px; }
+.result-card {
+  background: var(--surface);
+  border: 1px solid rgba(0,245,255,0.12);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.result-val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--cyan); }
+.result-lbl { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.rank-box {
+  background: var(--surface);
+  border: 1px solid rgba(255,184,0,0.2);
+  border-radius: 14px;
+  padding: 16px 24px;
+  text-align: center;
+  max-width: 360px;
+}
+.rank-value { font-family: var(--font-display); font-size: 1.8rem; font-weight: 900; color: var(--amber); margin-top: 4px; }
+.btn-row { display: flex; gap: 10px; width: 100%; max-width: 380px; }
+.cta-btn {
+  flex: 1;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cta-btn.secondary { background: var(--surface); color: var(--text); border: 1px solid rgba(0,245,255,0.15); }
+.streak-popup {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--amber);
+  z-index: 900;
+  pointer-events: none;
+  transition: transform 0.25s, opacity 0.3s;
+  opacity: 0;
+}
+.streak-popup.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.screen-flash { position: fixed; inset: 0; pointer-events: none; z-index: 700; opacity: 0; }
+.screen-flash.green-flash { background: rgba(0,255,136,0.1); animation: flash 0.4s; }
+.screen-flash.red-flash { background: rgba(255,58,92,0.12); animation: flash 0.4s; }
+@keyframes flash { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+.xp-float {
+  position: fixed;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--amber);
+  pointer-events: none;
+  z-index: 800;
+  animation: xp-rise 1s forwards;
+}
+@keyframes xp-rise { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
+.p2-scores { display: none; width: 100%; justify-content: center; gap: 24px; font-family: var(--font-display); font-size: 0.85rem; }
+.p2-scores.active { display: flex; }
+.p2-scores span { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<div class="nav-top">
+  <a href="{{ url_for('routes.games_hub') }}">← Games</a>
+  <span style="font-size:0.75rem;color:var(--muted);">Homeschool vocab</span>
+</div>
+
+<div class="screen" id="screen-title">
+  <div>
+    <div class="logo-sub">memory link</div>
+    <div class="logo-main">VOCABULARY <span class="logo-accent">BREAKER</span></div>
+  </div>
+  <div class="tagline">read the signal · pick the word · beat the clock</div>
+  <div class="mission-box">
+    <p>Uses your <strong>vocabulary list</strong> from <code style="opacity:.9">vocabulary_game.py</code>. Each round shows a <strong>definition</strong> — tap the matching word. Wrong answers and timeouts cost a life.</p>
+  </div>
+  <div class="level-select">
+    <button type="button" class="level-btn" id="btn-solo">
+      <span class="level-icon">🎯</span>
+      <div><div class="level-name">Solo</div><div class="level-desc">One player · 10 rounds · 3 lives</div></div>
+    </button>
+    <button type="button" class="level-btn" id="btn-p2">
+      <span class="level-icon">👥</span>
+      <div><div class="level-name">2 players</div><div class="level-desc">Pass the device · alternate turns · most points wins</div></div>
+    </button>
+  </div>
+</div>
+
+<div class="hud hidden" id="hud">
+  <div class="hud-item">
+    <div class="hud-label">Score</div>
+    <div class="hud-value" id="hud-score">0</div>
+  </div>
+  <div class="hud-item p2-scores" id="p2-wrap">
+    <div><span class="hud-label">P1</span> <span id="hud-p1">0</span></div>
+    <div><span class="hud-label">P2</span> <span id="hud-p2">0</span></div>
+  </div>
+  <div class="xp-bar-wrap">
+    <div style="display:flex;justify-content:space-between;"><span class="hud-label">POWER</span><span class="hud-label" id="hud-level">LVL 1</span></div>
+    <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="hud-item">
+    <div class="hud-label">Lives</div>
+    <div class="lives-row" id="lives-row">
+      <span class="life-heart">❤️</span><span class="life-heart">❤️</span><span class="life-heart">❤️</span>
+    </div>
+  </div>
+</div>
+
+<div class="screen hidden" id="screen-game">
+  <div class="game-inner">
+    <div class="round-type" id="round-type">MATCH THE DEFINITION</div>
+    <div class="turn-banner hidden" id="turn-banner"></div>
+    <div class="definition-box">
+      <p class="definition-text" id="definition-text"></p>
+      <p class="hint-line" id="hint-line"></p>
+      <button type="button" class="speak-btn" id="replay-btn">🔊 Read definition</button>
+    </div>
+    <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+    <div class="combo-display" id="combo-display"></div>
+    <div class="choices-grid" id="choices-grid"></div>
+    <div class="feedback-bar neutral-fb" id="feedback-bar">Read the definition · then tap the word</div>
+  </div>
+</div>
+
+<div class="screen hidden" id="screen-gameover">
+  <div class="gameover-title" id="gameover-title">RUN COMPLETE</div>
+  <div class="result-grid" id="result-solo">
+    <div class="result-card"><div class="result-val" id="final-score">0</div><div class="result-lbl">Score</div></div>
+    <div class="result-card"><div class="result-val" id="final-accuracy">0%</div><div class="result-lbl">Accuracy</div></div>
+    <div class="result-card"><div class="result-val" id="final-streak">0</div><div class="result-lbl">Best streak</div></div>
+  </div>
+  <div class="result-grid hidden" id="result-p2" style="grid-template-columns:1fr 1fr;">
+    <div class="result-card"><div class="result-val" id="final-p1">0</div><div class="result-lbl">Player 1</div></div>
+    <div class="result-card"><div class="result-val" id="final-p2">0</div><div class="result-lbl">Player 2</div></div>
+  </div>
+  <p class="hint-line" id="winner-line" style="text-align:center;max-width:360px;"></p>
+  <div class="rank-box">
+    <div class="hud-label">Rank</div>
+    <div class="rank-value" id="rank-value">—</div>
+    <div class="hint-line" id="rank-desc">—</div>
+  </div>
+  <div class="btn-row">
+    <button type="button" class="cta-btn secondary" id="btn-menu">↩ Menu</button>
+    <button type="button" class="cta-btn" id="btn-retry">↺ Retry</button>
+  </div>
+</div>
+
+<div class="streak-popup" id="streak-popup"></div>
+<div class="screen-flash" id="screen-flash"></div>
+
+<script id="vocab-data" type="application/json">{{ vocab_json | safe }}</script>
+<script>
+(function () {
+  const VOCABULARY = JSON.parse(document.getElementById('vocab-data').textContent || '[]');
+  if (!VOCABULARY.length) {
+    document.querySelector('.mission-box').innerHTML = '<p><strong>No words loaded.</strong> Check vocabulary_game.py</p>';
+    return;
+  }
+
+  let state = {};
+
+  function $(id) { return document.getElementById(id); }
+
+  function showScreen(id) {
+    ['screen-title', 'screen-game', 'screen-gameover'].forEach(function (s) {
+      $(s).classList.add('hidden');
+    });
+    $(id).classList.remove('hidden');
+    $('hud').classList.toggle('hidden', id !== 'screen-game');
+  }
+
+  function speak(text, rate) {
+    rate = rate || 0.92;
+    return new Promise(function (resolve) {
+      if (!window.speechSynthesis) { resolve(); return; }
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.rate = rate;
+      u.onend = resolve;
+      u.onerror = resolve;
+      speechSynthesis.speak(u);
+    });
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function pickEntry() {
+    var used = state.usedWords;
+    var avail = VOCABULARY.filter(function (e) { return !used.has(e.word); });
+    if (!avail.length) {
+      used.clear();
+      avail = VOCABULARY;
+    }
+    return avail[Math.floor(Math.random() * avail.length)];
+  }
+
+  function startGame(twoPlayer) {
+    state = {
+      twoPlayer: !!twoPlayer,
+      score: 0,
+      p1: 0,
+      p2: 0,
+      xp: 0,
+      lives: 3,
+      streak: 0,
+      bestStreak: 0,
+      combo: 0,
+      round: 0,
+      total: 10,
+      correct: 0,
+      answered: 0,
+      current: null,
+      timerInterval: null,
+      locked: false,
+      usedWords: new Set(),
+      activePlayer: 1,
+      timerSeconds: 18
+    };
+    $('p2-wrap').classList.toggle('active', state.twoPlayer);
+    $('turn-banner').classList.toggle('hidden', !state.twoPlayer);
+    $('result-solo').classList.toggle('hidden', state.twoPlayer);
+    $('result-p2').classList.toggle('hidden', !state.twoPlayer);
+    resetHearts();
+    updateHUD();
+    showScreen('screen-game');
+    setTimeout(nextRound, 250);
+  }
+
+  function resetHearts() {
+    document.querySelectorAll('.life-heart').forEach(function (h) { h.classList.remove('lost'); });
+  }
+
+  function updateHUD() {
+    if (state.twoPlayer) {
+      $('hud-score').textContent = state.p1 + state.p2;
+      $('hud-p1').textContent = state.p1;
+      $('hud-p2').textContent = state.p2;
+    } else {
+      $('hud-score').textContent = state.score;
+    }
+    var lvl = Math.floor(state.xp / 50) + 1;
+    $('hud-level').textContent = 'LVL ' + lvl;
+    $('xp-fill').style.width = ((state.xp % 50) / 50 * 100) + '%';
+  }
+
+  function nextRound() {
+    if (state.round >= state.total || state.lives <= 0) {
+      showGameOver();
+      return;
+    }
+    state.round++;
+    state.locked = false;
+    if (state.timerInterval) clearInterval(state.timerInterval);
+
+    var entry = pickEntry();
+    state.usedWords.add(entry.word);
+    state.current = entry;
+
+    if (state.twoPlayer) {
+      $('turn-banner').textContent = 'Player ' + state.activePlayer + ' — lock the signal';
+    }
+
+    $('definition-text').textContent = entry.definition;
+    $('hint-line').textContent = '';
+
+    var others = VOCABULARY.filter(function (e) { return e.word !== entry.word; });
+    var decoys = shuffle(others).slice(0, 3).map(function (e) { return e.word; });
+    var choices = shuffle([entry.word].concat(decoys));
+
+    var grid = $('choices-grid');
+    grid.innerHTML = choices.map(function (w) {
+      return '<button type="button" class="choice-btn" data-word="' + w.replace(/"/g, '&quot;') + '">' + w + '</button>';
+    }).join('');
+
+    grid.onclick = function (ev) {
+      var btn = ev.target.closest('.choice-btn');
+      if (!btn || state.locked) return;
+      submitAnswer(btn.getAttribute('data-word'), btn);
+    };
+
+    setFeedback('neutral', state.twoPlayer
+      ? 'Round ' + state.round + '/' + state.total + ' · Player ' + state.activePlayer
+      : 'Round ' + state.round + '/' + state.total);
+    $('combo-display').textContent = state.combo >= 2 ? ('🔥 ' + state.combo + 'x COMBO') : '';
+
+    speak(entry.definition, 0.95);
+
+    startTimer();
+  }
+
+  $('replay-btn').onclick = function () {
+    if (state.current) speak(state.current.definition, 0.95);
+  };
+
+  function startTimer() {
+    var seconds = state.timerSeconds;
+    var elapsed = 0;
+    var fill = $('timer-fill');
+    fill.style.width = '100%';
+    fill.classList.remove('warn');
+    state.timerInterval = setInterval(function () {
+      elapsed += 100;
+      var pct = Math.max(0, 100 - (elapsed / (seconds * 1000)) * 100);
+      fill.style.width = pct + '%';
+      if (pct < 28) fill.classList.add('warn');
+      if (pct <= 0) {
+        clearInterval(state.timerInterval);
+        if (!state.locked) timeOut();
+      }
+    }, 100);
+  }
+
+  function timeOut() {
+    state.locked = true;
+    state.combo = 0;
+    loseLife();
+    setFeedback('wrong', "Time's up — it was: " + state.current.word.toUpperCase());
+    flash('red');
+    speak('The word was ' + state.current.word);
+    if (state.twoPlayer) state.activePlayer = state.activePlayer === 1 ? 2 : 1;
+    setTimeout(nextRound, 2200);
+  }
+
+  function submitAnswer(answer, btn) {
+    if (state.locked) return;
+    state.locked = true;
+    clearInterval(state.timerInterval);
+
+    var ok = answer === state.current.word;
+    state.answered++;
+
+    document.querySelectorAll('.choice-btn').forEach(function (b) { b.disabled = true; });
+
+    if (ok) {
+      state.correct++;
+      state.streak++;
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+      state.combo++;
+      var bonus = state.combo >= 3 ? 2 : 1;
+      var pts = 10 * bonus;
+      state.score += pts;
+      state.xp += pts;
+      if (state.twoPlayer) {
+        if (state.activePlayer === 1) state.p1 += pts; else state.p2 += pts;
+      }
+      btn.classList.add('correct');
+      setFeedback('correct', '✅ +' + pts + (state.combo >= 3 ? ' COMBO!' : ''));
+      flash('green');
+      floatXP(pts, btn);
+      updateHUD();
+      speak(state.current.word);
+      if (state.combo === 3) showStreak('3x COMBO!');
+      if (state.combo === 6) showStreak('SYNC LOCKED!');
+    } else {
+      state.combo = 0;
+      state.streak = 0;
+      loseLife();
+      btn.classList.add('wrong');
+      document.querySelectorAll('.choice-btn').forEach(function (b) {
+        if (b.getAttribute('data-word') === state.current.word) b.classList.add('correct');
+      });
+      setFeedback('wrong', '❌ Answer: ' + state.current.word.toUpperCase());
+      flash('red');
+      speak(state.current.word);
+    }
+
+    if (state.twoPlayer) state.activePlayer = state.activePlayer === 1 ? 2 : 1;
+
+    $('combo-display').textContent = state.combo >= 2 ? ('🔥 ' + state.combo + 'x COMBO') : '';
+
+    if (state.lives <= 0) {
+      setTimeout(showGameOver, 1400);
+    } else {
+      setTimeout(nextRound, ok && state.combo > 1 ? 1700 : 1900);
+    }
+  }
+
+  function loseLife() {
+    state.lives = Math.max(0, state.lives - 1);
+    var hearts = document.querySelectorAll('.life-heart');
+    for (var i = hearts.length - 1; i >= 0; i--) {
+      if (!hearts[i].classList.contains('lost')) {
+        hearts[i].classList.add('lost');
+        break;
+      }
+    }
+  }
+
+  function setFeedback(type, text) {
+    var el = $('feedback-bar');
+    el.className = 'feedback-bar ' + (type === 'correct' ? 'correct-fb' : type === 'wrong' ? 'wrong-fb' : 'neutral-fb');
+    el.textContent = text;
+  }
+
+  function flash(color) {
+    var el = $('screen-flash');
+    el.className = 'screen-flash ' + color + '-flash';
+    setTimeout(function () { el.className = 'screen-flash'; }, 400);
+  }
+
+  function floatXP(pts, btn) {
+    var el = document.createElement('div');
+    el.className = 'xp-float';
+    el.textContent = '+' + pts;
+    var r = btn.getBoundingClientRect();
+    el.style.left = (r.left + r.width / 2 - 16) + 'px';
+    el.style.top = r.top + 'px';
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1000);
+  }
+
+  function showStreak(msg) {
+    var el = $('streak-popup');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(function () {
+      el.classList.remove('show');
+    }, 1000);
+  }
+
+  function showGameOver() {
+    if (state.timerInterval) clearInterval(state.timerInterval);
+    window.speechSynthesis && speechSynthesis.cancel();
+
+    var won = state.lives > 0;
+    var acc = state.answered > 0 ? Math.round(state.correct / state.answered * 100) : 0;
+
+    $('gameover-title').textContent = won ? '⚡ RUN COMPLETE' : '☠ SIGNAL LOST';
+    $('gameover-title').className = 'gameover-title ' + (won ? 'win' : 'lose');
+
+    if (state.twoPlayer) {
+      $('final-p1').textContent = state.p1;
+      $('final-p2').textContent = state.p2;
+      var win = '';
+      if (state.p1 > state.p2) win = 'Player 1 wins!';
+      else if (state.p2 > state.p1) win = 'Player 2 wins!';
+      else win = 'Tie game!';
+      $('winner-line').textContent = win;
+      var rnk = getRank(acc, state.p1 + state.p2);
+      $('rank-value').textContent = rnk.rank;
+      $('rank-desc').textContent = rnk.desc;
+    } else {
+      $('final-score').textContent = state.score;
+      $('final-accuracy').textContent = acc + '%';
+      $('final-streak').textContent = state.bestStreak;
+      $('winner-line').textContent = '';
+      var r2 = getRank(acc, state.score);
+      $('rank-value').textContent = r2.rank;
+      $('rank-desc').textContent = r2.desc;
+    }
+
+    showScreen('screen-gameover');
+  }
+
+  function getRank(acc, score) {
+    if (acc === 100) return { rank: 'S+', desc: 'Perfect lock.' };
+    if (acc >= 90) return { rank: 'S', desc: 'Strong signal.' };
+    if (acc >= 75) return { rank: 'A', desc: 'Solid vocab.' };
+    if (acc >= 60) return { rank: 'B', desc: 'Keep drilling.' };
+    if (acc >= 40) return { rank: 'C', desc: 'Review definitions.' };
+    return { rank: 'D', desc: 'Try again.' };
+  }
+
+  $('btn-solo').onclick = function () { startGame(false); };
+  $('btn-p2').onclick = function () { startGame(true); };
+  $('btn-menu').onclick = function () {
+    showScreen('screen-title');
+  };
+  $('btn-retry').onclick = function () {
+    startGame(state.twoPlayer);
+  };
+})();
+</script>
+</body>
+</html>

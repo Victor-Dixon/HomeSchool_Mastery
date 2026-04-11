@@ -1,0 +1,73 @@
+{
+  "id": "storm_library_v1",
+  "version": "1.0",
+  "kind": "story_duel",
+  "title": "Story Duel — Storm at the library",
+  "description": "Second narrative pack for swapping via STORY_DUEL_BUNDLE_ID or lesson notes.",
+  "subtitle": "Swap stories by setting STORY_DUEL_BUNDLE_ID=storm_library_v1 or story_duel_bundle:storm_library_v1 in lesson notes.",
+  "read_phase_seconds": 20,
+  "passage": "Rain hammered the library windows. Maya hugged her book bag and watched the librarian tape a handwritten sign to the door: \"Closing early — weather.\" Outside, the wind howled. Maya realized her little brother was still at the rec center three blocks away.",
+  "opponent_name": "Gale Critic",
+  "grading": "auto",
+  "metadata": { "source_notes": ["Schema v1 bundle."] },
+  "rounds": [
+    {
+      "id": "main_idea",
+      "kind": "comprehension",
+      "title": "Main Idea Strike",
+      "prompt": "What is this scene mostly about?",
+      "rubric": "Valid if the student captures bad weather closing the library and Maya realizing a problem (brother still out / needs to get him / worry about safety).",
+      "accept_substrings": true,
+      "substring_hints": [
+        "library closing",
+        "storm",
+        "weather",
+        "brother",
+        "rec center",
+        "worried",
+        "pick up"
+      ],
+      "keywords": ["library", "storm", "rain", "wind", "maya", "brother", "closing", "weather"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "inference",
+      "kind": "inference",
+      "title": "Inference Shield",
+      "prompt": "What is Maya most likely going to do next? Use the text.",
+      "rubric": "Valid if they infer she will leave to get her brother, call someone, or find a safe way to reach the rec center — not random guesses with no link to the passage.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "get her brother",
+        "pick up",
+        "rec center",
+        "call",
+        "run",
+        "leave",
+        "help"
+      ],
+      "keywords": ["brother", "rec", "center", "go", "get", "call", "because"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "mood",
+      "kind": "comprehension",
+      "title": "Mood Finisher",
+      "prompt": "What mood or feeling does the setting create? Point to one detail from the passage.",
+      "rubric": "Valid if they name a mood (tense, urgent, scary, uneasy) and tie it to rain, wind, early closing, or the brother being away.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "scary",
+        "tense",
+        "worried",
+        "urgent",
+        "dangerous",
+        "nervous",
+        "howled",
+        "hammered"
+      ],
+      "keywords": ["mood", "rain", "wind", "worried", "storm", "feel", "because"],
+      "min_keyword_hits": 2
+    }
+  ]
+}

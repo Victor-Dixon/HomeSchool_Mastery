@@ -1,0 +1,108 @@
+{#
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/lesson_fraction_battle.html
+Purpose: Fraction "Blocks War" — Tetris line clears gate fraction attacks (lesson shell + game).
+#}
+{% extends "base.html" %}
+{% block content %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fraction_battle.css') }}" />
+
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">{{ lesson["lesson_date"] }}</div>
+      <h1 class="h3 mb-1">Fraction Blocks War</h1>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="badge badge-soft">{{ lesson["subject"] }}</span>
+        <span class="badge text-bg-warning text-dark">Battle mode</span>
+        {% if lesson["is_done"] %}
+          <span class="badge text-bg-success">Completed</span>
+        {% endif %}
+      </div>
+      <p class="muted small mt-2 mb-0">{{ lesson["title"] }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Back</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_games', lesson_id=lesson['id']) }}">Games</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson['id']) }}">Practice</a>
+      {% set subjl = lesson['subject']|lower %}
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.snake_practice', lesson_id=lesson['id']) }}">
+        {%- if 'math' in subjl -%}Warden{%- elif 'read' in subjl or 'elar' in subjl or 'ela' in subjl -%}Dragon{%- else -%}Snake{%- endif -%}
+      </a>
+      <form method="post" action="{{ url_for('routes.toggle_lesson', lesson_id=lesson['id']) }}" class="m-0">
+        <button type="submit" class="btn {% if lesson['is_done'] %}btn-success{% else %}btn-light{% endif %} btn-fat">
+          {% if lesson['is_done'] %}Done{% else %}Mark done{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card p-3 p-md-4 mb-3 fb-wrap fb-start-card">
+    <p class="mb-2">
+      Clear lines to trigger a fraction problem. Get it right → damage the bot. Miss → garbage climbs your stack.
+      The bot also attacks on a timer (70% accuracy — same idea as your lesson notes).
+    </p>
+    <p class="fb-tip mb-3 p-2 rounded-3" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35);">
+      <strong>Why matching denominators?</strong>
+      You can’t add pieces unless they are the same size. The denominator is the size of the pieces.
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-light btn-fat" id="fb-start">Start battle</button>
+      <button type="button" class="btn btn-outline-light btn-fat" id="fb-reset">Reset</button>
+    </div>
+    <div class="mt-2 small muted" id="fb-status"></div>
+  </div>
+
+  <div class="fb-game-row mb-3">
+    <div class="fb-cwrap">
+      <canvas id="fb-canvas" class="fb-canvas" width="280" height="560"></canvas>
+    </div>
+    <div class="fb-hud">
+      <h3>Opponent — Bot</h3>
+      <div class="fb-meter bot mb-1"><span id="fb-bot-hp-bar" style="width: 100%;"></span></div>
+      <div class="small muted mb-3">Pressure: <span id="fb-bot-pct">100%</span></div>
+      <h3>You</h3>
+      <div class="fb-meter you mb-1"><span id="fb-you-bar" style="width: 100%;"></span></div>
+      <div class="small muted mb-2">Stability: <span id="fb-you-pct">100%</span></div>
+      <div class="fb-controls">
+        <strong>Controls:</strong> ← → move · ↓ soft drop · ↑ spin · Space hard drop
+      </div>
+    </div>
+  </div>
+
+  <div id="fb-overlay" class="fb-overlay" hidden>
+    <div class="fb-modal">
+      <h3>Math strike</h3>
+      <p class="q-meta" id="fb-q-meta"></p>
+      <p class="q-text" id="fb-q-text"></p>
+      <label class="form-label small muted" for="fb-q-input">Answer as a fraction (example: 5/8)</label>
+      <input type="text" id="fb-q-input" class="form-control form-control-lg" autocomplete="off" />
+      <div class="d-flex gap-2 mt-3">
+        <button type="button" class="btn btn-light btn-fat" id="fb-q-submit">Submit</button>
+      </div>
+      <div class="fb-feedback" id="fb-q-feedback"></div>
+    </div>
+  </div>
+
+  {% include "_lesson_ai_coach.html" %}
+
+  <div class="card p-3 p-md-4">
+    <h2 class="h6 mb-3 muted text-uppercase small">Lesson notes</h2>
+    {% if lesson["notes"] %}
+      <div class="lesson-notes">{{ lesson["notes"] }}</div>
+    {% else %}
+      <div class="muted">No details were added for this lesson.</div>
+    {% endif %}
+  </div>
+
+  <script>
+    window.FRACTION_BATTLE_CONFIG = {
+      aiAccuracy: 0.7,
+      aiAttackMs: 15000,
+      aiDamageVariance: 900,
+      playerHitDamage: 18,
+      xpUrl: {{ url_for("routes.api_fraction_battle_xp", lesson_id=lesson["id"]) | tojson }},
+    };
+  </script>
+  <script src="{{ url_for('static', filename='js/fraction_battle/question_engine.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/fraction_battle/main.js') }}"></script>
+{% endblock %}

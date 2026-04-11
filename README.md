@@ -215,13 +215,40 @@ http://<your-ip>:3000
 
 ## 📁 Project Structure
 
+This repository contains **two** apps that share the same family deployment but do not share a runtime:
+
+1. **Mastery (Node.js)** — diagnostic-first skills, XP, WebSocket sync — run from the repo root; default **port 3000** (`node server.js`).
+2. **Homeschool Lessons (Flask)** — daily lesson checklist, practice, spelling lab, vocabulary games on the LAN — lives in **`lessons_lan/`**; default **port 5000**.
+
 ```
-homeschool/
+.
 ├── server.js
 ├── app.html
-├── data.json
+├── quiz-engine.js
+├── tests/
+├── lessons_lan/          # Python / Flask LAN app
+│   ├── run.py
+│   ├── main.py
+│   ├── app/
+│   └── README.md
 └── README.md
 ```
+
+### Mastery (Node)
+
+See [Setup](#-setup) above.
+
+### Homeschool Lessons (Flask)
+
+```powershell
+cd lessons_lan
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python run.py
+```
+
+Open `http://127.0.0.1:5000` on this PC, or `http://<your-LAN-ip>:5000` on phones/tablets. More detail: [lessons_lan/README.md](lessons_lan/README.md).
 
 ---
 

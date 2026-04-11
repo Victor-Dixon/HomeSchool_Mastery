@@ -1,0 +1,64 @@
+{
+  "id": "vocab_ocean_v1",
+  "version": "1.0",
+  "kind": "vocabulary",
+  "title": "Vocabulary Duel — Ocean words",
+  "description": "Vocabulary blueprint using the same Story Duel engine.",
+  "subtitle": "Word bank + rubric + Ollama; heuristic uses substring_hints and keywords.",
+  "read_phase_seconds": 15,
+  "passage": "Word bank for this duel:\n• abundant — more than enough; plenty\n• fragile — easy to break or damage\n• navigate — to find your way; to steer a course\n\nContext: Coral reefs are abundant in warm, shallow water. Divers must navigate carefully around fragile sea fans.",
+  "opponent_name": "Lexicon Leech",
+  "grading": "auto",
+  "metadata": { "source_notes": ["Schema v1; kinds vocabulary_define / vocabulary_use."] },
+  "rounds": [
+    {
+      "id": "define_abundant",
+      "kind": "vocabulary_define",
+      "title": "Define: abundant",
+      "prompt": "Explain what abundant means in your own words (one or two sentences).",
+      "rubric": "Valid if the student conveys the idea of a large amount, plenty, or more than enough. Minor wording errors are OK.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "lot of",
+        "lots of",
+        "plenty",
+        "many",
+        "more than enough",
+        "a lot",
+        "large amount"
+      ],
+      "keywords": ["abundant", "many", "lot", "plenty", "much", "enough"],
+      "min_keyword_hits": 2
+    },
+    {
+      "id": "use_fragile",
+      "kind": "vocabulary_use",
+      "title": "Use: fragile",
+      "prompt": "Write a sentence that uses fragile correctly.",
+      "rubric": "Valid if fragile describes something that can break easily (object, relationship, peace, etc.). Reject if the word is used as a verb or with a nonsense meaning.",
+      "accept_substrings": true,
+      "substring_hints": ["fragile"],
+      "keywords": ["fragile", "break", "delicate", "easily", "glass", "careful"],
+      "min_keyword_hits": 1
+    },
+    {
+      "id": "navigate_context",
+      "kind": "vocabulary_use",
+      "title": "Context: navigate",
+      "prompt": "In the passage, what does navigate suggest the divers are doing? Answer in a short phrase.",
+      "rubric": "Valid if they connect navigate to finding a path, steering, moving carefully, or avoiding damage in the reef.",
+      "accept_substrings": true,
+      "substring_hints": [
+        "find their way",
+        "steer",
+        "move carefully",
+        "path",
+        "way through",
+        "avoid",
+        "careful"
+      ],
+      "keywords": ["navigate", "careful", "path", "way", "reef", "around"],
+      "min_keyword_hits": 2
+    }
+  ]
+}

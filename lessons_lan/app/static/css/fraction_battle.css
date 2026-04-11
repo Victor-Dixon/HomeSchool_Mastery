@@ -1,0 +1,146 @@
+/* Fraction Blocks War — battle HUD + modal */
+.fb-wrap {
+  --fb-panel: rgba(15, 23, 42, 0.85);
+  --fb-line: rgba(148, 163, 184, 0.35);
+  --fb-accent: #38bdf8;
+  --fb-good: #4ade80;
+  --fb-bad: #f87171;
+}
+
+.fb-game-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.fb-cwrap {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid var(--fb-line);
+  background: linear-gradient(180deg, #020617, #0f172a);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.fb-canvas {
+  display: block;
+  vertical-align: middle;
+}
+
+.fb-hud {
+  flex: 1;
+  min-width: 220px;
+  background: var(--fb-panel);
+  border: 1px solid var(--fb-line);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+}
+
+.fb-hud h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(231, 238, 252, 0.72);
+}
+
+.fb-meter {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+
+.fb-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.fb-meter.bot span {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+}
+
+.fb-meter.you span {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.fb-tip {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(231, 238, 252, 0.88);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--fb-line);
+}
+
+.fb-controls {
+  font-size: 0.82rem;
+  color: rgba(231, 238, 252, 0.65);
+  margin-top: 0.6rem;
+}
+
+.fb-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+.fb-overlay[hidden] {
+  display: none !important;
+}
+
+.fb-modal {
+  width: 100%;
+  max-width: 420px;
+  background: #0f172a;
+  border: 1px solid var(--fb-line);
+  border-radius: 16px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+
+.fb-modal h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.fb-modal .q-text {
+  font-size: 1.35rem;
+  font-weight: 650;
+  margin: 0.75rem 0;
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  color: #e2e8f0;
+}
+
+.fb-modal .q-meta {
+  font-size: 0.8rem;
+  color: rgba(148, 163, 184, 0.95);
+  margin-bottom: 0.75rem;
+}
+
+.fb-modal .fb-feedback {
+  min-height: 1.25rem;
+  font-size: 0.88rem;
+  margin-top: 0.5rem;
+}
+
+.fb-feedback.ok {
+  color: var(--fb-good);
+}
+
+.fb-feedback.bad {
+  color: var(--fb-bad);
+}
+
+.fb-start-card {
+  max-width: 520px;
+}

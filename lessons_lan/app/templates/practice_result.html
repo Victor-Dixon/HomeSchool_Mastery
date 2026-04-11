@@ -1,0 +1,31 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/practice_result.html
+Purpose: Practice game results and next steps.
+Owner: Local family deployment (homeschool)
+-#}
+{% extends "base.html" %}
+{% block content %}
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <div class="muted mb-1">Practice Result</div>
+      <h1 class="h3 mb-1">{{ subject }}</h1>
+      <div class="muted">Score: <strong class="text-white">{{ correct }}</strong>/<strong class="text-white">{{ total }}</strong></div>
+    </div>
+    <div class="d-flex gap-2">
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.lesson_detail', lesson_id=lesson_id) }}">Back to lesson</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.today') }}">Today</a>
+    </div>
+  </div>
+
+  <div class="card p-3 p-md-4">
+    <div class="muted lesson-notes">
+Great work. If you missed anything, do a quick retry tomorrow — that’s how mastery is built.
+    </div>
+    <div class="mt-3 d-flex gap-2">
+      <a class="btn btn-light btn-fat" href="{{ url_for('routes.practice', lesson_id=lesson_id) }}">Practice again</a>
+      <a class="btn btn-outline-light btn-fat" href="{{ url_for('routes.feedback') }}">Leave feedback</a>
+    </div>
+  </div>
+{% endblock %}
+

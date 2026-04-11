@@ -1,0 +1,14 @@
+{
+  "_header": {
+    "project": "Homeschool Lessons (Dream.OS)",
+    "file": "plugins/teks_daily_training/plugin.json",
+    "purpose": "Plugin manifest for TEKS daily training generator.",
+    "owner": "Local family deployment (homeschool)"
+  },
+  "name": "teks_daily_training",
+  "version": "0.1.0",
+  "entrypoint": "plugin.py",
+  "description": "TEKS-aligned daily loop generator for grades 6-7 (Charlie/Chris).",
+  "type": "lesson_generator"
+}
+

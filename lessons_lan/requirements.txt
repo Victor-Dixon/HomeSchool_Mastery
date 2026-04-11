@@ -1,0 +1,7 @@
+# Project: Homeschool Lessons (Dream.OS)
+# File: requirements.txt
+# Purpose: Runtime Python dependencies.
+# Owner: Local family deployment (homeschool)
+Flask>=3.0
+Werkzeug>=3.0
+waitress>=3.0

@@ -1,0 +1,256 @@
+{#-
+Project: Homeschool Lessons (Dream.OS)
+File: app/templates/story_duel.html
+Purpose: Story Duel v1 — passage, read timer, short-answer rounds, HP (server-authoritative).
+-#}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story Duel{% if lesson %} · Lesson {{ lesson['id'] }}{% else %} · Demo{% endif %}</title>
+  <style>
+    :root {
+      --bg: #070d18;
+      --panel: #101a2e;
+      --line: #2a3f66;
+      --text: #e9f0ff;
+      --muted: #94a8cc;
+      --hp-player: #3ddc84;
+      --hp-ai: #ff6b81;
+      --gold: #f0c14b;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Georgia, "Times New Roman", serif; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 20px; }
+    .top { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .top a {
+      color: var(--text); text-decoration: none; border: 1px solid var(--line);
+      padding: 8px 14px; border-radius: 10px; background: var(--panel); font-size: 14px;
+    }
+    .top a:hover { background: #1a2740; }
+    h1 { font-size: 1.35rem; margin: 0; font-weight: 700; }
+    .card {
+      background: linear-gradient(180deg, var(--panel), #0c1424);
+      border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); font-size: 0.95rem; line-height: 1.45; }
+    .passage { font-size: 1.15rem; line-height: 1.55; white-space: pre-wrap; }
+    .hp-row { display: grid; gap: 10px; margin-bottom: 12px; }
+    .hp-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+    .hp-track { height: 14px; border-radius: 8px; background: rgba(255,255,255,.08); overflow: hidden; border: 1px solid var(--line); }
+    .hp-fill-player { height: 100%; background: linear-gradient(90deg, #2a9158, var(--hp-player)); width: 100%; transition: width 0.35s ease; }
+    .hp-fill-ai { height: 100%; background: linear-gradient(90deg, #c23d50, var(--hp-ai)); width: 100%; transition: width 0.35s ease; }
+    .round-tag { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 8px; }
+    .prompt { font-size: 1.2rem; margin: 0 0 12px; line-height: 1.4; }
+    textarea {
+      width: 100%; min-height: 100px; padding: 12px; border-radius: 12px; border: 1px solid var(--line);
+      background: rgba(0,0,0,.25); color: var(--text); font-family: inherit; font-size: 1rem;
+    }
+    button.primary {
+      margin-top: 12px; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--line);
+      background: #1e3a5f; color: var(--text); font-weight: 700; cursor: pointer; font-size: 16px;
+    }
+    button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.primary:hover:not(:disabled) { background: #274777; }
+    .log { font-size: 14px; color: var(--muted); border-top: 1px dashed var(--line); margin-top: 14px; padding-top: 12px; min-height: 48px; white-space: pre-wrap; }
+    .countdown { font-size: 2.5rem; font-weight: 700; color: var(--gold); text-align: center; margin: 16px 0; }
+    .hidden { display: none !important; }
+    .banner { font-size: 13px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1 id="page-title">Story Duel</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="{{ url_exit }}">{% if is_demo %}Games{% else %}All games{% endif %}</a>
+        {% if lesson %}
+          <a href="{{ url_for('routes.lesson_detail', lesson_id=lesson['id']) }}">Lesson</a>
+        {% endif %}
+        <a href="{{ url_for('routes.today') }}">Today</a>
+      </div>
+    </div>
+
+    {% if is_demo %}
+      <div class="banner">
+        Demo mode — content comes from JSON bundles under <code>app/data/story_duel/</code>.
+        When <strong>Ollama</strong> is running, answers are graded by the model (keyword backup if offline).
+        Swap bundles with env <code>STORY_DUEL_BUNDLE_ID</code> or lesson notes <code>story_duel_bundle:slug</code>.
+      </div>
+    {% endif %}
+
+    <div id="screen-intro" class="card">
+      <p class="muted" id="intro-blurb">Load the duel to see the passage and opponent.</p>
+      <button type="button" class="primary" id="btn-load">Begin Story Duel</button>
+    </div>
+
+    <div id="screen-read" class="hidden">
+      <div class="card">
+        <p class="round-tag">Reading phase</p>
+        <p class="passage" id="passage-text"></p>
+        <div class="countdown" id="read-countdown"></div>
+        <p class="muted" style="text-align:center;">When the timer hits zero, questions attack — answer fast for stronger hits.</p>
+      </div>
+    </div>
+
+    <div id="screen-fight" class="hidden">
+      <div class="card">
+        <div class="hp-row">
+          <div>
+            <div class="hp-label"><span>You</span><span id="hp-player-num">100</span></div>
+            <div class="hp-track"><div class="hp-fill-player" id="hp-player-bar"></div></div>
+          </div>
+          <div>
+            <div class="hp-label"><span id="opponent-label">Opponent</span><span id="hp-ai-num">100</span></div>
+            <div class="hp-track"><div class="hp-fill-ai" id="hp-ai-bar"></div></div>
+          </div>
+        </div>
+        <div class="round-tag" id="round-kind"></div>
+        <h2 class="prompt" id="round-prompt"></h2>
+        <textarea id="answer-box" placeholder="Type your answer…" maxlength="2000"></textarea>
+        <div class="muted" id="round-timer-hint" style="margin-top:8px;font-size:13px;"></div>
+        <button type="button" class="primary" id="btn-submit">Strike</button>
+        <div class="log" id="battle-log"></div>
+      </div>
+    </div>
+
+    <div id="screen-end" class="hidden">
+      <div class="card" style="text-align:center;">
+        <h2 id="end-title" style="margin-top:0;">Fin</h2>
+        <p class="muted" id="end-body"></p>
+        <p id="end-xp" class="muted"></p>
+        <button type="button" class="primary" id="btn-again">Play again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var URL_START = {{ url_start | tojson }};
+    var URL_ROUND = {{ url_round | tojson }};
+    var bundle = null;
+    var duelToken = null;
+    var readSeconds = 18;
+    var questionStarted = 0;
+
+    function show(id) {
+      document.getElementById(id).classList.remove("hidden");
+    }
+    function hide(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+    function setHp(playerHp, aiHp) {
+      document.getElementById("hp-player-num").textContent = String(playerHp);
+      document.getElementById("hp-ai-num").textContent = String(aiHp);
+      document.getElementById("hp-player-bar").style.width = Math.max(0, Math.min(100, playerHp)) + "%";
+      document.getElementById("hp-ai-bar").style.width = Math.max(0, Math.min(100, aiHp)) + "%";
+    }
+
+    document.getElementById("btn-load").addEventListener("click", function () {
+      fetch(URL_START, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        credentials: "same-origin",
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok && !data.bundle) throw new Error(data.error || "start failed");
+          if (!data.duel_token) throw new Error("server did not return duel_token");
+          bundle = data.bundle;
+          duelToken = data.duel_token;
+          readSeconds = bundle.read_phase_seconds || 18;
+          document.getElementById("page-title").textContent = bundle.title || "Story Duel";
+          document.getElementById("passage-text").textContent = bundle.passage || "";
+          document.getElementById("opponent-label").textContent = bundle.opponent_name || "Opponent";
+          hide("screen-intro");
+          show("screen-read");
+          var left = readSeconds;
+          var el = document.getElementById("read-countdown");
+          el.textContent = String(left);
+          var t = setInterval(function () {
+            left -= 1;
+            el.textContent = String(Math.max(0, left));
+            if (left <= 0) {
+              clearInterval(t);
+              hide("screen-read");
+              beginFightRound(bundle.rounds[0]);
+            }
+          }, 1000);
+        })
+        .catch(function (e) {
+          alert("Could not start duel: " + e.message);
+        });
+    });
+
+    function beginFightRound(round) {
+      show("screen-fight");
+      document.getElementById("round-kind").textContent = round.title || "";
+      document.getElementById("round-prompt").textContent = round.prompt || "";
+      document.getElementById("answer-box").value = "";
+      document.getElementById("battle-log").textContent = "";
+      document.getElementById("round-timer-hint").textContent = "Answer in under 10s for a stronger strike.";
+      questionStarted = Date.now();
+      document.getElementById("btn-submit").disabled = false;
+    }
+
+    document.getElementById("btn-submit").addEventListener("click", function () {
+      var btn = document.getElementById("btn-submit");
+      if (btn.disabled) return;
+      btn.disabled = true;
+      var ans = (document.getElementById("answer-box").value || "").trim();
+      var ms = Date.now() - questionStarted;
+      if (!duelToken) {
+        alert("Session expired — tap Begin Story Duel again.");
+        btn.disabled = false;
+        return;
+      }
+      fetch(URL_ROUND, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ answer: ans, ms_elapsed: ms, duel_token: duelToken }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.ok) throw new Error(data.error || "round failed");
+          if (data.duel_token) duelToken = data.duel_token;
+          setHp(data.player_hp, data.ai_hp);
+          document.getElementById("battle-log").textContent = data.narrative || "";
+          if (data.battle_end) {
+            hide("screen-fight");
+            show("screen-end");
+            var won = data.battle_end === "win";
+            document.getElementById("end-title").textContent = won ? "Victory" : "Defeat";
+            document.getElementById("end-body").textContent = data.narrative || "";
+            document.getElementById("end-xp").textContent = data.xp_earned
+              ? ("XP earned: " + data.xp_earned)
+              : "";
+            duelToken = null;
+            return;
+          }
+          if (data.next_round) {
+            beginFightRound(data.next_round);
+          } else {
+            alert("No next question from server — try Play again or refresh.");
+            btn.disabled = false;
+          }
+        })
+        .catch(function (e) {
+          alert(e.message);
+          btn.disabled = false;
+        });
+    });
+
+    document.getElementById("btn-again").addEventListener("click", function () {
+      hide("screen-end");
+      hide("screen-fight");
+      hide("screen-read");
+      show("screen-intro");
+      bundle = null;
+      duelToken = null;
+      document.getElementById("page-title").textContent = "Story Duel";
+      setHp(100, 100);
+    });
+  </script>
+</body>
+</html>
