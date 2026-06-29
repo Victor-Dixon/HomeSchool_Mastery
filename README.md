@@ -215,22 +215,38 @@ http://<your-ip>:3000
 
 ## 📁 Project Structure
 
-This repository contains **two** apps that share the same family deployment but do not share a runtime:
+This repository contains **three** apps that share the same family deployment but do not share a runtime:
 
 1. **Mastery (Node.js)** — diagnostic-first skills, XP, WebSocket sync — run from the repo root; default **port 3000** (`node server.js`).
 2. **Homeschool Lessons (Flask)** — daily lesson checklist, practice, spelling lab, vocabulary games on the LAN — lives in **`lessons_lan/`**; default **port 5000**.
+3. **AI Tutor (Flask + Discord)** — Ollama-powered homework help API and Discord bot with TEKS quiz cogs — lives in **`ai_tutor/`**; default API **port 5000** (configure via `PORT` env var to avoid conflict with lessons_lan).
 
 ```
 .
-├── server.js
-├── app.html
-├── quiz-engine.js
+├── server.js               # Node.js Mastery server (port 3000)
+├── app.html                # Mastery frontend SPA
+├── quiz-engine.js          # Auto-generated quiz questions
 ├── tests/
-├── lessons_lan/          # Python / Flask LAN app
+│   ├── quiz-engine.test.js # Node quiz engine tests
+│   └── test_ai_tutor_api.py # AI tutor API contract tests
+├── ai_tutor/               # Python AI tutor backend (merged from ProfessorSama)
+│   ├── api.py              #   Flask API: /ask, /explain, /health
+│   ├── tutor.py            #   Ollama AI explanation engine
+│   ├── bot.py              #   Discord bot entry point
+│   ├── questions.py        #   TEKS question bank
+│   ├── progress.py         #   Per-user progress tracker
+│   ├── .env.example        #   Environment variable template
+│   └── cogs/               #   Discord command modules
+│       ├── quiz.py         #     !quiz, !drill, !question
+│       ├── homework.py     #     !ask, !solve
+│       ├── progress.py     #     !progress, !xp, !weakskills
+│       └── help_cmd.py     #     !help
+├── lessons_lan/            # Python / Flask LAN app
 │   ├── run.py
 │   ├── main.py
 │   ├── app/
 │   └── README.md
+├── requirements.txt        # Unified Python deps (all Python apps)
 └── README.md
 ```
 
@@ -249,6 +265,24 @@ python run.py
 ```
 
 Open `http://127.0.0.1:5000` on this PC, or `http://<your-LAN-ip>:5000` on phones/tablets. More detail: [lessons_lan/README.md](lessons_lan/README.md).
+
+### AI Tutor API (Flask)
+
+```powershell
+pip install -r requirements.txt
+python -m ai_tutor.api
+```
+
+The API serves `POST /ask` (free-form homework help), `POST /explain` (structured quiz explanations), and `GET /health`. Requires a running Ollama instance for AI responses. See `ai_tutor/.env.example` for configuration.
+
+### Discord Bot
+
+```powershell
+pip install -r requirements.txt
+python -m ai_tutor.bot
+```
+
+Requires a Discord bot token in `.env`. Commands: `!quiz`, `!drill`, `!ask`, `!solve`, `!progress`, `!xp`, `!weakskills`, `!help`.
 
 ---
 
@@ -309,3 +343,44 @@ In this phase, the system treats the TEKS skills list as the single source of tr
    - Progress forecasts and weekly plans
    - Optional cloud sync / multi-home support
 
+<!-- DREAMVAULT_PORTFOLIO_README:BEGIN schema=v1 generated="2026-06-29T02:03:16Z" -->
+## Portfolio status
+
+**Homeschool + kids planner** — Family learning curriculum tied to weareswarm.online/kids-planner missions and rewards.
+
+| Field | Value |
+|---|---|
+| **Canonical ID** | `HomeSchool_Mastery` |
+| **Bucket** | unclassified |
+| **Action** | — |
+| **GitHub** | [HomeSchool_Mastery](https://github.com/Victor-Dixon/HomeSchool_Mastery) |
+
+### Repository inventory
+
+*Filesystem scan at `2026-06-29T02:03:16Z` — regenerate via `python runtime/scripts/sync_portfolio_readmes_001.py`.*
+
+| Signal | Value |
+|---|---|
+| Python files | 53 |
+| Test files | 1 |
+| CI workflows | 0 |
+| runtime/tasks YAML | 0 |
+| pyproject.toml | no |
+| package.json | no |
+| tests/ directory | yes |
+| Git branch | master |
+| Working tree | dirty |
+
+**Top-level directories:** .benchmarks, ai_tutor, docs, lessons_lan, runtime, tests
+
+**Top-level files:** .gitignore, AGENTS.md, CONSOLIDATION_MANIFEST.md, MASTER_TASK_LIST.md, MASTER_TASK_LOG.md, NEXT_UP.md, PRD.md, PRODUCTION_READINESS.md, PROJECT_STRUCTURE_TREE.md, README.md, ROADMAP.md, ai_tutor_launcher.py, app.html, quiz-engine.js, requirements.txt, server.js
+
+### Consolidation signals
+
+- No pyproject.toml or package.json — packaging boundary unclear.
+- No GitHub Actions workflows detected — CI gap.
+
+### Run / verify
+
+- `pip install -r requirements.txt`
+<!-- DREAMVAULT_PORTFOLIO_README:END schema=v1 generated="2026-06-29T02:03:16Z" -->
