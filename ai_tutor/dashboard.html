@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  MathMentor Dashboard (SSOT: dashboard ask flow)
+  Purpose: Local web UI for submitting questions to Flask /ask and rendering explanations.
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathMentor — Student Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0b0f;
+    --surface: #111318;
+    --surface2: #171a21;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent: #6ee7b7;       /* mint green */
+    --accent2: #fbbf24;      /* amber */
+    --accent3: #818cf8;      /* indigo */
+    --red: #f87171;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html { background: var(--bg); color: var(--text); font-family: var(--font-body); }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(110,231,183,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 85% 20%, rgba(129,140,248,0.06) 0%, transparent 50%);
+  }
+
+  /* ── LAYOUT ──────────────────────────────────────── */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 64px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ──────────────────────────────────────── */
+  .topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,11,15,0.9);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .streak-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 0.01em;
+  }
+
+  .avatar {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--surface);
+  }
+
+  .nav-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 10px;
+    margin: 16px 0 6px;
+  }
+
+  .nav-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(110,231,183,0.08);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 25%; height: 50%;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(248,113,113,0.15);
+    color: var(--red);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* ── MAIN CONTENT ─────────────────────────────────── */
+  .main {
+    padding: 32px 36px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ── PAGE HEADER ─────────────────────────────────── */
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .greeting {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .greeting em { color: var(--accent); font-style: italic; }
+
+  .subtext {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .ask-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #0a0b0f;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .ask-btn:hover { background: #a7f3d0; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(110,231,183,0.25); }
+
+  /* ── STATS ROW ───────────────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: rgba(255,255,255,0.14); }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 6px;
+    line-height: 1;
+  }
+
+  .stat-value.green { color: var(--accent); }
+  .stat-value.amber { color: var(--accent2); }
+  .stat-value.indigo { color: var(--accent3); }
+  .stat-value.red { color: var(--red); }
+
+  .stat-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .stat-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  .stat-delta.up { background: rgba(110,231,183,0.1); color: var(--accent); }
+  .stat-delta.down { background: rgba(248,113,113,0.1); color: var(--red); }
+
+  /* ── MAIN GRID ───────────────────────────────────── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* ── CARD ────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-action {
+    font-size: 0.75rem;
+    color: var(--accent3);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .card-body { padding: 16px 20px 20px; }
+
+  /* ── SKILL BARS ──────────────────────────────────── */
+  .skill-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .skill-row { display: flex; flex-direction: column; gap: 6px; }
+
+  .skill-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skill-name { font-size: 0.825rem; font-weight: 500; color: var(--text); }
+
+  .skill-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .skill-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .skill-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+  }
+
+  .fill-green { background: linear-gradient(90deg, #059669, var(--accent)); }
+  .fill-amber { background: linear-gradient(90deg, #b45309, var(--accent2)); }
+  .fill-red   { background: linear-gradient(90deg, #dc2626, var(--red)); }
+
+  /* ── ASK BOX ─────────────────────────────────────── */
+  .ask-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .ask-box-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ask-box-icon {
+    width: 32px; height: 32px;
+    background: rgba(110,231,183,0.1);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+  }
+
+  .ask-box-title { font-size: 0.875rem; font-weight: 600; }
+  .ask-box-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+
+  .ask-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    padding: 16px 20px;
+    resize: none;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  .ask-textarea::placeholder { color: var(--muted); }
+
+  .ask-box-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ask-hint { font-size: 0.72rem; color: var(--muted); }
+  .ask-hint kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: #0a0b0f;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .submit-btn:hover { background: #a7f3d0; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── AI RESPONSE ─────────────────────────────────── */
+  .ai-response {
+    margin: 0 20px 20px;
+    background: rgba(110,231,183,0.04);
+    border: 1px solid rgba(110,231,183,0.12);
+    border-radius: 12px;
+    padding: 16px;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .ai-response.visible { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ai-response-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .ai-response-text {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  .typing-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .typing-dots span {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── ACTIVITY FEED ───────────────────────────────── */
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .activity-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .dot-green { background: var(--accent); }
+  .dot-red   { background: var(--red); }
+  .dot-amber { background: var(--accent2); }
+
+  .activity-info { flex: 1; min-width: 0; }
+
+  .activity-text {
+    font-size: 0.825rem;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .activity-skill {
+    font-weight: 600;
+    color: var(--accent3);
+  }
+
+  .activity-time {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .activity-xp {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent2);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+
+  /* ── XP CARD ─────────────────────────────────────── */
+  .xp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .xp-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(251,191,36,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .xp-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+  .xp-level-badge {
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent2);
+    font-family: var(--font-mono);
+  }
+
+  .xp-number {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  .xp-sub { font-size: 0.75rem; color: var(--muted); }
+
+  .xp-bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .xp-bar-fill {
+    height: 100%;
+    width: 68%;
+    background: linear-gradient(90deg, #b45309, var(--accent2));
+    border-radius: 10px;
+    position: relative;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .xp-bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 60%, rgba(255,255,255,0.3));
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .xp-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ── NEXT UP CARD ─────────────────────────────────── */
+  .next-up-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .next-up-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .next-up-skill {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+
+  .next-up-reason {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .drill-btn {
+    background: rgba(129,140,248,0.1);
+    border: 1px solid rgba(129,140,248,0.2);
+    color: var(--accent3);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .drill-btn:hover { background: rgba(129,140,248,0.18); }
+
+  /* ── WEEKLY CHART ─────────────────────────────────── */
+  .week-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 60px;
+    padding: 4px 0;
+  }
+
+  .week-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .week-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.8s cubic-bezier(0.4,0,0.2,1);
+    min-height: 3px;
+    background: rgba(110,231,183,0.2);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .week-bar.today { background: var(--accent); }
+  .week-bar:hover { filter: brightness(1.3); }
+
+  .week-day {
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-align: center;
+  }
+
+  .week-day.today { color: var(--accent); font-weight: 600; }
+
+  /* ── RESPONSIVE ──────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .content-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-value { font-size: 1.5rem; }
+    .greeting { font-size: 1.5rem; }
+  }
+
+  /* ── TOAST ───────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 0.825rem;
+    color: var(--text);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 320px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── SKELETON LOADER ─────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface2) 25%, rgba(255,255,255,0.04) 50%, var(--surface2) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shine 1.5s infinite;
+    border-radius: 6px;
+    height: 14px;
+    width: 100%;
+  }
+
+  @keyframes skeleton-shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ── PRACTICE MODAL OVERLAY ──────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    animation: modalIn 0.25s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 28px; height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .modal h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; }
+  .modal p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+
+  .modal-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+    margin-bottom: 12px;
+  }
+
+  .modal-input:focus { border-color: var(--accent3); }
+
+  .modal-answer {
+    background: rgba(110,231,183,0.04);
+    border: 1px solid rgba(110,231,183,0.12);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text);
+    display: none;
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+  }
+
+  .modal-answer.visible { display: block; }
+
+  .modal-submit {
+    background: var(--accent);
+    color: #0a0b0f;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+  }
+
+  .modal-submit:hover { background: #a7f3d0; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a href="#" class="logo">
+      <div class="logo-mark">∑</div>
+      MathMentor
+    </a>
+    <div class="topbar-right">
+      <div class="streak-chip">🔥 7-day streak</div>
+      <div class="avatar" title="Chris">C</div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <span class="nav-label">Learn</span>
+    <div class="nav-item active" onclick="setNav(this)">
+      <span class="nav-icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="setNav(this); openModal()">
+      <span class="nav-icon">⬡</span> Practice Quiz
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">◎</span> Skill Drills
+      <span class="badge">3</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">◇</span> Homework Help
+    </div>
+
+    <span class="nav-label">Track</span>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">▦</span> My Progress
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">◉</span> Weak Spots
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">⬙</span> XP & Levels
+    </div>
+
+    <span class="nav-label">Account</span>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="nav-icon">◈</span> Settings
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="greeting">Good evening, <em>Chris</em> 👋</div>
+        <div class="subtext">Thursday — Week 3 of 7th Grade Math. Keep going!</div>
+      </div>
+      <button class="ask-btn" onclick="document.querySelector('.ask-textarea').focus()">
+        ✦ Ask a question
+      </button>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total XP</div>
+        <div class="stat-value amber" id="xp-count">0</div>
+        <div class="stat-delta up">↑ +40 today</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Accuracy</div>
+        <div class="stat-value green">74%</div>
+        <div class="stat-delta up">↑ +6% this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Skills Attempted</div>
+        <div class="stat-value indigo">11</div>
+        <div class="stat-sub">of 19 total TEKS skills</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Weak Skills</div>
+        <div class="stat-value red">3</div>
+        <div class="stat-delta down">needs drilling</div>
+      </div>
+    </div>
+
+    <!-- CONTENT GRID -->
+    <div class="content-grid">
+
+      <!-- LEFT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- ASK ANYTHING -->
+        <div class="ask-box">
+          <div class="ask-box-header">
+            <div class="ask-box-icon">✦</div>
+            <div>
+              <div class="ask-box-title">Ask Anything</div>
+              <div class="ask-box-sub">Paste any homework problem — no prep needed</div>
+            </div>
+          </div>
+          <textarea
+            class="ask-textarea"
+            id="ask-input"
+            placeholder="e.g.  3/4 + 1/2&#10;or  Solve 2x + 3 = 11&#10;or  What is 25% of 80?"
+            rows="3"
+          ></textarea>
+          <div class="ask-box-footer">
+            <span class="ask-hint">Press <kbd>Enter</kbd> or click Send</span>
+            <button class="submit-btn" id="submit-btn" onclick="handleAsk()">
+              Send ↗
+            </button>
+          </div>
+          <div class="ai-response" id="ai-response">
+            <div class="ai-response-label">✦ MathMentor</div>
+            <div class="ai-response-text" id="ai-text"></div>
+          </div>
+        </div>
+
+        <!-- SKILL BREAKDOWN -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Skill Breakdown</div>
+            <div class="card-action" onclick="showToast('Full skill view coming soon!')">View all →</div>
+          </div>
+          <div class="card-body">
+            <div class="skill-list" id="skill-list">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- WEEKLY ACTIVITY -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">This Week</div>
+            <div class="card-action">questions answered</div>
+          </div>
+          <div class="card-body">
+            <div class="week-chart" id="week-chart"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- XP CARD -->
+        <div class="xp-card">
+          <div class="xp-header">
+            <div>
+              <div class="stat-label">Experience Points</div>
+              <div class="xp-number" id="xp-big">680</div>
+              <div class="xp-sub">Level 6 → Level 7</div>
+            </div>
+            <div class="xp-level-badge">LVL 6</div>
+          </div>
+          <div class="xp-bar-track">
+            <div class="xp-bar-fill" id="xp-bar" style="width: 0%"></div>
+          </div>
+          <div class="xp-meta">
+            <span>680 XP</span>
+            <span>700 XP next level</span>
+          </div>
+        </div>
+
+        <!-- NEXT UP -->
+        <div class="next-up-card">
+          <div class="next-up-label">🎯 Drill Next</div>
+          <div class="next-up-skill">Fraction to Percent</div>
+          <div class="next-up-reason">You got this one wrong 3 times this week. One focused drill session could lock it in.</div>
+          <button class="drill-btn" onclick="openModal()">
+            ▶ Start Drill
+          </button>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Activity</div>
+          </div>
+          <div class="card-body" style="padding-top:8px;">
+            <div class="activity-list" id="activity-list">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- PRACTICE MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <h3 id="modal-q-title">Practice Question</h3>
+    <p id="modal-q-text">Convert 3/4 to a percent.</p>
+    <input class="modal-input" id="modal-answer" type="text" placeholder="Your answer…" />
+    <div class="modal-answer" id="modal-result"></div>
+    <button class="modal-submit" id="modal-btn" onclick="checkAnswer()">Check Answer</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────
+const SKILLS = [
+  { name: "Integer Addition",      correct: 8,  wrong: 1 },
+  { name: "One-Step Equation",     correct: 7,  wrong: 2 },
+  { name: "Percent of a Number",   correct: 6,  wrong: 3 },
+  { name: "Fraction to Decimal",   correct: 5,  wrong: 1 },
+  { name: "Fraction to Percent",   correct: 2,  wrong: 4 },
+  { name: "Simple Interest",       correct: 3,  wrong: 3 },
+  { name: "Mean",                  correct: 4,  wrong: 1 },
+  { name: "Probability",           correct: 1,  wrong: 3 },
+];
+
+const ACTIVITY = [
+  { type: "correct", skill: "Integer Addition",    time: "2 min ago",  xp: "+10" },
+  { type: "correct", skill: "One-Step Equation",   time: "5 min ago",  xp: "+10" },
+  { type: "wrong",   skill: "Fraction to Percent", time: "12 min ago", xp: null  },
+  { type: "correct", skill: "Mean",                time: "18 min ago", xp: "+10" },
+  { type: "correct", skill: "Percent of a Number", time: "25 min ago", xp: "+10" },
+  { type: "wrong",   skill: "Probability",         time: "1 hr ago",   xp: null  },
+  { type: "ask",     skill: "Homework Help",        time: "3 hrs ago",  xp: null  },
+];
+
+const WEEK = [
+  { day: "M", count: 12 },
+  { day: "T", count: 8  },
+  { day: "W", count: 15 },
+  { day: "T", count: 20 },
+  { day: "F", count: 6  },
+  { day: "S", count: 0  },
+  { day: "S", count: 0  },
+];
+
+const PRACTICE_Q = {
+  skill: "Fraction to Percent",
+  question: "Convert 3/4 to a percent.",
+  answer: "75%",
+  hint: "3 ÷ 4 = 0.75 → × 100 = 75%",
+};
+
+// ── RENDER SKILLS ────────────────────────────────────
+function renderSkills() {
+  const list = document.getElementById("skill-list");
+  list.innerHTML = SKILLS.map(s => {
+    const total = s.correct + s.wrong;
+    const pct = Math.round((s.correct / total) * 100);
+    const cls = pct >= 70 ? "fill-green" : pct >= 40 ? "fill-amber" : "fill-red";
+    return `
+      <div class="skill-row">
+        <div class="skill-meta">
+          <span class="skill-name">${s.name}</span>
+          <span class="skill-stats">
+            <span style="color:var(--accent)">${s.correct}✓</span>
+            <span style="color:var(--red)">${s.wrong}✗</span>
+            <span>${pct}%</span>
+          </span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill ${cls}" style="width:0%" data-w="${pct}"></div>
+        </div>
+      </div>`;
+  }).join("");
+  // Animate bars in
+  setTimeout(() => {
+    document.querySelectorAll(".skill-bar-fill").forEach(b => {
+      b.style.width = b.dataset.w + "%";
+    });
+  }, 120);
+}
+
+// ── RENDER ACTIVITY ──────────────────────────────────
+function renderActivity() {
+  const list = document.getElementById("activity-list");
+  list.innerHTML = ACTIVITY.map(a => {
+    const dot = a.type === "correct" ? "dot-green" : a.type === "wrong" ? "dot-red" : "dot-amber";
+    const verb = a.type === "correct" ? "Got it right —" : a.type === "wrong" ? "Missed —" : "Asked about";
+    return `
+      <div class="activity-item">
+        <div class="activity-dot ${dot}"></div>
+        <div class="activity-info">
+          <div class="activity-text">${verb} <span class="activity-skill">${a.skill}</span></div>
+          <div class="activity-time">${a.time}</div>
+        </div>
+        ${a.xp ? `<div class="activity-xp">${a.xp}</div>` : ""}
+      </div>`;
+  }).join("");
+}
+
+// ── RENDER WEEK CHART ─────────────────────────────────
+function renderWeek() {
+  const chart = document.getElementById("week-chart");
+  const max = Math.max(...WEEK.map(w => w.count), 1);
+  chart.innerHTML = WEEK.map((w, i) => {
+    const h = Math.round((w.count / max) * 52);
+    const isToday = i === 3;
+    return `
+      <div class="week-bar-wrap">
+        <div class="week-bar${isToday ? " today" : ""}"
+          style="height:0px" data-h="${h}px"
+          title="${w.count} questions"
+        ></div>
+        <div class="week-day${isToday ? " today" : ""}">${w.day}</div>
+      </div>`;
+  }).join("");
+  setTimeout(() => {
+    document.querySelectorAll(".week-bar").forEach(b => {
+      b.style.height = b.dataset.h;
+    });
+  }, 200);
+}
+
+// ── XP COUNTER ───────────────────────────────────────
+function animateXP() {
+  const el = document.getElementById("xp-count");
+  let v = 0;
+  const target = 680;
+  const step = Math.ceil(target / 40);
+  const t = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = v;
+    if (v >= target) clearInterval(t);
+  }, 25);
+  // XP bar
+  setTimeout(() => {
+    document.getElementById("xp-bar").style.width = "68%";
+  }, 300);
+}
+
+// ── HANDLE ASK ───────────────────────────────────────
+async function handleAsk() {
+  const input = document.getElementById("ask-input");
+  const q = input.value.trim();
+  if (!q) return;
+
+  const btn = document.getElementById("submit-btn");
+  const responseDiv = document.getElementById("ai-response");
+  const textDiv = document.getElementById("ai-text");
+
+  btn.disabled = true;
+  btn.textContent = "Thinking…";
+  responseDiv.classList.add("visible");
+  textDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+
+  try {
+    const res = await fetch("http://localhost:5000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        question: q
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error("API request failed");
+    }
+
+    const data = await res.json();
+    const answer = data.explanation || "I couldn't generate an answer. Please try again!";
+    typeText(textDiv, answer);
+    showToast("✦ Got an answer!");
+
+    // Add to activity feed
+    ACTIVITY.unshift({ type: "ask", skill: "Homework Help", time: "just now", xp: null });
+    renderActivity();
+
+  } catch (e) {
+    textDiv.textContent = "Something went wrong. Try again.";
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Send ↗";
+}
+
+// ── TYPEWRITER EFFECT ─────────────────────────────────
+function typeText(el, text) {
+  el.textContent = "";
+  let i = 0;
+  const t = setInterval(() => {
+    el.textContent += text[i++];
+    if (i >= text.length) clearInterval(t);
+  }, 12);
+}
+
+// ── MODAL ────────────────────────────────────────────
+function openModal() {
+  document.getElementById("modal-q-title").textContent = PRACTICE_Q.skill;
+  document.getElementById("modal-q-text").textContent = PRACTICE_Q.question;
+  document.getElementById("modal-answer").value = "";
+  document.getElementById("modal-result").className = "modal-answer";
+  document.getElementById("modal-result").textContent = "";
+  document.getElementById("modal-btn").textContent = "Check Answer";
+  document.getElementById("modal-overlay").classList.add("open");
+  setTimeout(() => document.getElementById("modal-answer").focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
+}
+
+function checkAnswer() {
+  const input = document.getElementById("modal-answer").value.trim().toLowerCase();
+  const result = document.getElementById("modal-result");
+  const btn = document.getElementById("modal-btn");
+
+  if (!input) return;
+
+  const correct = PRACTICE_Q.answer.toLowerCase();
+  const isRight = input === correct || input === correct.replace("%", "");
+
+  if (isRight) {
+    result.textContent = "✅ Correct! Great work — 3/4 = 0.75 = 75%. You've got this skill down!\n\nTry another: Convert 2/5 to a percent.";
+    result.style.background = "rgba(110,231,183,0.06)";
+    result.style.borderColor = "rgba(110,231,183,0.2)";
+    showToast("+10 XP! 🔥");
+    ACTIVITY.unshift({ type: "correct", skill: PRACTICE_Q.skill, time: "just now", xp: "+10" });
+    renderActivity();
+  } else {
+    result.textContent = `❌ Not quite — you said "${input}", but the answer is ${PRACTICE_Q.answer}.\n\nHint: ${PRACTICE_Q.hint}\n\nSo 3/4 → divide → 0.75 → multiply by 100 → 75%.`;
+    result.style.background = "rgba(248,113,113,0.05)";
+    result.style.borderColor = "rgba(248,113,113,0.15)";
+    ACTIVITY.unshift({ type: "wrong", skill: PRACTICE_Q.skill, time: "just now", xp: null });
+    renderActivity();
+  }
+
+  result.classList.add("visible");
+  btn.textContent = "Try Another →";
+  btn.onclick = openModal;
+}
+
+// ── TOAST ────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  document.getElementById("toast-msg").textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ── NAV ───────────────────────────────────────────────
+function setNav(el) {
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  el.classList.add("active");
+}
+
+// ── ENTER KEY IN TEXTAREA ─────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  renderSkills();
+  renderActivity();
+  renderWeek();
+  animateXP();
+
+  const ta = document.getElementById("ask-input");
+  ta.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleAsk();
+    }
+  });
+
+  const mi = document.getElementById("modal-answer");
+  mi.addEventListener("keydown", e => {
+    if (e.key === "Enter") checkAnswer();
+  });
+});
+</script>
+</body>
+</html>

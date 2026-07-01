@@ -1,0 +1,20 @@
+# Unified Python dependencies for HomeSchool Mastery
+# Covers: lessons_lan (Flask LAN app) + ai_tutor (AI tutor API + Discord bot)
+
+# --- Web framework (shared by lessons_lan and ai_tutor) ---
+Flask>=3.0
+Werkzeug>=3.0
+
+# --- WSGI servers ---
+waitress>=3.0
+gunicorn>=21.0.0
+
+# --- AI tutor backend ---
+requests>=2.31.0
+
+# --- Discord bot ---
+discord.py>=2.3.0
+python-dotenv>=1.0.0
+
+# --- Dev / testing ---
+pytest>=8.0
