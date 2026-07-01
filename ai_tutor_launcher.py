@@ -43,7 +43,7 @@ def main() -> int:
         return _run_python_file("ai_tutor/bot.py")
     if args.command == "test":
         result = subprocess.run(
-            [sys.executable, "-m", "unittest", "tests.test_ai_tutor_api"],
+            [sys.executable, "-m", "pytest", "tests/test_ai_tutor_api.py", "-q"],
             cwd=REPO_ROOT,
             check=False,
         )
