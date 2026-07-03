@@ -1,147 +1,156 @@
-# Product Requirements Document — HomeSchool Mastery
+# Product Requirements Document - HomeSchool Mastery
 
-| Field   | Value |
-|---------|-------|
-| Repo    | Victor-Dixon/HomeSchool_Mastery |
-| Owner   | Victor Dixon |
-| Status  | Active Development — Phase 2 (SSOT-driven diagnostics stabilization) |
-| Version | 2.0 |
-| Updated | 2026-05-25 |
+| Field | Value |
+|---|---|
+| Repo | Victor-Dixon/HomeSchool_Mastery |
+| Product | HomeSchool Mastery |
+| Canonical implementation | `lessons_lan/` |
+| Status | Active documentation-synchronized Flask LAN app |
+| Updated | 2026-07-03 |
 
----
+## What this project is
 
-## Overview
+HomeSchool Mastery is a local-first family homeschool learning platform. The
+canonical app is `lessons_lan/`, a Flask/Jinja/SQLite LAN app for student
+lessons, TEKS/STAAR-aligned practice, learning games, XP/mastery accountability,
+boss fights, gear rewards, feedback, and parent/admin operations.
 
-HomeSchool Mastery is a **diagnostic-first learning system** built for a two-student, one-teacher homeschool household. It replaces passive curriculum tracking with an active feedback loop: diagnose gaps, focus effort, prove mastery, reward progress, repeat.
+The repository also contains a root Node mastery prototype and an `ai_tutor/`
+support package. Those contexts are present but are not the canonical product
+unless explicitly referenced.
 
-The system comprises two co-deployed applications:
+## Why it exists
 
-1. **Mastery (Node.js)** — quiz engine, XP/badges, skill lifecycle, WebSocket real-time sync. Port 3000.
-2. **Homeschool Lessons (Flask)** — daily lesson checklists, vocabulary games, spelling lab, practice items on the LAN. Port 5000.
+The project exists to support a household learning workflow where students can:
 
-Both apps run locally on the home network with zero cloud dependency.
+- See today's assigned work.
+- Practice Math and Reading/ELAR skills.
+- Receive immediate feedback through XP, levels, games, and boss gates.
+- Submit feedback to the parent/admin.
 
----
+It also gives the parent/admin simple local workflows for lesson management,
+password resets, feedback review, and operation of the home LAN app.
 
-## Problem Statement
+## Domain modeled
 
-Traditional homeschool curricula rely on linear lesson plans and periodic tests. They lack:
+Primary domain: family homeschool education and learner accountability.
 
-- **Real-time gap detection** — weaknesses hide until exam day.
-- **Adaptive focus** — students waste time on already-mastered material.
-- **Immediate feedback** — motivation drops without visible progress signals.
-- **Teacher visibility** — Victor cannot monitor two students' live state simultaneously.
+Curriculum domain: TEKS/STAAR-aligned Math and Reading/ELAR practice. Complete
+TEKS corpus coverage is Unknown in the current implementation; the app contains
+seeded standards and TEKS-tagged questions.
 
-HomeSchool Mastery addresses each of these by making diagnostics the primary driver of every learning session.
+## Users
 
----
+| User type | Current evidence | Needs |
+|---|---|---|
+| Student | Seeded users include Charlie and Chris in `lessons_lan/app/db.py` | Complete lessons, practice, play learning games, earn XP/rewards, submit feedback |
+| Parent/Admin | Seeded `admin` account in `lessons_lan/app/db.py` | Manage lessons/accounts, review feedback, operate local app |
+| Operator | Same household maintainer role | Start/stop app, run tests, back up data, avoid destructive resets |
 
-## Goals
+## Problems solved
 
-| # | Goal | Mechanism |
-|---|------|-----------|
-| G1 | Detect learning gaps in real-time | Quiz engine runs diagnostics per skill, surfaces "needs_work" items immediately |
-| G2 | Focus effort where it matters | UI hides mastered content; daily workflow starts with gap review |
-| G3 | Reinforce mastery through feedback loops | Skill lifecycle (unseen → needs_work → mastered) prevents assumed mastery |
-| G4 | Gamify progress | XP, levels (500 XP/level), 10 achievement badges |
-| G5 | Provide teacher oversight | Teacher dashboard with multi-student view, progress export, gap identification |
+| Problem | Current solution |
+|---|---|
+| Daily work is hard to see and track | Today checklist and completion records |
+| Practice needs accountability | Question attempts, XP, Adventure page, mastery gates |
+| Students need motivation | Games, boss fights, gear unlocks, levels |
+| Parent/admin needs simple control | Admin lesson CRUD, password reset, feedback inbox |
+| Household wants local operation | SQLite + LAN server; no required cloud service |
 
----
+## In scope
 
-## Non-Goals
+- LAN-accessible Flask app in `lessons_lan/`.
+- Login/session-based student and admin views.
+- Daily lessons and completion tracking.
+- Practice quizzes and snake practice using the question bank.
+- TEKS-tagged Math and Reading/ELAR questions.
+- XP/level state and milestone mastery gates.
+- Adventure page, boss fights, boss attempts, assessments, loot, and gear.
+- Text Detective, Discount Dash, Fraction Battle, Story Duel, Spelling Lab, and
+  Vocabulary Signal Breaker.
+- Student feedback and admin feedback review.
+- Optional local Ollama lesson coaching and Story Duel grading fallback.
+- Tests under `lessons_lan/tests/`.
 
-- **Cloud dependency** — the system must remain local-first; cloud sync is a future opt-in.
-- **Destructive cleanup of learner history** — student data and progress records are never deleted automatically.
-- **Untested changes** — no route, mastery, or quiz logic change ships without passing tests.
+## Out of scope for the current canonical app
 
----
+- Required cloud dependency.
+- Multi-household or school deployment.
+- OAuth, email, LMS integration, or hosted analytics.
+- Treating the Node prototype or `ai_tutor/` JSON progress as shared canonical
+  persistence for `lessons_lan/`.
+- Destructive data cleanup during normal student/admin use.
 
-## Target Users
+## Current architecture
 
-| User    | Role    | Grade | Context |
-|---------|---------|-------|---------|
-| Charlie | Student | 6th   | Takes quizzes, earns XP/badges, progresses through TEKS skill tree |
-| Chris   | Student | 7th   | Same workflow, grade-appropriate TEKS skills |
-| Victor  | Teacher / Admin | — | Monitors both students, controls content, exports data, assigns focus areas |
-
-All users share the same system with **role-based views** and PIN-based login.
-
----
-
-## Scope
-
-### In Scope
-
-- Diagnostic quiz engine (2–3 questions per skill, auto-scored)
-- Skill lifecycle tracking (unseen → needs_work → mastered) with TEKS alignment
-- XP, levels, and 10 achievement badges
-- WebSocket real-time sync across household devices
-- Teacher dashboard (multi-student view, CSV export, gap identification)
-- TEKS/STAAR standards alignment for 6th and 7th grade
-- Flask LAN lessons app (daily checklists, vocabulary games, spelling lab, practice)
-
-### Out of Scope (Current Phase)
-
-- Cloud sync / remote access
-- Multi-school or multi-household support
-- Advanced analytics (ML-driven predictions, cohort analysis)
-- Third-party LMS integration
-
----
-
-## Success Criteria
-
-| Criterion | Target | Verification |
-|-----------|--------|--------------|
-| TEKS skill coverage | All 6th + 7th grade TEKS skills tracked in data model | Skill list audit against TEKS standards |
-| Quiz coverage | >80% of tracked skills have associated quiz items | Script-generated coverage report |
-| Real-time sync | WebSocket updates propagate within 1 second on LAN | Manual device test during daily workflow |
-| Test gate | `pytest -q` passes in `lessons_lan/` before any deploy | CI or manual pre-deploy check |
-| Data persistence | `data.json` survives restarts; CSV export produces valid output | Backup verification test |
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────┐
-│                Home LAN Network                  │
-│                                                  │
-│  ┌──────────────────┐   ┌─────────────────────┐ │
-│  │  Mastery (Node)  │   │  Lessons (Flask)     │ │
-│  │  server.js :3000 │   │  run.py :5000        │ │
-│  │  ─────────────── │   │  ───────────────     │ │
-│  │  Quiz Engine     │   │  Lesson Checklists   │ │
-│  │  Skill Lifecycle │   │  Vocabulary Games    │ │
-│  │  XP / Badges     │   │  Spelling Lab        │ │
-│  │  WebSocket Sync  │   │  Practice Items      │ │
-│  │  Teacher Dash    │   │  Admin Routes        │ │
-│  └───────┬──────────┘   └───────┬─────────────┘ │
-│          │                      │                │
-│          ▼                      ▼                │
-│     data.json              SQLite / local DB     │
-│     (persistence)          (lessons state)       │
-└─────────────────────────────────────────────────┘
+```text
+Browser/tablet on home LAN
+        |
+        v
+lessons_lan/run.py or main.py
+        |
+        v
+Flask app factory (app/__init__.py)
+        |
+        +-- routes blueprint: lessons, practice, games, boss, admin, feedback
+        +-- spelling_lab blueprint
+        +-- vocab_signal blueprint
+        +-- plugins/teks_daily_training hook
+        |
+        +-- SQLite instance/homeschool.db
+        +-- Flask session / signed Story Duel tokens
+        +-- JSON Story Duel bundles
+        +-- optional local Ollama HTTP API
 ```
 
-### Data Flow
+## Data and persistence
 
-1. Student logs in with PIN → role-based view loads.
-2. Student takes quiz → engine scores answers → skill status transitions.
-3. XP awarded → badge eligibility checked → UI updates via WebSocket.
-4. Teacher views dashboard → sees aggregated progress → exports CSV.
+| Store | Scope | Notes |
+|---|---|---|
+| `lessons_lan/instance/homeschool.db` | Canonical app SQLite DB | Users, lessons, completions, questions, attempts, boss attempts, assessments, player state, gear, feedback |
+| Flask session | Canonical app runtime state | Login, game state, AI chat history, one-time XP guards |
+| Story Duel JSON bundles | Canonical app content | Swappable battle/story content |
+| Root `data.json` | Node prototype | Not canonical; generated if Node app runs |
+| `data/progress.json` | `ai_tutor/` support package | Not canonical; per-Discord-user support progress |
 
----
+## Completed capabilities
 
-## Evidence References
+- `lessons_lan/` is identified as the canonical implementation.
+- Flask app factory, routes, templates, SQLite schema, seed data, and tests exist.
+- Student Today, lesson detail, completion, practice, games, Adventure, boss,
+  loot, feedback, and admin routes exist.
+- Optional local Ollama hooks exist for lesson AI coach and Story Duel grading.
+- Existing pytest coverage covers smoke routes, lesson pages, mastery, loot,
+  boss rewards, item types, generator behavior, snake practice, Story Duel, and
+  broader app flows.
+- Documentation was synchronized around the canonical domain model on 2026-07-03.
 
-| Source | Location | Notes |
-|--------|----------|-------|
-| README.md | repo root | Rich system description, architecture, roadmap |
-| AGENTS.md | repo root | Agent rules, canonical app designation |
-| PRD.md (prior) | repo root | Brief original PRD |
-| MASTER_TASK_LIST.md | repo root | Open/done task tracking |
-| MASTER_TASK_LOG.md | repo root | Completion history |
-| NEXT_UP.md | repo root | Short-term action items |
-| lessons_lan/README.md | lessons_lan/ | Flask app documentation |
-| tests/ | lessons_lan/ | Existing pytest coverage |
+## Remaining work
+
+- Verify and document data backup/export for `lessons_lan`.
+- Add CI for the current Python tests.
+- Expand admin/mastery dashboard test coverage.
+- Add TEKS coverage reporting and clarify full standards import status.
+- Expand question/content variety with TEKS tags and item types.
+- Decide whether the Node prototype remains legacy, gets archived, or is
+  reintegrated; current operational status is Unknown.
+- Decide whether `ai_tutor/` remains a support package or becomes integrated
+  with the canonical app; current deployment status is Unknown.
+
+## Success criteria
+
+| Criterion | Verification |
+|---|---|
+| New contributor can identify the canonical app | README, AGENTS, this PRD, and docs index all point to `lessons_lan/` |
+| Domain entities are mapped | `docs/DOMAIN_MODEL.md` includes entities, value objects, services, relationships, data flow, integrations, and feature mapping |
+| Learner data is protected | Reset commands documented as operator-only; no student route exposes destructive reset |
+| Behavior changes are test-backed | Targeted tests run from `lessons_lan/` before behavior changes |
+| Documentation remains synchronized | Root summaries and expanded docs are updated together |
+
+## Unknowns
+
+- Complete TEKS corpus import and coverage.
+- Active household use of the root Node prototype.
+- Active household deployment of the `ai_tutor/` Discord bot.
+- Cross-runtime data synchronization.
+- Production backup/export path for canonical learner data.

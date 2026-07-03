@@ -1,386 +1,235 @@
-# 🏆 Homeschool Mastery
+# HomeSchool Mastery
 
-*A real-time, diagnostic-first learning system for Charlie, Chris, and Victor*
+Local-first family homeschool learning platform for TEKS/STAAR-aligned lessons,
+practice games, XP/mastery accountability, and parent/admin oversight on a home
+LAN.
 
----
+## What this project is
 
-## 🎯 Mission
+HomeSchool Mastery is a family learning platform repository. The canonical app
+is `lessons_lan/`, a Flask/Jinja/SQLite web app designed to run on a household
+computer and serve students on the home network.
 
-This system is a **learning optimization engine**, not a basic homeschool tracker.
+The canonical app provides:
 
-It exists to:
+- daily lessons and checklist completion
+- TEKS/STAAR-aligned Math and Reading/ELAR practice
+- learning games
+- XP, levels, mastery gates, boss fights, and gear rewards
+- student feedback and admin review
+- parent/admin lesson and account management
+- optional local Ollama AI coaching
 
-* Detect learning gaps in real-time
-* Focus effort only where it matters
-* Reinforce mastery through feedback loops
-* Turn progress into a visible, motivating system (XP, levels, badges)
+The repository also contains a root Node prototype and an `ai_tutor/` support
+package. They are present contexts, but `lessons_lan/` is the current
+implementation source of truth.
 
----
+## Why it exists
 
-## 🧠 Core System Loop
+The project exists to make homeschool work visible, motivating, and accountable
+without requiring cloud services. Students can see what to do next and receive
+immediate practice feedback. A parent/admin can manage lessons, passwords, and
+feedback from the same local system.
 
+## Domain
+
+Primary domain: family homeschool education and learner accountability.
+
+Curriculum domain: TEKS/STAAR-aligned Math and Reading/ELAR practice. Complete
+TEKS corpus import and full standards coverage are Unknown in the current repo;
+the canonical app includes seeded standards, TEKS-tagged questions, and tests
+for current behavior.
+
+## Users
+
+| User type | Current implementation |
+|---|---|
+| Students | Log in, view Today, open lessons, practice, play games, earn XP/rewards, submit feedback |
+| Parent/Admin | Manage lessons, reset passwords, review feedback, operate the local app |
+| Operator | Start/stop the LAN server, run tests, back up data, avoid destructive resets |
+
+## Canonical architecture
+
+```text
+Browser/tablet on home LAN
+        |
+        v
+lessons_lan/run.py or main.py
+        |
+        v
+Flask app factory
+        |
+        +-- student routes: Today, lessons, practice, games, Adventure, feedback
+        +-- admin routes: users, lessons, feedback inbox
+        +-- game routes: Story Duel, Text Detective, Discount Dash, Spelling Lab
+        +-- plugin hook: daily lesson generation
+        |
+        +-- SQLite: lessons_lan/instance/homeschool.db
+        +-- Flask session and signed Story Duel tokens
+        +-- JSON Story Duel bundles
+        +-- optional local Ollama HTTP API
 ```
-Diagnose → Identify Gaps → Focus → Master → Reward → Repeat
+
+## Major domain entities
+
+See `docs/DOMAIN_MODEL.md` for the complete model. Major canonical entities
+include:
+
+- User
+- Lesson
+- Completion
+- Standard and LessonStandard
+- Question and QuestionAttempt
+- BossAttempt and Assessment
+- PlayerState
+- Gear and GearUnlock
+- Badge and BadgeAward (schema exists; award behavior is Unknown)
+- Feedback
+- StoryDuelBundle and DuelState
+- game session state stored in Flask session
+
+## Feature-to-domain map
+
+| Feature | Domain area |
+|---|---|
+| Today checklist | Lessons and completions |
+| Practice and snake practice | Questions, attempts, XP |
+| Adventure page | Player state, mastery gates, boss milestones |
+| Boss fight | Questions, attempts, assessments, gear rewards |
+| Text Detective / Discount Dash / Fraction Battle | Learning games and XP |
+| Story Duel | JSON bundles, signed state, optional Ollama grading |
+| Spelling Lab / Vocabulary Signal Breaker | Vocabulary and spelling practice |
+| Feedback | Student feedback and admin review |
+| Admin lesson/user management | Parent/admin operations |
+| Lesson AI coach | Optional local Ollama integration |
+
+## Repository structure
+
+```text
+.
++-- lessons_lan/              # Canonical Flask LAN app
+|   +-- app/                  # Routes, services, templates, static assets
+|   +-- plugins/              # Daily lesson plugin
+|   +-- tests/                # Canonical pytest suite
+|   +-- run.py
+|   +-- main.py
+|   +-- README.md
++-- docs/                     # Documentation index, PRD, roadmap, domain model
++-- runtime/tasks/            # Expanded task list and task log
++-- ai_tutor/                 # Support package: Flask API + Discord bot + Ollama
++-- tests/                    # Root tests for support/prototype contexts
++-- server.js                 # Root Node prototype runtime
++-- app.html                  # Root Node prototype UI
++-- quiz-engine.js            # Root Node prototype quiz generator
++-- AGENTS.md                 # Agent rules and canonical app guidance
++-- PRD.md                    # PRD summary
++-- ROADMAP.md                # Roadmap summary
++-- MASTER_TASK_LIST.md       # Task summary
++-- MASTER_TASK_LOG.md        # Task log summary
++-- NEXT_UP.md                # Current next work
++-- PRODUCTION_READINESS.md   # Household readiness checklist
 ```
 
-This loop is enforced through:
+## Quick start: canonical app
 
-* Quiz engine (diagnostics)
-* Skill status transitions
-* Focus-driven UI
-* XP + badge feedback system
-
----
-
-## 👨‍👦 Users
-
-| User    | Role          | Function                |
-| ------- | ------------- | ----------------------- |
-| Charlie | Student (6th) | Skill mastery + quizzes |
-| Chris   | Student (7th) | Skill mastery + quizzes |
-| Victor  | Teacher       | Oversight + control     |
-
-Each user operates inside the same system with **role-based views**.
-
----
-
-## 📚 Data Model (SSOT)
-
-All skills are derived from TEKS checklists (6th + 7th grade). 
-
-Each skill follows a lifecycle:
-
-```json
-{
-  "status": "unseen → needs_work → mastered"
-}
-```
-
----
-
-## ⚙️ System Architecture
-
-### 🧩 Frontend
-
-* Single-page app (`app.html`)
-* Mobile-first UI
-* Gamified UX (XP, badges, levels) 
-
----
-
-### 🔌 Backend
-
-* Node.js server (`server.js`)
-* WebSocket sync (real-time updates across devices)
-* No external dependencies
-
----
-
-### 💾 Data Layer
-
-* `data.json` (local persistence)
-* Survives restarts
-* Exportable to CSV
-
----
-
-## 🔥 Core Features
-
-### 🎯 Diagnostic Quiz Engine
-
-* 2–3 questions per skill
-* Determines mastery automatically
-* Drives all progression
-
----
-
-### 🧠 Skill Tracking System
-
-Each skill can be:
-
-* ❌ Needs Work
-* ⚠️ In Progress
-* ✅ Mastered
-
----
-
-### ⚡ Real-Time Sync
-
-* Updates instantly across devices
-* Works on same WiFi network
-* No refresh needed
-
----
-
-### 🎮 Gamification Layer
-
-* XP per action
-* Level system (500 XP per level)
-* 10 achievement badges:
-
-  * First Win
-  * On Fire
-  * Scholar
-  * Legend
-  * Math Wizard
-  * Word Master
-  * Perfectionist
-  * Grinder
-  * Comeback Kid
-  * Unstoppable 
-
----
-
-### 🧑‍🏫 Teacher Dashboard
-
-Victor can:
-
-* View both students simultaneously
-* Track progress by subject
-* Export CSV for reporting
-* Monitor mastery distribution
-
----
-
-## 📱 Usage Flow
-
-### Student
-
-1. Login with PIN
-2. Take quizzes OR mark skills
-3. Earn XP + badges
-4. Progress through levels
-
----
-
-### Teacher
-
-1. Login as Victor
-2. View live progress
-3. Identify weak areas
-4. Export data
-
----
-
-## 🔁 Daily Workflow
-
-| Time   | Action                 |
-| ------ | ---------------------- |
-| 5 min  | Open app + review gaps |
-| 20 min | Teach weak skills      |
-| 5 min  | Quiz + update mastery  |
-
----
-
-## 🧬 What Makes This Different
-
-This is not:
-
-* ❌ A checklist
-* ❌ A passive curriculum
-* ❌ A grading system
-
-This **is**:
-
-* ✅ A diagnostic engine
-* ✅ A feedback loop system
-* ✅ A real-time learning optimizer
-
----
-
-## ⚠️ System Rules (Critical)
-
-1. Diagnostics drive all decisions
-2. Focus on “Needs Work” only
-3. Mastery must be proven, not assumed
-4. Feedback must be immediate (XP, badges)
-5. System must remain fast and frictionless
-
----
-
-## 🚀 Setup
+From the repository root:
 
 ```bash
-cd homeschool
-node server.js
-```
-
-Open on any device via local network:
-
-```
-http://<your-ip>:3000
-```
-
----
-
-## 📁 Project Structure
-
-This repository contains **three** apps that share the same family deployment but do not share a runtime:
-
-1. **Mastery (Node.js)** — diagnostic-first skills, XP, WebSocket sync — run from the repo root; default **port 3000** (`node server.js`).
-2. **Homeschool Lessons (Flask)** — daily lesson checklist, practice, spelling lab, vocabulary games on the LAN — lives in **`lessons_lan/`**; default **port 5000**.
-3. **AI Tutor (Flask + Discord)** — Ollama-powered homework help API and Discord bot with TEKS quiz cogs — lives in **`ai_tutor/`**; default API **port 5000** (configure via `PORT` env var to avoid conflict with lessons_lan).
-
-```
-.
-├── server.js               # Node.js Mastery server (port 3000)
-├── app.html                # Mastery frontend SPA
-├── quiz-engine.js          # Auto-generated quiz questions
-├── tests/
-│   ├── quiz-engine.test.js # Node quiz engine tests
-│   └── test_ai_tutor_api.py # AI tutor API contract tests
-├── ai_tutor/               # Python AI tutor backend (merged from ProfessorSama)
-│   ├── api.py              #   Flask API: /ask, /explain, /health
-│   ├── tutor.py            #   Ollama AI explanation engine
-│   ├── bot.py              #   Discord bot entry point
-│   ├── questions.py        #   TEKS question bank
-│   ├── progress.py         #   Per-user progress tracker
-│   ├── .env.example        #   Environment variable template
-│   └── cogs/               #   Discord command modules
-│       ├── quiz.py         #     !quiz, !drill, !question
-│       ├── homework.py     #     !ask, !solve
-│       ├── progress.py     #     !progress, !xp, !weakskills
-│       └── help_cmd.py     #     !help
-├── lessons_lan/            # Python / Flask LAN app
-│   ├── run.py
-│   ├── main.py
-│   ├── app/
-│   └── README.md
-├── requirements.txt        # Unified Python deps (all Python apps)
-└── README.md
-```
-
-### Mastery (Node)
-
-See [Setup](#-setup) above.
-
-### Homeschool Lessons (Flask)
-
-```powershell
 cd lessons_lan
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 python run.py
 ```
 
-Open `http://127.0.0.1:5000` on this PC, or `http://<your-LAN-ip>:5000` on phones/tablets. More detail: [lessons_lan/README.md](lessons_lan/README.md).
+Open:
 
-### AI Tutor API (Flask)
+- `http://127.0.0.1:5000` on the host computer
+- `http://<your-LAN-ip>:5000` from another device on the same network
 
-```powershell
-pip install -r requirements.txt
-python -m ai_tutor.api
+Windows PowerShell instructions and autostart options are in
+`lessons_lan/README.md`.
+
+## Stop the canonical app
+
+If running in a terminal, press `Ctrl+C`. If installed through the Windows
+Startup-folder or Scheduled Task scripts, use the matching uninstall script in
+`lessons_lan/autostart/` and then stop any running Python process that launched
+`lessons_lan/run.py`.
+
+## Data location and safety
+
+The canonical app stores local data in:
+
+```text
+lessons_lan/instance/homeschool.db
 ```
 
-The API serves `POST /ask` (free-form homework help), `POST /explain` (structured quiz explanations), and `GET /health`. Requires a running Ollama instance for AI responses. See `ai_tutor/.env.example` for configuration.
+Do not delete generated databases or student data as part of normal work.
+`reset-db --yes` exists for operator-only maintenance and wipes local progress.
+Back up the SQLite file before destructive maintenance.
 
-### Discord Bot
+## Verification
 
-```powershell
-pip install -r requirements.txt
-python -m ai_tutor.bot
+Canonical app tests:
+
+```bash
+cd lessons_lan
+pytest -q
 ```
 
-Requires a Discord bot token in `.env`. Commands: `!quiz`, `!drill`, `!ask`, `!solve`, `!progress`, `!xp`, `!weakskills`, `!help`.
+Root tests exist for support/prototype contexts:
 
----
+- `tests/quiz-engine.test.js`
+- `tests/test_ai_tutor_api.py`
 
-## 🔮 Next Evolutions
+## Current status
 
-* Adaptive quiz generation
-* AI-driven gap prioritization
-* Cross-device cloud sync
-* Parent insights (weakness trends)
-* Voice-based interaction
+Completed:
 
----
+- `lessons_lan/` identified as canonical.
+- Documentation-first domain model audit completed on 2026-07-03.
+- PRD, roadmap, task docs, NextUp, AGENTS, README, production readiness, and
+  app-local docs synchronized around the canonical app.
+- Current Flask app has tests for smoke routes, lessons, mastery, loot, boss
+  rewards, generator behavior, item types, snake practice, and Story Duel.
 
-## 🏁 End State
+Remaining:
 
-A system where:
+- Run and preserve the canonical test gate.
+- Add CI for current tests.
+- Add backup/export verification for learner data.
+- Add TEKS skill/question coverage report.
+- Expand admin/mastery route tests.
+- Decide whether the root Node prototype is maintained, integrated, or archived.
+- Decide whether `ai_tutor/` remains a support package or integrates with
+  `lessons_lan/`.
 
-* Learning is **targeted, not generalized**
-* Progress is **visible and motivating**
-* Weaknesses are **systematically eliminated**
-* Education becomes **optimized like a feedback system**
+## Documentation map
 
----
+- Documentation index: `docs/README.md`
+- Product requirements: `docs/PRD.md`
+- Domain model: `docs/DOMAIN_MODEL.md`
+- Roadmap: `docs/ROADMAP.md`
+- Task list/log: `runtime/tasks/master_task_list.md`,
+  `runtime/tasks/master_task_log.md`
+- Current next work: `NEXT_UP.md`
+- Agent rules: `AGENTS.md`
+- Canonical app operations: `lessons_lan/README.md`
 
-## 🧭 Status
+## External integrations
 
-✅ Real-time system operational
-✅ Gamification active
-✅ Diagnostic loop functional
-🟡 Adaptive intelligence (next phase)
+- SQLite: required local persistence for `lessons_lan/`.
+- Waitress: default WSGI server for `lessons_lan/run.py`.
+- Ollama: optional local AI coach/grading integration.
+- Discord: present only in the `ai_tutor/` support package.
 
-## 🗺️ Product Phase + Roadmap
+No current docs or code prove a cloud database, OAuth, email delivery, hosted
+analytics, or LMS integration.
 
-### Current Phase (as of April 6, 2026)
-**Phase 2 — SSOT-driven diagnostics stabilization**
+## Recommended GitHub repository description
 
-In this phase, the system treats the TEKS skills list as the single source of truth (SSOT) and ensures quiz availability tracks directly to that model.
+Use this repository description in GitHub settings:
 
-### Roadmap
-
-1. **Phase 1 (Completed): Core loop online**
-   - Role-based login + dashboards
-   - Skill lifecycle tracking (`unseen → needs_work → mastered`)
-   - XP/levels/badges + real-time sync
-
-2. **Phase 2 (Current): SSOT enforcement**
-   - Auto-generated quizzes from skill records
-   - Manual quiz override support for curated items
-   - Domain-shape checks for quiz outputs
-
-3. **Phase 3 (Next): Adaptive diagnostics**
-   - Difficulty ramp based on quiz history
-   - Gap-prioritized sequencing
-   - Subject/strand-level weakness trend tracking
-
-4. **Phase 4 (Later): Insight + planning**
-   - Parent/teacher intervention recommendations
-   - Progress forecasts and weekly plans
-   - Optional cloud sync / multi-home support
-
-<!-- DREAMVAULT_PORTFOLIO_README:BEGIN schema=v1 generated="2026-06-29T02:03:16Z" -->
-## Portfolio status
-
-**Homeschool + kids planner** — Family learning curriculum tied to weareswarm.online/kids-planner missions and rewards.
-
-| Field | Value |
-|---|---|
-| **Canonical ID** | `HomeSchool_Mastery` |
-| **Bucket** | unclassified |
-| **Action** | — |
-| **GitHub** | [HomeSchool_Mastery](https://github.com/Victor-Dixon/HomeSchool_Mastery) |
-
-### Repository inventory
-
-*Filesystem scan at `2026-06-29T02:03:16Z` — regenerate via `python runtime/scripts/sync_portfolio_readmes_001.py`.*
-
-| Signal | Value |
-|---|---|
-| Python files | 53 |
-| Test files | 1 |
-| CI workflows | 0 |
-| runtime/tasks YAML | 0 |
-| pyproject.toml | no |
-| package.json | no |
-| tests/ directory | yes |
-| Git branch | master |
-| Working tree | dirty |
-
-**Top-level directories:** .benchmarks, ai_tutor, docs, lessons_lan, runtime, tests
-
-**Top-level files:** .gitignore, AGENTS.md, CONSOLIDATION_MANIFEST.md, MASTER_TASK_LIST.md, MASTER_TASK_LOG.md, NEXT_UP.md, PRD.md, PRODUCTION_READINESS.md, PROJECT_STRUCTURE_TREE.md, README.md, ROADMAP.md, ai_tutor_launcher.py, app.html, quiz-engine.js, requirements.txt, server.js
-
-### Consolidation signals
-
-- No pyproject.toml or package.json — packaging boundary unclear.
-- No GitHub Actions workflows detected — CI gap.
-
-### Run / verify
-
-- `pip install -r requirements.txt`
-<!-- DREAMVAULT_PORTFOLIO_README:END schema=v1 generated="2026-06-29T02:03:16Z" -->
+> Local-first family homeschool learning platform for TEKS/STAAR-aligned lessons, practice games, XP/mastery accountability, and parent/admin oversight on a home LAN.

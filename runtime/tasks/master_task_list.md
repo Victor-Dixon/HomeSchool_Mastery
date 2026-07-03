@@ -1,67 +1,87 @@
-# Master Task List — HomeSchool Mastery
+# Master Task List - HomeSchool Mastery
 
-> Updated: 2026-05-25
+> Updated: 2026-07-03
 
----
+## Purpose
 
-## Core Features
+HomeSchool Mastery is a local-first family homeschool learning platform. The
+canonical app is `lessons_lan/`, a Flask LAN app for lessons, practice, games,
+XP/mastery accountability, feedback, and parent/admin workflows.
 
-- [ ] Improve quiz engine question variety (synonyms, reworded prompts)
-- [ ] Implement adaptive difficulty ramp (increase after 3 correct, decrease after 2 failures)
-- [ ] Add gap-prioritized quiz sequencing (weakest skills surface first)
-- [ ] Support multi-question quiz types (multiple choice, fill-in-the-blank, matching)
-- [ ] Add skill regression detection (flag mastered skills that show retention loss)
-- [ ] Implement timed quiz mode for STAAR test prep simulation
+## Domain
 
-## Infrastructure
+Family homeschool education and learner accountability, with TEKS/STAAR-aligned
+Math and Reading/ELAR practice.
 
-- [ ] Add CI workflow (`.github/workflows/ci.yml` — pytest on push/PR)
-- [ ] Create household deployment guide (`PRODUCTION_READINESS.md`)
-- [ ] Add data backup verification test (export → read-back → validate)
-- [ ] Document Flask LAN startup/shutdown path in `lessons_lan/README.md`
-- [ ] Add health check endpoint to both apps (`/health`)
-- [ ] Add structured logging (JSON log lines with timestamp, level, event)
+## Current priority order
 
-## Testing
+### Verification and operations
 
-- [ ] Expand pytest coverage for admin mastery dashboard routes (>80%)
-- [ ] Add Node.js test framework for `server.js` quiz engine
-- [ ] Create integration test: full quiz flow (login → quiz → score → skill update)
-- [ ] Add WebSocket connection/reconnection tests
-- [ ] Add data.json schema validation test
-- [ ] Add TEKS skill coverage report (% skills with quiz items)
+- [ ] Run and preserve `cd lessons_lan && pytest -q` as the canonical
+      verification gate.
+- [ ] Add CI workflow for the current Python tests.
+- [ ] Add data backup/export verification for `lessons_lan` learner data.
+- [ ] Complete `PRODUCTION_READINESS.md` checklist items.
+- [ ] Add documented smoke-test steps for household operation.
 
-## Documentation
+### Canonical app quality
 
-- [ ] Audit README for stale Node-era architecture references
-- [ ] Create architecture diagram (both apps, data flow, network topology)
-- [ ] Write teacher/parent user guide (daily workflow, dashboard usage, export)
-- [ ] Document API surface for both apps (routes, params, responses)
-- [ ] Add contributing guide for future development
+- [ ] Expand pytest coverage for admin/mastery dashboard routes.
+- [ ] Add TEKS skill/question coverage report.
+- [ ] Expand Reading and Math question bank coverage with TEKS tags and item
+      types.
+- [ ] Formalize mastery tier map for levels 1-100 and boss gates.
+- [ ] Decide whether `app/generator.py` should be wired into daily lessons or
+      remain a tested utility.
 
-## Gamification
+### Documentation
 
-- [ ] Add streak system (consecutive daily logins/quiz sessions)
-- [ ] Add challenge mode (head-to-head quizzes between Charlie and Chris)
-- [ ] Add new badge tier (beyond current 10 badges)
-- [ ] Add XP multiplier events (bonus XP weekends, subject-focus days)
-- [ ] Add progress milestone celebrations (level-up animations, sound effects)
+- [ ] Add route/API reference for `lessons_lan/`.
+- [ ] Add parent/admin user guide for daily operation.
+- [ ] Add contributing guide for future development.
+- [ ] Keep docs synchronized when canonical architecture changes.
 
-## Data & Analytics
+### Data and analytics
 
-- [ ] Build weekly progress report generator (per student)
-- [ ] Add weakness trend tracking (skills stuck in needs_work over time)
-- [ ] Create subject mastery heatmap visualization
-- [ ] Add export improvements (PDF report, formatted summary)
-- [ ] Add historical quiz performance graphs
-- [ ] Add TEKS coverage gap report (skills with no quiz items)
+- [ ] Build weekly progress report/export for each student.
+- [ ] Add weakness trend tracking from question attempts.
+- [ ] Add subject mastery visualization.
+- [ ] Add historical practice/boss performance reporting.
 
----
+### Future/adaptive learning
+
+- [ ] Implement adaptive difficulty ramp based on recent answers.
+- [ ] Add weak-skill prioritization from attempt history.
+- [ ] Implement timed STAAR-style practice mode.
+- [ ] Add streaks or additional rewards only after current XP/mastery behavior
+      remains test-backed.
+
+### Context decisions
+
+- [ ] Decide whether the root Node prototype is maintained, integrated, or
+      archived. Current canonical status: not canonical.
+- [ ] Decide whether `ai_tutor/` remains a support package or integrates with
+      `lessons_lan/`. Current canonical status: support package.
+- [ ] If either context becomes canonical, update PRD, roadmap, domain model,
+      README, AGENTS, and tests in the same change.
 
 ## Completed
 
-- [x] Identify `lessons_lan/` as canonical implementation
-- [x] Confirm existing pytest coverage exists
-- [x] Add governance baseline artifacts (AGENTS.md, MASTER_TASK_LIST.md, MASTER_TASK_LOG.md)
-- [x] Phase 1 core loop: role-based login, dashboards, skill lifecycle, XP/badges, WebSocket sync
-- [x] Production readiness documentation refresh (2026-05-25)
+- [x] Identify `lessons_lan/` as canonical implementation.
+- [x] Confirm existing pytest coverage exists.
+- [x] Add governance baseline artifacts (`AGENTS.md`, master task docs,
+      `NEXT_UP.md`).
+- [x] Add production readiness checklist file.
+- [x] Document canonical app startup/shutdown/database location.
+- [x] Audit README and architecture docs for stale Node-era references.
+- [x] Produce synchronized domain model with entities, value objects, services,
+      relationships, data flow, integrations, feature mapping, and Unknowns.
+- [x] Synchronize PRD, roadmap, master task list, master task log, NextUp,
+      AGENTS, README, app docs, and runtime task docs on 2026-07-03.
+
+## What remains
+
+The main remaining work is operational evidence: tests, CI, backup/export, TEKS
+coverage reporting, and admin/mastery coverage. Adaptive diagnostics and
+cross-runtime integration should wait until those foundations are documented and
+test-backed.
