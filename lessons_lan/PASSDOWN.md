@@ -1,35 +1,64 @@
-## Passdown (Homeschool Lessons / Dream.OS)
+# Passdown - Homeschool Lessons LAN App
 
-### Snapshot
-- **App URL (LAN)**: `http://192.168.12.201:5000`
-- **Passwords**:
-  - **Charlie**: `34086028`
-  - **Chris**: `0822`
-- **Start**: `START.bat` (one click) or auto-start via `autostart/` Startup-folder script.
-- **Tests**: `.\.venv\Scripts\python -m pytest` (currently green).
+> Updated: 2026-07-03
 
-### What’s working
-- **Today** list per student + **Open** lesson detail view.
-- **Admin**: add lessons, delete lessons, **edit lesson details** (prevents “No details…” gap).
-- **Feedback**: in-app feedback + admin inbox.
-- **RPG**: XP/level tracking, Adventure page shows next boss.
-- **Boss Fight V1**: TEKS-tagged question bank, grading, attempts persisted, assessments recorded, loot roll + gear unlocks.
-- **Seed integrity**: seeded lessons always include required details; tests fail if not.
+## Snapshot
 
-### Engineering notes (important)
-- **Session IDs**: now UUID-backed to avoid collisions (`question_attempts.session_id`, `boss_attempts.session_id`).
-- **Plugin loading**: `app/plugin_loader.py` registers modules into `sys.modules` to support import-time side effects (e.g., dataclasses).
-- **DB**: SQLite in `instance/homeschool.db` (configurable via `app.config["DATABASE"]` for tests).
+- **Canonical app**: `lessons_lan/`
+- **Domain**: local-first family homeschool education and learner accountability
+- **Default URL**: `http://127.0.0.1:5000` on the host, or
+  `http://<LAN-IP>:5000` from tablets on the same network
+- **Start**: `python run.py`, `START.bat`, or autostart scripts
+- **Stop**: `Ctrl+C` for terminal runs; uninstall autostart scripts before
+  disabling startup-managed runs
+- **Database**: `instance/homeschool.db`
+- **Tests**: `pytest -q` from this folder
 
-### Known gaps / next priorities
-- **Content variety**: expand question bank (more Reading + Math, more TEKS tags, more item types).
-- **Lesson engine**: make daily lessons generate practice sets and adapt based on recent misses (use `generator.py` + attempt history).
-- **Mastery gates**: currently enforced mainly around milestone leveling; formalize tier map (1–100 with gates).
-- **Ollama tutor NPC**: `app/tutor.py` exists; needs UI integration + skill-aware prompts.
+## What is working
 
-### Standard operating procedure (SOP)
-- **When adding a new feature**:
-  - Add/extend tests in `tests/`.
-  - Update `PASSDOWN.md` with what changed + what’s next.
-  - Add tasks to the master task DB using `tools/master_tasks.py` (below).
+- **Today** list per student and lesson detail pages.
+- **Practice** with TEKS-tagged question bank, grading, attempts, and XP.
+- **Learning games**: snake practice, Fraction Battle, Text Detective, Discount
+  Dash, Story Duel, Spelling Lab, Vocabulary Signal Breaker.
+- **Lesson AI coach**: UI/API route exists and uses optional local Ollama with
+  offline fallback messaging.
+- **Feedback**: student feedback form and admin inbox.
+- **Admin**: add, edit, delete lessons; reset user passwords.
+- **RPG**: XP/level tracking, Adventure page, mastery gates around boss
+  milestones.
+- **Boss Fight V1**: grading, attempts, assessments, loot roll, and gear unlocks.
+- **Seed integrity**: seeded lessons include required details; tests cover this.
 
+## Engineering notes
+
+- **Session IDs**: UUID-backed for `question_attempts.session_id` and
+  `boss_attempts.session_id`.
+- **Plugin loading**: `app/plugin_loader.py` loads plugin manifests and supports
+  import-time side effects.
+- **DB**: SQLite in `instance/homeschool.db`; tests can override
+  `app.config["DATABASE"]`.
+- **Story Duel state**: signed token plus JSON bundles, not only Flask session.
+- **Generator**: `app/generator.py` is tested but not the current routed daily
+  lesson engine.
+
+## Known gaps / next priorities
+
+- **Verification**: keep `pytest -q` passing and add CI.
+- **Backup/export**: add verification for learner data backup/export.
+- **Content variety**: expand Reading and Math questions with TEKS tags and item
+  types.
+- **TEKS coverage**: report tracked tags/standards by subject and grade.
+- **Admin/mastery tests**: expand route coverage for admin and mastery flows.
+- **Mastery gates**: formalize level 1-100 tier map and gate rules.
+- **Context decisions**: decide whether root Node prototype and `ai_tutor/`
+  remain separate, are archived, or are integrated.
+
+## Standard operating procedure
+
+When adding a feature:
+
+1. Derive behavior from code/docs; mark Unknowns instead of guessing.
+2. Add or extend tests in `tests/` for behavior changes.
+3. Preserve learner data and do not weaken XP/mastery/accountability logic.
+4. Keep student routes and admin routes separated.
+5. Update `PASSDOWN.md`, `TASKLIST.md`, and repository docs if status changes.

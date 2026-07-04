@@ -1,98 +1,109 @@
-# Roadmap — HomeSchool Mastery
+# Roadmap - HomeSchool Mastery
 
-> Last updated: 2026-05-25
+> Last updated: 2026-07-03
 
----
+## What is this project?
 
-## Phase 1 — Core Loop Online (Completed)
+HomeSchool Mastery is a local-first family homeschool learning platform. The
+canonical implementation is the Flask LAN app in `lessons_lan/`.
 
-**Goal:** Stand up the foundational learning system and prove the diagnostic loop works.
+## Why does it exist?
 
-| Milestone | Status |
-|-----------|--------|
-| Role-based login (student PIN, teacher auth) | Done |
-| Student + teacher dashboards | Done |
-| Skill lifecycle tracking (unseen → needs_work → mastered) | Done |
-| XP system (500 XP per level) | Done |
-| Achievement badges (10 badges) | Done |
-| WebSocket real-time sync across devices | Done |
-| data.json local persistence | Done |
-| CSV export for teacher reporting | Done |
-| Mobile-first responsive UI | Done |
+It exists to make daily homeschool work visible, practice-driven, motivating,
+and locally operable for students and a parent/admin.
 
-**Exit Criteria Met:** Students can log in, take quizzes, earn XP, and Victor can monitor progress in real-time.
+## Domain
 
----
+Family homeschool education and learner accountability, with TEKS/STAAR-aligned
+Math and Reading/ELAR practice. Unknowns are tracked explicitly in the PRD and
+domain model.
 
-## Phase 2 — SSOT Enforcement (Current — as of April 2026)
+## Current status
 
-**Goal:** Make the TEKS skill list the single source of truth (SSOT) so quiz availability and coverage track directly to the curriculum model.
+- Canonical app: `lessons_lan/` Flask/Jinja/SQLite LAN app.
+- Support/prototype contexts: root Node app and `ai_tutor/`.
+- Documentation audit: completed and synchronized on 2026-07-03.
+- Current product focus: stabilize and document the canonical LAN app before
+  expanding adaptive diagnostics or cross-runtime features.
 
-| Milestone | Status |
-|-----------|--------|
-| TEKS skills list as canonical data source | In Progress |
-| Auto-generated quizzes from skill records | In Progress |
-| Manual quiz override for curated items | In Progress |
-| Domain-shape checks for quiz outputs | In Progress |
-| Flask LAN lessons app stabilization (lessons_lan/) | In Progress |
-| Existing pytest coverage preserved as verification gate | Done |
+## Phase 1 - Canonical app baseline (Completed)
 
-**Exit Criteria:** Every tracked TEKS skill either has an auto-generated quiz or a curated override. Domain-shape validation prevents malformed quiz data.
-
----
-
-## Phase 3 — Adaptive Diagnostics (Next)
-
-**Goal:** Make the quiz engine smarter — adapt difficulty, prioritize gaps, and surface trends.
+Goal: establish the current source of truth and preserve existing behavior.
 
 | Milestone | Status |
-|-----------|--------|
-| Difficulty ramp based on quiz history | Planned |
-| Gap-prioritized sequencing (worst-first) | Planned |
-| Subject/strand-level weakness trend tracking | Planned |
-| Per-student difficulty calibration | Planned |
+|---|---|
+| Identify `lessons_lan/` as canonical implementation | Done |
+| Preserve existing pytest coverage as verification gate | Done |
+| Document current app operations | Done; ongoing refinement |
+| Preserve local-first learner data model | Done |
+| Keep parent/admin routes separate from student routes | Done; continue testing |
 
-**Exit Criteria:** Quiz difficulty adjusts after consecutive correct/incorrect answers. Students see their weakest skills first. Victor can view weakness trends over time.
+## Phase 2 - Documentation and production readiness (Current)
 
----
-
-## Phase 4 — Insight & Planning
-
-**Goal:** Turn accumulated data into actionable recommendations for Victor.
+Goal: make the repository understandable and safe to operate from docs alone.
 
 | Milestone | Status |
-|-----------|--------|
-| Parent/teacher intervention recommendations | Planned |
-| Progress forecasts (projected mastery dates) | Planned |
-| Weekly learning plans (auto-generated) | Planned |
-| Weakness trend visualizations | Planned |
+|---|---|
+| Documentation-first domain model audit | Done |
+| Synchronize PRD, roadmap, task list, task log, NextUp, AGENTS, README | Done |
+| Document startup/shutdown/database location | Done in `lessons_lan/README.md` |
+| Verify targeted tests after documentation sync | Pending in current branch until tests run |
+| Add backup/export verification for learner data | Open |
+| Add CI for current tests | Open |
+| Complete production readiness checklist | Open |
 
-**Exit Criteria:** Victor receives a weekly summary with specific recommendations for each student.
+Exit criteria:
 
----
+- New contributors can identify the canonical app and domain model without
+  additional explanation.
+- `cd lessons_lan && pytest -q` passes.
+- Production readiness docs cover startup, shutdown, database location, backup,
+  smoke tests, rollback/reset boundaries, and route separation.
 
-## Phase 5 — Scale (Future)
+## Phase 3 - Mastery coverage and admin confidence (Next)
 
-**Goal:** Optionally extend the system beyond the household LAN.
+Goal: strengthen evidence around TEKS/STAAR practice and parent/admin workflows.
 
 | Milestone | Status |
-|-----------|--------|
-| Optional cloud sync for backup and remote access | Planned |
-| Multi-home support (share curriculum across households) | Planned |
-| Voice-based interaction (hands-free quizzes) | Planned |
-| Additional grade-level TEKS support | Planned |
+|---|---|
+| TEKS skill coverage report | Open |
+| Question bank expansion with TEKS tags and item types | Open |
+| Admin/mastery dashboard test expansion | Open |
+| Backup/export verification test | Open |
+| API/route reference for canonical app | Open |
 
-**Exit Criteria:** System can optionally sync to cloud without breaking local-first operation.
+## Phase 4 - Adaptive learning improvements (Later)
 
----
+Goal: make practice sequencing more responsive to learner evidence.
 
-## Phase Progression
+| Milestone | Status |
+|---|---|
+| Difficulty ramp based on recent answers | Planned |
+| Weak-skill prioritization from attempt history | Planned |
+| Lesson practice generation using recent misses | Planned |
+| Formal tier map for levels 1-100 and gates | Planned |
 
-```
-Phase 1 ──▶ Phase 2 ──▶ Phase 3 ──▶ Phase 4 ──▶ Phase 5
- (Done)     (Current)    (Next)     (Later)     (Future)
-  Core        SSOT       Adaptive   Insight     Scale
-  Loop      Enforcement  Diagnostics & Planning
-```
+## Phase 5 - Context decisions and optional integrations (Future)
 
-Each phase builds on the prior. No phase is started until the previous phase's exit criteria are met.
+Goal: decide how non-canonical contexts should evolve.
+
+| Milestone | Status |
+|---|---|
+| Decide Node prototype status: archive, maintain separately, or integrate | Unknown/open |
+| Decide `ai_tutor/` status: support package or canonical integration | Unknown/open |
+| Optional cloud backup/sync without breaking local-first operation | Planned, not current scope |
+| Additional grade-level TEKS support | Planned, not current scope |
+
+## What remains
+
+The next work should focus on operational safety and evidence:
+
+1. Run and document tests for the current branch.
+2. Add backup/export verification.
+3. Add CI for `lessons_lan` tests.
+4. Add TEKS coverage reporting.
+5. Expand admin/mastery tests.
+
+Do not advance adaptive or integration work by assuming behavior from the Node
+prototype or `ai_tutor/`; either wire it into the canonical app with tests or
+document it as separate support/legacy behavior.

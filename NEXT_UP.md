@@ -1,45 +1,77 @@
 # Next Up
 
-> Updated: 2026-05-25
+> Updated: 2026-07-03
 
----
+## What is this project?
 
-## 1. Audit README for stale Node-era architecture references
+HomeSchool_Mastery is a local-first family homeschool learning platform. The
+canonical app is `lessons_lan/`.
 
-**AC:** README accurately reflects the dual-app reality (Node mastery + Flask lessons_lan), with no misleading single-app language.
+## Why does it exist?
 
-## 2. Document Flask LAN startup/shutdown path
+It supports daily lessons, TEKS/STAAR-aligned practice, learning games,
+XP/mastery accountability, feedback, and parent/admin workflows on a home LAN.
 
-**AC:** `lessons_lan/README.md` contains complete setup instructions — venv creation, dependency install, run command, graceful shutdown, and LAN access URLs.
+## Domain
 
-## 3. Add data backup/export verification test
+Family homeschool education and learner accountability.
 
-**AC:** A test in `lessons_lan/tests/` exports CSV, reads it back, and verifies row count and column content match expected output.
+## Recently completed
 
-## 4. Expand admin mastery dashboard tests
+- Documentation-first domain model audit.
+- README/PRD/roadmap/task docs/AGENTS synchronization around `lessons_lan/`.
+- Startup, shutdown, and database location documented for the canonical app.
 
-**AC:** Admin routes in `lessons_lan/` have >80% test coverage; all dashboard GET/POST endpoints return expected status codes and content.
+## 1. Run and preserve the canonical test gate
 
-## 5. Add TEKS skill coverage report generator
+**AC:** `cd lessons_lan && pytest -q` passes in the current environment or any
+failure is documented with the failing tests and cause.
 
-**AC:** A script outputs the percentage of tracked TEKS skills that have associated quiz items, broken down by subject and grade.
+## 2. Add data backup/export verification
 
-## 6. Implement adaptive difficulty ramp for quiz engine
+**AC:** A documented command or test exports `lessons_lan` learner data, reads it
+back, and verifies row count and important columns for users, lessons,
+completions, attempts, player state, gear unlocks, and feedback.
 
-**AC:** After 3 consecutive correct answers on a skill strand, the next quiz increases in difficulty (longer questions, fewer hints). After 2 consecutive failures, difficulty decreases.
+## 3. Add CI workflow for `lessons_lan`
 
-## 7. Add production readiness checklist for household deployment
+**AC:** `.github/workflows/ci.yml` runs the current Python test gate on push/PR
+to `master`, and the workflow passes on the current suite.
 
-**AC:** A `PRODUCTION_READINESS.md` file exists covering: pre-deploy checks, data backup, network config, startup commands, smoke tests, and rollback steps.
+## 4. Expand admin/mastery route tests
 
-## 8. Add CI workflow for pytest on lessons_lan
+**AC:** Admin lesson/user/feedback routes and Adventure/mastery pages have
+focused tests for authorized, unauthorized, and expected-content behavior.
 
-**AC:** `.github/workflows/ci.yml` runs `pytest -q` in `lessons_lan/` on push/PR to main. Workflow passes on current test suite.
+## 5. Add TEKS skill/question coverage report
 
-## 9. Add WebSocket reconnection handling for mobile devices
+**AC:** A script reports coverage of tracked standards/TEKS tags by subject and
+grade from the canonical SQLite/question-bank data, marking missing full-corpus
+coverage as Unknown rather than assumed complete.
 
-**AC:** Client-side WebSocket code auto-reconnects within 5 seconds after disconnect, with exponential backoff up to 30 seconds.
+## 6. Finish production readiness checklist
 
-## 10. Create parent progress report email/export feature
+**AC:** `PRODUCTION_READINESS.md` covers pre-deploy checks, backup/restore,
+network configuration, startup/shutdown, smoke tests, rollback/reset boundaries,
+and admin/student route separation.
 
-**AC:** Victor can generate a weekly summary per student (skills mastered, quizzes taken, XP earned, current gaps) and export it as PDF or formatted text.
+## 7. Document canonical route/API surface
+
+**AC:** A doc lists `lessons_lan` routes by actor (student/admin/operator/API),
+required auth, request method, and domain entities touched.
+
+## 8. Expand question/content variety
+
+**AC:** New Reading and Math questions include TEKS tags, item types, tests where
+behavior changes, and no weakened mastery/XP behavior.
+
+## 9. Decide root Node prototype status
+
+**AC:** A documented decision states whether the root Node runtime is maintained
+separately, archived, or reintegrated, and updates docs/tests accordingly.
+
+## 10. Decide `ai_tutor/` support-package status
+
+**AC:** A documented decision states whether `ai_tutor/` remains separate support
+tooling or becomes integrated with `lessons_lan`; if integrated, shared data
+flow and tests are added.

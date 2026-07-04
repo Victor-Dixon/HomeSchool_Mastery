@@ -111,13 +111,13 @@ The following are intentional cosmetic changes made during merge (emoji removal,
 
 ## Missing / Gaps
 
-- [ ] `chris_tutor_bot/README.md` — NOT transferred (donor had a package-level README; ai_tutor/ has no README)
+- [x] `chris_tutor_bot/README.md` - package-level docs added as `ai_tutor/README.md` during the 2026-07-03 documentation audit
 - [ ] `main.py` root launcher — NOT transferred (donor had a CLI launcher for api/bot/test; HomeSchool_Mastery has no equivalent ai_tutor launcher)
 - [ ] `chris_tutor_bot/requirements.txt` — NOT transferred as standalone file (merged into root `requirements.txt` — acceptable)
 - [ ] `.github/workflows/ci.yml` — NOT transferred (donor had CI config; not merged into HomeSchool_Mastery)
-- [ ] `docs/DOMAIN_MODEL.md` — present in both repos (check for divergence needed)
-- [ ] `docs/PRD.md` — present in both repos (check for divergence needed)
-- [ ] `docs/ROADMAP.md` — present in both repos (check for divergence needed)
+- [x] `docs/DOMAIN_MODEL.md` - reconciled for HomeSchool_Mastery canonical `lessons_lan/` domain on 2026-07-03; `ai_tutor/` documented as support package
+- [x] `docs/PRD.md` - reconciled on 2026-07-03
+- [x] `docs/ROADMAP.md` - reconciled on 2026-07-03
 
 ## Test Results
 
@@ -147,12 +147,12 @@ tests/test_ai_tutor_api.py::AskEndpointTests::test_ask_accepts_question_only PAS
 | Test cases | 2 | 2 | FULL PARITY |
 | Config vars | 5 | 5 | FULL PARITY |
 
-**Supporting artifacts: 3 NOT transferred** (README, main.py launcher, CI workflow)
+**Supporting artifacts: 2 NOT transferred** (main.py launcher, CI workflow)
 
 ## Blockers for Archive Authorization
 
 1. **None blocking** — all functional capabilities are at full parity
-2. **Advisory:** package-level README and root launcher were not transferred (low priority, not functional blockers)
+2. **Advisory:** root launcher was not transferred (low priority, not functional blocker)
 3. **Advisory:** CI workflow not transferred (HomeSchool_Mastery may have its own CI)
 
 ## Recommended Next Lane
