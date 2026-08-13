@@ -124,9 +124,9 @@ include:
 +-- AGENTS.md                 # Agent rules and canonical app guidance
 +-- PRD.md                    # PRD summary
 +-- ROADMAP.md                # Roadmap summary
-+-- MASTER_TASK_LIST.md       # Task summary
-+-- MASTER_TASK_LOG.md        # Task log summary
-+-- NEXT_UP.md                # Current next work
++-- MASTER_TASK_LIST.md       # Backlog / strategic task summary
++-- MASTER_TASK_LOG.md        # Dated evidence / history summary
++-- NEXT_UP.md                # Immediate 3-5 item execution queue
 +-- PRODUCTION_READINESS.md   # Household readiness checklist
 ```
 
@@ -190,7 +190,7 @@ Completed:
 
 - `lessons_lan/` identified as canonical.
 - Documentation-first domain model audit completed on 2026-07-03.
-- PRD, roadmap, task docs, NextUp, AGENTS, README, production readiness, and
+- PRD, roadmap, task docs, NEXT_UP, AGENTS, README, production readiness, and
   app-local docs synchronized around the canonical app.
 - Current Flask app has tests for smoke routes, lessons, mastery, loot, boss
   rewards, generator behavior, item types, snake practice, and Story Duel.
@@ -217,6 +217,10 @@ Remaining:
 - Current next work: `NEXT_UP.md`
 - Agent rules: `AGENTS.md`
 - Canonical app operations: `lessons_lan/README.md`
+
+Planning files have distinct roles: `MASTER_TASK_LIST.md` is backlog,
+`MASTER_TASK_LOG.md` is dated evidence/history, and `NEXT_UP.md` is the
+immediate 3-5 task execution queue.
 
 ## External integrations
 

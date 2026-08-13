@@ -22,7 +22,7 @@ Math and Reading/ELAR practice.
 
 - `lessons_lan/` identified as canonical.
 - Documentation-first domain model audit completed.
-- PRD, roadmap, master task docs, NextUp, AGENTS, README, and app docs aligned
+- PRD, roadmap, master task docs, NEXT_UP, AGENTS, README, and app docs aligned
   around the canonical Flask implementation.
 
 ## Current

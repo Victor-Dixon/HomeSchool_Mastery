@@ -45,6 +45,10 @@ Do not update one copy without updating the corresponding canonical document:
 - `AGENTS.md`, `README.md`, and `CONSOLIDATION_MANIFEST.md` when the canonical
   app or architecture status changes
 
+Planning files have distinct roles: task lists are backlog and strategic
+inventory, task logs are dated evidence/history, and `NEXT_UP.md` is only the
+immediate 3-5 item execution queue.
+
 ## Current implementation boundaries
 
 | Runtime/context | Status in docs |

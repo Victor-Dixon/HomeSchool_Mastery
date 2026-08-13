@@ -45,7 +45,7 @@ Goal: make the repository understandable and safe to operate from docs alone.
 | Milestone | Status |
 |---|---|
 | Documentation-first domain model audit | Done |
-| Synchronize PRD, roadmap, task list, task log, NextUp, AGENTS, README | Done |
+| Synchronize PRD, roadmap, task list, task log, NEXT_UP, AGENTS, README | Done |
 | Document startup/shutdown/database location | Done in `lessons_lan/README.md` |
 | Verify targeted tests after documentation sync | Pending in current branch until tests run |
 | Add backup/export verification for learner data | Open |

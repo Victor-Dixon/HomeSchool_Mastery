@@ -1,6 +1,17 @@
 # Master Task List - HomeSchool Mastery
 
-> Updated: 2026-07-03
+> Updated: 2026-08-13
+
+This file is the expanded backlog and strategic task inventory. It answers:
+"What work exists in this repo?"
+
+## Planning file contract
+
+| File | Purpose | Answers |
+| --- | --- | --- |
+| `MASTER_TASK_LIST.md` / `runtime/tasks/master_task_list.md` | Full backlog and strategic task inventory. | What work exists in this repo? |
+| `MASTER_TASK_LOG.md` / `runtime/tasks/master_task_log.md` | Dated evidence, decisions, and completed work. | What happened, when, and why? |
+| `NEXT_UP.md` | Immediate execution queue, limited to 3-5 active tasks. | What should the next agent do right now? |
 
 ## Purpose
 
@@ -76,7 +87,7 @@ Math and Reading/ELAR practice.
 - [x] Audit README and architecture docs for stale Node-era references.
 - [x] Produce synchronized domain model with entities, value objects, services,
       relationships, data flow, integrations, feature mapping, and Unknowns.
-- [x] Synchronize PRD, roadmap, master task list, master task log, NextUp,
+- [x] Synchronize PRD, roadmap, master task list, master task log, NEXT_UP,
       AGENTS, README, app docs, and runtime task docs on 2026-07-03.
 
 ## What remains

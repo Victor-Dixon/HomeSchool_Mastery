@@ -54,6 +54,15 @@ instead of guessing.
 - Canonical app operations: `lessons_lan/README.md` and
   `lessons_lan/PASSDOWN.md`
 
+Planning files have distinct roles:
+
+- `MASTER_TASK_LIST.md` and `runtime/tasks/master_task_list.md` are backlog and
+  strategic inventory: what work exists in this repo.
+- `MASTER_TASK_LOG.md` and `runtime/tasks/master_task_log.md` are dated
+  evidence/history: what happened, when, and why.
+- `NEXT_UP.md` is the immediate 3-5 item execution queue: what the next agent
+  should do right now.
+
 When changing architecture, behavior, or project status, update the related docs
 in the same change.
 
