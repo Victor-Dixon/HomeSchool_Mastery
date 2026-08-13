@@ -59,7 +59,7 @@ Planning files have distinct roles:
 - `MASTER_TASK_LIST.md` and `runtime/tasks/master_task_list.md` are backlog and
   strategic inventory: what work exists in this repo.
 - `MASTER_TASK_LOG.md` and `runtime/tasks/master_task_log.md` are dated
-  evidence/history: what happened, when, and why.
+  verified evidence/history: what closed, when, and why.
 - `NEXT_UP.md` is the immediate 3-5 item execution queue: what the next agent
   should do right now.
 
@@ -78,3 +78,20 @@ in the same change.
 - Keep parent/admin routes separated from student routes.
 - Keep documentation internally consistent; remove stale Node-era assumptions
   when they conflict with the canonical Flask app.
+
+## Standard Repository Working Contract
+
+1. Read `AGENTS.md`, `NEXT_UP.md`, `MASTER_TASK_LIST.md`, `MASTER_TASK_LOG.md`, any repo SSOT/state manifest, branch/HEAD, and relevant tests before editing.
+2. Work one bounded lane with explicit **TARGET, ACTION, VERIFY, COMMIT**. Do not mix unrelated cleanup, features, migrations, or speculative rewrites.
+3. Use Fast TDD: smallest acceptance test, smallest safe change, targeted verification, then broad verification.
+4. When repo state changes, update `NEXT_UP.md` and `MASTER_TASK_LIST.md` in the same lane, plus the execution-state SSOT when present.
+5. Append the canonical task log only after verification proves closure. Never record planned or merely implemented work as completed.
+6. For non-trivial work, create/update `runtime/tasks/*.yaml` with objective, scope, acceptance, verification, holds, and next lane when supported.
+7. Trust but verify: targeted tests, repo validators, `git diff --check`, and final status/diff review. PASS/COMPLETE/deployed/merged claims require evidence.
+8. Salvage before destructive cleanup. Classify variants/donor material before delete/reset/rewrite; preserve canonical source unless evidence proves it stale.
+9. End code or repo-structure work with a clean scoped commit. Planning-only work still requires synchronized task surfaces and verification.
+10. Leave the next executable step in `NEXT_UP.md` with its verification gate so the next agent does not rediscover the lane.
+
+### Canonical Planning Names
+
+Fleet-standard root planning names are `NEXT_UP.md`, `MASTER_TASK_LIST.md`, and `MASTER_TASK_LOG.md`. Existing explicit repo SSOTs remain authoritative until deliberately migrated; compatibility mirrors must not become competing authorities.
