@@ -6,6 +6,7 @@ Owner: Local family deployment (homeschool)
 """
 
 import os
+import shutil
 import sqlite3
 
 import pytest
@@ -13,9 +14,9 @@ import pytest
 from app import create_app
 
 
-@pytest.fixture()
-def app(tmp_path):
-    db_path = tmp_path / "test.db"
+@pytest.fixture(scope="module")
+def seeded_db_path(tmp_path_factory):
+    db_path = tmp_path_factory.mktemp("seeded_app_db") / "seeded.db"
     a = create_app()
     a.config.update(
         TESTING=True,
@@ -32,6 +33,22 @@ def app(tmp_path):
         # sanity: points to temp DB
         con = get_db()
         assert isinstance(con, sqlite3.Connection)
+        con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+
+    return db_path
+
+
+@pytest.fixture()
+def app(tmp_path, seeded_db_path):
+    db_path = tmp_path / "test.db"
+    shutil.copyfile(seeded_db_path, db_path)
+
+    a = create_app()
+    a.config.update(
+        TESTING=True,
+        SECRET_KEY="test",
+        DATABASE=str(db_path),
+    )
 
     yield a
 
