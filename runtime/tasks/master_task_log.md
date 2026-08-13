@@ -1,7 +1,10 @@
 # Master Task Log - HomeSchool Mastery
 
 > Chronological record of completed tasks, milestones, and significant events.
-> Updated: 2026-07-03
+> Updated: 2026-08-13
+
+This file is the expanded dated evidence/history log. It answers: "What
+happened, when, and why?"
 
 ## Project context
 
@@ -78,3 +81,14 @@ TEKS/STAAR-aligned Math and Reading/ELAR practice.
 - Add TEKS coverage reporting.
 - Expand admin/mastery route tests.
 - Decide future status of root Node prototype and `ai_tutor/` support package.
+
+## 2026-08-13
+
+- Reconciled the stranded local planning-standardization commit `d4d18e7` onto
+  current remote `origin/master` without overwriting PR #2's documentation
+  domain-model work.
+- Standardized planning-file roles across the root summary docs and expanded
+  runtime task docs.
+- Kept `NEXT_UP.md` as the immediate 3-5 item execution queue and left broader
+  backlog in the task-list files.
+- No product/source/runtime behavior was changed.

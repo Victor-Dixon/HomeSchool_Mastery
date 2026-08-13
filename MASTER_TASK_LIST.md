@@ -1,7 +1,19 @@
 # Master Task List - Summary
 
 > Expanded task list: `runtime/tasks/master_task_list.md`
-> Updated: 2026-07-03
+> Updated: 2026-08-13
+
+This file is the root summary backlog and strategic task inventory. It answers:
+"What work exists in this repo?" Keep expanded backlog detail in
+`runtime/tasks/master_task_list.md`.
+
+## Planning file contract
+
+| File | Purpose | Answers |
+| --- | --- | --- |
+| `MASTER_TASK_LIST.md` / `runtime/tasks/master_task_list.md` | Full backlog and strategic task inventory. | What work exists in this repo? |
+| `MASTER_TASK_LOG.md` / `runtime/tasks/master_task_log.md` | Dated evidence, decisions, and completed work. | What happened, when, and why? |
+| `NEXT_UP.md` | Immediate execution queue, limited to 3-5 active tasks. | What should the next agent do right now? |
 
 ## What is this project?
 
@@ -38,9 +50,10 @@ Math and Reading/ELAR practice.
 - [x] Document canonical app startup/shutdown/database location.
 - [x] Audit stale README and architecture references.
 - [x] Produce synchronized documentation-first domain model.
-- [x] Update PRD, roadmap, task list, task log, NextUp, AGENTS, README, and app
+- [x] Update PRD, roadmap, task list, task log, NEXT_UP, AGENTS, README, and app
       docs around the current implementation.
 
 ## Next operating step
 
-Work on backup/export verification and CI before expanding adaptive diagnostics.
+Use `NEXT_UP.md` for the current 3-5 item execution queue. Work on
+backup/export verification and CI before expanding adaptive diagnostics.

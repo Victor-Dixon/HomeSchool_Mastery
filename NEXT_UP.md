@@ -1,6 +1,10 @@
 # Next Up
 
-> Updated: 2026-07-03
+> Updated: 2026-08-13
+
+This is the immediate execution queue. Keep it to 3-5 active tasks. Do not place
+completed evidence or long backlog inventory here; use `MASTER_TASK_LOG.md` and
+`MASTER_TASK_LIST.md` for those.
 
 ## What is this project?
 
@@ -15,12 +19,6 @@ XP/mastery accountability, feedback, and parent/admin workflows on a home LAN.
 ## Domain
 
 Family homeschool education and learner accountability.
-
-## Recently completed
-
-- Documentation-first domain model audit.
-- README/PRD/roadmap/task docs/AGENTS synchronization around `lessons_lan/`.
-- Startup, shutdown, and database location documented for the canonical app.
 
 ## 1. Run and preserve the canonical test gate
 
@@ -49,29 +47,6 @@ focused tests for authorized, unauthorized, and expected-content behavior.
 grade from the canonical SQLite/question-bank data, marking missing full-corpus
 coverage as Unknown rather than assumed complete.
 
-## 6. Finish production readiness checklist
-
-**AC:** `PRODUCTION_READINESS.md` covers pre-deploy checks, backup/restore,
-network configuration, startup/shutdown, smoke tests, rollback/reset boundaries,
-and admin/student route separation.
-
-## 7. Document canonical route/API surface
-
-**AC:** A doc lists `lessons_lan` routes by actor (student/admin/operator/API),
-required auth, request method, and domain entities touched.
-
-## 8. Expand question/content variety
-
-**AC:** New Reading and Math questions include TEKS tags, item types, tests where
-behavior changes, and no weakened mastery/XP behavior.
-
-## 9. Decide root Node prototype status
-
-**AC:** A documented decision states whether the root Node runtime is maintained
-separately, archived, or reintegrated, and updates docs/tests accordingly.
-
-## 10. Decide `ai_tutor/` support-package status
-
-**AC:** A documented decision states whether `ai_tutor/` remains separate support
-tooling or becomes integrated with `lessons_lan`; if integrated, shared data
-flow and tests are added.
+Broader backlog remains in `MASTER_TASK_LIST.md` and
+`runtime/tasks/master_task_list.md`; promote items here only when they become
+one of the next 3-5 execution tasks.
