@@ -1,6 +1,6 @@
 # Master Task List - HomeSchool Mastery
 
-> Updated: 2026-08-13
+> Updated: 2026-08-16
 
 This file is the expanded backlog and strategic task inventory. It answers:
 "What work exists in this repo?"
@@ -11,7 +11,7 @@ This file is the expanded backlog and strategic task inventory. It answers:
 | --- | --- | --- |
 | `MASTER_TASK_LIST.md` / `runtime/tasks/master_task_list.md` | Full backlog and strategic task inventory. | What work exists in this repo? |
 | `MASTER_TASK_LOG.md` / `runtime/tasks/master_task_log.md` | Dated evidence, decisions, and completed work. | What happened, when, and why? |
-| `NEXT_UP.md` | Immediate execution queue, limited to 3-5 active tasks. | What should the next agent do right now? |
+| `NEXT_UP.md` | Immediate execution queue. | What should the next agent do right now? |
 
 ## Purpose
 
@@ -28,29 +28,33 @@ Math and Reading/ELAR practice.
 
 ### Verification and operations
 
-- [ ] Run and preserve `cd lessons_lan && pytest -q` as the canonical
-      verification gate.
-- [ ] Add CI workflow for the current Python tests.
-- [ ] Add data backup/export verification for `lessons_lan` learner data.
-- [ ] Complete `PRODUCTION_READINESS.md` checklist items.
-- [ ] Add documented smoke-test steps for household operation.
+- [ ] Maintain `cd lessons_lan && python -m pytest -q` as the canonical local verification gate.
+- [x] Add canonical GitHub Actions CI for the current Python tests; PR #6 exact-head CI succeeded before merge.
+- [ ] Add and verify learner-data backup/export plus isolated restore/smoke behavior.
+- [ ] Verify admin/student route boundaries, including destructive-reset isolation.
+- [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
+- [ ] Add documented household smoke-test steps where missing.
 
 ### Canonical app quality
 
-- [ ] Expand pytest coverage for admin/mastery dashboard routes.
+- [x] Salvage and merge the existing test-runtime optimization onto the current CI-enabled master through PR #7; original PR #4 is closed as superseded.
+- [ ] Expand pytest coverage for admin/mastery dashboard routes where gaps remain.
 - [ ] Add TEKS skill/question coverage report.
-- [ ] Expand Reading and Math question bank coverage with TEKS tags and item
-      types.
+- [ ] Expand Reading and Math question bank coverage with TEKS tags and item types.
 - [ ] Formalize mastery tier map for levels 1-100 and boss gates.
-- [ ] Decide whether `app/generator.py` should be wired into daily lessons or
-      remain a tested utility.
+- [ ] Decide whether `app/generator.py` should be wired into daily lessons or remain a tested utility.
+
+### Active/held ownership
+
+- [ ] PR #5 family-pilot package remains `DRAFT / READINESS_HELD`; do not activate external or paid pilot work until its documented readiness gates are satisfied or explicitly bounded out.
+- [ ] Revalidate current PR ownership and branch ancestry immediately before deleting any merged-stale or superseded branch.
 
 ### Documentation
 
 - [ ] Add route/API reference for `lessons_lan/`.
 - [ ] Add parent/admin user guide for daily operation.
 - [ ] Add contributing guide for future development.
-- [ ] Keep docs synchronized when canonical architecture changes.
+- [ ] Keep docs synchronized when canonical architecture or readiness state changes.
 
 ### Data and analytics
 
@@ -64,35 +68,30 @@ Math and Reading/ELAR practice.
 - [ ] Implement adaptive difficulty ramp based on recent answers.
 - [ ] Add weak-skill prioritization from attempt history.
 - [ ] Implement timed STAAR-style practice mode.
-- [ ] Add streaks or additional rewards only after current XP/mastery behavior
-      remains test-backed.
+- [ ] Add streaks or additional rewards only after current XP/mastery behavior remains test-backed.
 
 ### Context decisions
 
-- [ ] Decide whether the root Node prototype is maintained, integrated, or
-      archived. Current canonical status: not canonical.
-- [ ] Decide whether `ai_tutor/` remains a support package or integrates with
-      `lessons_lan/`. Current canonical status: support package.
-- [ ] If either context becomes canonical, update PRD, roadmap, domain model,
-      README, AGENTS, and tests in the same change.
+- [ ] Decide whether the root Node prototype is maintained, integrated, or archived. Current canonical status: not canonical.
+- [ ] Decide whether `ai_tutor/` remains a support package or integrates with `lessons_lan/`. Current canonical status: support package.
+- [ ] If either context becomes canonical, update PRD, roadmap, domain model, README, AGENTS, and tests in the same change.
 
 ## Completed
 
 - [x] Identify `lessons_lan/` as canonical implementation.
 - [x] Confirm existing pytest coverage exists.
-- [x] Add governance baseline artifacts (`AGENTS.md`, master task docs,
-      `NEXT_UP.md`).
+- [x] Add governance baseline artifacts (`AGENTS.md`, master task docs, `NEXT_UP.md`).
 - [x] Add production readiness checklist file.
 - [x] Document canonical app startup/shutdown/database location.
 - [x] Audit README and architecture docs for stale Node-era references.
-- [x] Produce synchronized domain model with entities, value objects, services,
-      relationships, data flow, integrations, feature mapping, and Unknowns.
-- [x] Synchronize PRD, roadmap, master task list, master task log, NEXT_UP,
-      AGENTS, README, app docs, and runtime task docs on 2026-07-03.
+- [x] Produce synchronized domain model with entities, value objects, services, relationships, data flow, integrations, feature mapping, and Unknowns.
+- [x] Synchronize PRD, roadmap, master task list, master task log, NEXT_UP, AGENTS, README, app docs, and runtime task docs on 2026-07-03.
+- [x] Merge PR #6 after exact-head `lessons_lan CI` success, establishing independent CI authority.
+- [x] Port PR #4's unique test/config optimization to current master as PR #7, verify exact-head CI, merge it, and close PR #4 without merge as superseded.
 
 ## What remains
 
-The main remaining work is operational evidence: tests, CI, backup/export, TEKS
-coverage reporting, and admin/mastery coverage. Adaptive diagnostics and
-cross-runtime integration should wait until those foundations are documented and
-test-backed.
+The immediate foundation is operational learner-data safety: backup/export and
+isolated restore verification. Route-boundary proof, TEKS coverage, and broader
+readiness follow. Adaptive diagnostics, external pilot activation, and
+cross-runtime integration should not outrun those readiness gates.
