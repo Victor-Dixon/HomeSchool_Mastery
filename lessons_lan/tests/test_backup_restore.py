@@ -18,10 +18,14 @@ def test_backup_and_isolated_restore_preserve_canonical_learner_data(tmp_path):
         init_db()
         seed_if_empty()
         db = get_db()
-        user_id = db.execute("SELECT id FROM users ORDER BY id LIMIT 1").fetchone()[0]
-        lesson_id = db.execute(
-            "SELECT id FROM lessons WHERE user_id = ? ORDER BY id LIMIT 1", (user_id,)
-        ).fetchone()[0]
+        learner_row = db.execute(
+            "SELECT lessons.user_id, lessons.id AS lesson_id "
+            "FROM lessons JOIN users ON users.id = lessons.user_id "
+            "WHERE users.is_admin = 0 ORDER BY lessons.id LIMIT 1"
+        ).fetchone()
+        assert learner_row is not None
+        user_id = learner_row["user_id"]
+        lesson_id = learner_row["lesson_id"]
         db.execute(
             "INSERT OR REPLACE INTO completions (lesson_id) VALUES (?)", (lesson_id,)
         )
