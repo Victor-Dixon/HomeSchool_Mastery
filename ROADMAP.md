@@ -1,7 +1,7 @@
 # Roadmap - Summary
 
 > Canonical expanded roadmap: `docs/ROADMAP.md`
-> Updated: 2026-07-03
+> Updated: 2026-08-16
 
 ## What is this project?
 
@@ -22,22 +22,23 @@ Math and Reading/ELAR practice.
 
 - `lessons_lan/` identified as canonical.
 - Documentation-first domain model audit completed.
-- PRD, roadmap, master task docs, NEXT_UP, AGENTS, README, and app docs aligned
-  around the canonical Flask implementation.
+- PRD, roadmap, master task docs, NEXT_UP, AGENTS, README, and app docs aligned around the canonical Flask implementation.
+- Canonical `lessons_lan CI` added and exact-head verified through PR #6.
+- Test-runtime optimization salvaged from stale PR #4, reverified on current master through PR #7, and merged; PR #4 closed as superseded.
 
 ## Current
 
-- Keep the canonical app stable and test-backed.
-- Complete production readiness items.
-- Preserve learner data and document operator-only reset/backup workflows.
+- Keep the canonical app stable and test-backed through the local pytest gate and GitHub Actions CI.
+- Complete production-readiness items.
+- Preserve learner data and prove backup/export plus isolated restore behavior before broader pilot/readiness claims.
 
 ## Next
 
-1. Run and maintain `cd lessons_lan && pytest -q` as the verification gate.
-2. Add backup/export verification for learner data.
-3. Add CI for current tests.
-4. Expand TEKS/STAAR coverage reporting.
-5. Improve parent/admin mastery workflow tests.
+1. Verify learner-data backup/export and isolated restore/smoke behavior.
+2. Verify admin/student route boundaries and destructive-reset isolation.
+3. Expand admin/mastery tests where evidence is still missing.
+4. Add TEKS/STAAR coverage reporting.
+5. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.
 
 ## Later
 
