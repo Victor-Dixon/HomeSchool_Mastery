@@ -29,6 +29,7 @@ and restored safely before household production or any external pilot expands.
 **Current state**
 
 - `lessons_lan/` is the canonical app.
+- The backup/restore verification slice is `ACTIVE` on `feat/learner-data-backup-restore-20260816`; implementation and targeted tests are present, but exact-head CI is still required before review/closeout claims.
 - PR #6 added the canonical `lessons_lan CI` workflow and merged after exact-head CI success.
 - PR #7 salvaged the prior test-runtime optimization onto current `master`, passed exact-head CI, and merged.
 - Original PR #4 is closed without merge as superseded by PR #7.
@@ -40,9 +41,7 @@ and restored safely before household production or any external pilot expands.
 
 **Blockers**
 
-- No verified backup/export + restore procedure currently proves preservation of
-  users, lessons, completions, question attempts, player state, gear unlocks,
-  feedback, and other canonical learner-data tables.
+- Exact-head `lessons_lan CI` has not yet verified the active backup/restore implementation slice.
 
 **Done evidence**
 

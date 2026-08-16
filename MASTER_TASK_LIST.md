@@ -35,7 +35,7 @@ Math and Reading/ELAR practice.
 ### Production readiness
 
 - [ ] Maintain the canonical verification gate: `cd lessons_lan && python -m pytest -q`.
-- [ ] Add and verify learner-data backup/export plus isolated restore/smoke testing.
+- [ ] Add and verify learner-data backup/export plus isolated restore/smoke testing. **ACTIVE:** `feat/learner-data-backup-restore-20260816`; exact-head CI required before closure.
 - [ ] Verify admin/student route boundaries, including that destructive reset is unavailable to student flows.
 - [ ] Expand admin/mastery dashboard tests where gaps remain.
 - [ ] Add TEKS skill/question coverage reporting.
