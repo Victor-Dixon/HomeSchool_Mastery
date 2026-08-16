@@ -1,7 +1,7 @@
 # Master Task List - Summary
 
 > Expanded task list: `runtime/tasks/master_task_list.md`
-> Updated: 2026-08-13
+> Updated: 2026-08-16
 
 This file is the root summary backlog and strategic task inventory. It answers:
 "What work exists in this repo?" Keep expanded backlog detail in
@@ -35,7 +35,8 @@ Math and Reading/ELAR practice.
 - [ ] Run and preserve the canonical verification gate:
       `cd lessons_lan && pytest -q`.
 - [ ] Add data backup/export verification for `lessons_lan` learner data.
-- [ ] Add CI workflow for the current Python tests.
+- [ ] Add CI workflow for the current Python tests. ACTIVE as
+      `lessons_lan_ci_20260816`; exact-head workflow success is required.
 - [ ] Expand admin/mastery dashboard tests.
 - [ ] Add TEKS skill/question coverage report.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
@@ -55,5 +56,6 @@ Math and Reading/ELAR practice.
 
 ## Next operating step
 
-Use `NEXT_UP.md` for the current 3-5 item execution queue. Work on
-backup/export verification and CI before expanding adaptive diagnostics.
+Use `NEXT_UP.md` for the current 3-5 item execution queue. Complete the active
+CI gate, then advance backup/export verification before expanding adaptive
+diagnostics.

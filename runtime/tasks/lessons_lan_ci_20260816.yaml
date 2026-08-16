@@ -1,0 +1,27 @@
+task_id: lessons_lan_ci_20260816
+status: ACTIVE
+objective: >-
+  Add the canonical GitHub Actions verification gate for the lessons_lan Flask app
+  so product-readiness work can receive independent exact-head test evidence.
+scope:
+  - .github/workflows/ci.yml
+  - runtime/tasks/lessons_lan_ci_20260816.yaml
+  - NEXT_UP.md
+  - MASTER_TASK_LIST.md
+acceptance:
+  - workflow runs on pull requests to master when lessons_lan or the workflow changes
+  - workflow installs runtime and test dependencies from canonical requirements
+  - workflow runs python -m pytest -q from lessons_lan
+  - exact-head pull-request workflow concludes success
+verification:
+  targeted:
+    command: cd lessons_lan && python -m pytest -q
+    status: PENDING_CI
+  exact_head_ci:
+    status: PENDING
+holds:
+  - do not mark the CI task complete before an exact-head workflow succeeds
+  - do not modify learner data, Revenue pilot artifacts, or product behavior
+  - do not merge while the exact-head workflow is red or absent
+next_lane: >-
+  After CI is independently green, advance backup/export verification from NEXT_UP.
