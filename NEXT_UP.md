@@ -2,55 +2,80 @@
 
 > Updated: 2026-08-16
 
-This is the immediate execution queue. Keep it to 3-5 active tasks. Do not place
-completed evidence or long backlog inventory here; use `MASTER_TASK_LOG.md` and
-`MASTER_TASK_LIST.md` for those.
+This is the immediate executable queue. `MASTER_TASK_LIST.md` and
+`runtime/tasks/master_task_list.md` remain the complete backlog; the task logs
+remain append-only verified history.
 
-## What is this project?
+## Highest-priority executable lane
 
-HomeSchool_Mastery is a local-first family homeschool learning platform. The
-canonical app is `lessons_lan/`.
+### Verify learner-data backup/export and isolated restore
 
-## Why does it exist?
+**Why it exists**
 
-It supports daily lessons, TEKS/STAAR-aligned practice, learning games,
-XP/mastery accountability, feedback, and parent/admin workflows on a home LAN.
+HomeSchool Mastery is a local-first family homeschool platform whose canonical
+learner data lives in `lessons_lan/instance/homeschool.db`. The repository now
+has an independently verified CI gate, so the next unresolved production-
+readiness dependency is proving that learner data can be backed up, read back,
+and restored safely before household production or any external pilot expands.
 
-## Domain
+**Authority/source**
 
-Family homeschool education and learner accountability.
+- `PRD.md` and `docs/PRD.md`
+- `ROADMAP.md` and `docs/ROADMAP.md`
+- `PRODUCTION_READINESS.md`
+- `MASTER_TASK_LIST.md` and `runtime/tasks/master_task_list.md`
+- merged PR #6 CI evidence recorded in the task logs
 
-## 1. Run and preserve the canonical test gate
+**Current state**
 
-**AC:** `cd lessons_lan && pytest -q` passes in the current environment or any
-failure is documented with the failing tests and cause.
+- `lessons_lan/` is the canonical app.
+- PR #6 added the canonical `lessons_lan CI` workflow and merged after exact-head CI success.
+- PR #7 salvaged the prior test-runtime optimization onto current `master`, passed exact-head CI, and merged.
+- Original PR #4 is closed without merge as superseded by PR #7.
+- PR #5 remains an `ACTIVE_PR / DRAFT / READINESS_HELD` family-pilot document; it does not own canonical planners.
+- `docs/planning-reconciliation-20260813` is `MERGED_STALE`.
+- `feat/lessons-lan-ci-20260816` is `MERGED_STALE_BY_PR_6`; squash ancestry must not be mistaken for unique unmerged work.
+- `test/app-runtime-reduction-20260813` is `SUPERSEDED_BY_PR_7`.
+- `test/app-runtime-reduction-refresh-20260816` is `MERGED_STALE_BY_PR_7`.
 
-## 2. Add data backup/export verification
+**Blockers**
 
-**AC:** A documented command or test exports `lessons_lan` learner data, reads it
-back, and verifies row count and important columns for users, lessons,
-completions, attempts, player state, gear unlocks, and feedback.
+- No verified backup/export + restore procedure currently proves preservation of
+  users, lessons, completions, question attempts, player state, gear unlocks,
+  feedback, and other canonical learner-data tables.
 
-## 3. Add CI workflow for `lessons_lan` — ACTIVE
+**Done evidence**
 
-**AC:** `.github/workflows/ci.yml` runs the current Python test gate on push/PR
-to `master`, and the workflow passes on the current suite.
+1. A documented command or test creates a backup/export from an isolated test database or explicitly safe operator path.
+2. The backup is restored/read into an isolated location; live learner data is never overwritten during verification.
+3. Verification checks expected tables, row counts, and important columns for canonical learner-data entities.
+4. A restore smoke test proves the restored database can be opened by the canonical app/test path.
+5. `PRODUCTION_READINESS.md`, planner surfaces, and task logs are reconciled from actual verification evidence.
+6. Any code/test change receives exact-head `lessons_lan CI` success before merge/complete claims.
 
-**Current evidence:** task `lessons_lan_ci_20260816` is active on branch
-`feat/lessons-lan-ci-20260816`; exact-head GitHub Actions success is required
-before this item can close.
+**Do not work concurrently on**
 
-## 4. Expand admin/mastery route tests
+- external or paid pilot activation from PR #5 before readiness gates are satisfied;
+- adaptive-learning expansion or Node/`ai_tutor/` integration;
+- destructive reset/cleanup of learner data;
+- resurrection of PR #4 or duplicate test-runtime optimization work.
 
-**AC:** Admin lesson/user/feedback routes and Adventure/mastery pages have
-focused tests for authorized, unauthorized, and expected-content behavior.
+## Following lanes
 
-## 5. Add TEKS skill/question coverage report
+2. Verify admin/student route boundaries and prove destructive reset is unavailable to student flows.
+3. Expand admin/mastery route tests where coverage gaps remain.
+4. Add TEKS skill/question coverage reporting and keep complete-corpus coverage `Unknown` until measured.
+5. Resolve the future status of the root Node prototype and `ai_tutor/` only after readiness foundations are proven.
 
-**AC:** A script reports coverage of tracked standards/TEKS tags by subject and
-grade from the canonical SQLite/question-bank data, marking missing full-corpus
-coverage as Unknown rather than assumed complete.
+## Verification authority
 
-Broader backlog remains in `MASTER_TASK_LIST.md` and
-`runtime/tasks/master_task_list.md`; promote items here only when they become
-one of the next 3-5 execution tasks.
+```bash
+cd lessons_lan && python -m pytest -q
+```
+
+GitHub Actions `lessons_lan CI` is the independent CI authority for changes
+under `lessons_lan/**` or the workflow itself. Exact-head CI evidence is required
+for `CI_VERIFIED` claims.
+
+Volatile SHAs and ahead/behind counts belong in the task logs as timestamped
+evidence, not in this durable execution queue.
