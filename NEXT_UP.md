@@ -1,6 +1,6 @@
 # Next Up
 
-> Updated: 2026-08-13
+> Updated: 2026-08-16
 
 This is the immediate execution queue. Keep it to 3-5 active tasks. Do not place
 completed evidence or long backlog inventory here; use `MASTER_TASK_LOG.md` and
@@ -31,10 +31,14 @@ failure is documented with the failing tests and cause.
 back, and verifies row count and important columns for users, lessons,
 completions, attempts, player state, gear unlocks, and feedback.
 
-## 3. Add CI workflow for `lessons_lan`
+## 3. Add CI workflow for `lessons_lan` — ACTIVE
 
 **AC:** `.github/workflows/ci.yml` runs the current Python test gate on push/PR
 to `master`, and the workflow passes on the current suite.
+
+**Current evidence:** task `lessons_lan_ci_20260816` is active on branch
+`feat/lessons-lan-ci-20260816`; exact-head GitHub Actions success is required
+before this item can close.
 
 ## 4. Expand admin/mastery route tests
 
