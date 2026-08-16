@@ -13,7 +13,7 @@ This file is the root summary backlog and strategic task inventory. It answers:
 | --- | --- | --- |
 | `MASTER_TASK_LIST.md` / `runtime/tasks/master_task_list.md` | Full backlog and strategic task inventory. | What work exists in this repo? |
 | `MASTER_TASK_LOG.md` / `runtime/tasks/master_task_log.md` | Dated evidence, decisions, and completed work. | What happened, when, and why? |
-| `NEXT_UP.md` | Immediate execution queue, limited to 3-5 active tasks. | What should the next agent do right now? |
+| `NEXT_UP.md` | Immediate execution queue. | What should the next agent do right now? |
 
 ## What is this project?
 
@@ -32,15 +32,23 @@ Math and Reading/ELAR practice.
 
 ## Open
 
-- [ ] Run and preserve the canonical verification gate:
-      `cd lessons_lan && pytest -q`.
-- [ ] Add data backup/export verification for `lessons_lan` learner data.
-- [ ] Add CI workflow for the current Python tests. ACTIVE as
-      `lessons_lan_ci_20260816`; exact-head workflow success is required.
-- [ ] Expand admin/mastery dashboard tests.
-- [ ] Add TEKS skill/question coverage report.
+### Production readiness
+
+- [ ] Maintain the canonical verification gate: `cd lessons_lan && python -m pytest -q`.
+- [ ] Add and verify learner-data backup/export plus isolated restore/smoke testing.
+- [ ] Verify admin/student route boundaries, including that destructive reset is unavailable to student flows.
+- [ ] Expand admin/mastery dashboard tests where gaps remain.
+- [ ] Add TEKS skill/question coverage reporting.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
-- [ ] Decide status of root Node prototype: maintain, integrate, or archive.
+
+### Portfolio / ownership hygiene
+
+- [ ] Keep PR #5 (`docs/revenue: gate HomeSchool Mastery family pilot`) in `DRAFT / READINESS_HELD` until its documented readiness gates are independently satisfied or explicitly bounded out.
+- [ ] Delete merged-stale/superseded branches only after current PR ownership and branch ancestry are revalidated immediately before deletion.
+
+### Context decisions
+
+- [ ] Decide status of root Node prototype: maintain separately, integrate, or archive.
 - [ ] Decide status of `ai_tutor/`: support package or canonical integration.
 
 ## Done
@@ -51,11 +59,13 @@ Math and Reading/ELAR practice.
 - [x] Document canonical app startup/shutdown/database location.
 - [x] Audit stale README and architecture references.
 - [x] Produce synchronized documentation-first domain model.
-- [x] Update PRD, roadmap, task list, task log, NEXT_UP, AGENTS, README, and app
-      docs around the current implementation.
+- [x] Update PRD, roadmap, task list, task log, NEXT_UP, AGENTS, README, and app docs around the current implementation.
+- [x] Add the canonical `lessons_lan CI` workflow through PR #6 and verify its exact head successfully before merge.
+- [x] Salvage PR #4's test-runtime optimization onto current master through PR #7, verify exact-head CI, merge the refreshed lane, and close PR #4 without merge as superseded.
 
 ## Next operating step
 
-Use `NEXT_UP.md` for the current 3-5 item execution queue. Complete the active
-CI gate, then advance backup/export verification before expanding adaptive
-diagnostics.
+Use `NEXT_UP.md` for the immediate execution contract. Backup/export plus
+isolated restore verification is the next readiness lane. Do not advance
+external pilot activation or adaptive/cross-runtime expansion ahead of that
+proof.
