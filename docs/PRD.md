@@ -5,8 +5,8 @@
 | Repo | Victor-Dixon/HomeSchool_Mastery |
 | Product | HomeSchool Mastery |
 | Canonical implementation | `lessons_lan/` |
-| Status | Active documentation-synchronized Flask LAN app |
-| Updated | 2026-07-03 |
+| Status | Active local-first Flask LAN app with canonical CI; production readiness still gated |
+| Updated | 2026-08-16 |
 
 ## What this project is
 
@@ -17,7 +17,7 @@ boss fights, gear rewards, feedback, and parent/admin operations.
 
 The repository also contains a root Node mastery prototype and an `ai_tutor/`
 support package. Those contexts are present but are not the canonical product
-unless explicitly referenced.
+unless explicitly integrated by test-backed work.
 
 ## Why it exists
 
@@ -43,9 +43,9 @@ seeded standards and TEKS-tagged questions.
 
 | User type | Current evidence | Needs |
 |---|---|---|
-| Student | Seeded users include Charlie and Chris in `lessons_lan/app/db.py` | Complete lessons, practice, play learning games, earn XP/rewards, submit feedback |
-| Parent/Admin | Seeded `admin` account in `lessons_lan/app/db.py` | Manage lessons/accounts, review feedback, operate local app |
-| Operator | Same household maintainer role | Start/stop app, run tests, back up data, avoid destructive resets |
+| Student | Seeded student users in `lessons_lan/app/db.py` | Complete lessons, practice, play learning games, earn XP/rewards, submit feedback |
+| Parent/Admin | Seeded admin account in `lessons_lan/app/db.py` | Manage lessons/accounts, review feedback, operate local app |
+| Operator | Household maintainer role | Start/stop app, run tests, back up and restore data safely, avoid destructive resets |
 
 ## Problems solved
 
@@ -66,20 +66,20 @@ seeded standards and TEKS-tagged questions.
 - TEKS-tagged Math and Reading/ELAR questions.
 - XP/level state and milestone mastery gates.
 - Adventure page, boss fights, boss attempts, assessments, loot, and gear.
-- Text Detective, Discount Dash, Fraction Battle, Story Duel, Spelling Lab, and
-  Vocabulary Signal Breaker.
+- Learning-game surfaces already present in the canonical app.
 - Student feedback and admin feedback review.
 - Optional local Ollama lesson coaching and Story Duel grading fallback.
 - Tests under `lessons_lan/tests/`.
+- Canonical GitHub Actions verification for relevant `lessons_lan` changes.
 
 ## Out of scope for the current canonical app
 
 - Required cloud dependency.
 - Multi-household or school deployment.
 - OAuth, email, LMS integration, or hosted analytics.
-- Treating the Node prototype or `ai_tutor/` JSON progress as shared canonical
-  persistence for `lessons_lan/`.
+- Treating the Node prototype or `ai_tutor/` JSON progress as shared canonical persistence for `lessons_lan/`.
 - Destructive data cleanup during normal student/admin use.
+- Treating the draft PR #5 family-pilot package as proof of market validation, customers, production readiness, or educational efficacy.
 
 ## Current architecture
 
@@ -111,7 +111,7 @@ Flask app factory (app/__init__.py)
 | Flask session | Canonical app runtime state | Login, game state, AI chat history, one-time XP guards |
 | Story Duel JSON bundles | Canonical app content | Swappable battle/story content |
 | Root `data.json` | Node prototype | Not canonical; generated if Node app runs |
-| `data/progress.json` | `ai_tutor/` support package | Not canonical; per-Discord-user support progress |
+| `data/progress.json` | `ai_tutor/` support package | Not canonical; support-package progress |
 
 ## Completed capabilities
 
@@ -124,18 +124,18 @@ Flask app factory (app/__init__.py)
   boss rewards, item types, generator behavior, snake practice, Story Duel, and
   broader app flows.
 - Documentation was synchronized around the canonical domain model on 2026-07-03.
+- PR #6 established `lessons_lan CI`; exact-head run `31931001139` succeeded before merge.
+- PR #7 revalidated and merged the test-runtime optimization on current master; exact-head run `31934385959` succeeded, and old PR #4 was closed as superseded.
 
 ## Remaining work
 
-- Verify and document data backup/export for `lessons_lan`.
-- Add CI for the current Python tests.
-- Expand admin/mastery dashboard test coverage.
+- Verify and document backup/export plus isolated restore/smoke for `lessons_lan` learner data.
+- Verify admin/student route boundaries, including destructive-reset isolation.
+- Expand admin/mastery dashboard test coverage where gaps remain.
 - Add TEKS coverage reporting and clarify full standards import status.
 - Expand question/content variety with TEKS tags and item types.
-- Decide whether the Node prototype remains legacy, gets archived, or is
-  reintegrated; current operational status is Unknown.
-- Decide whether `ai_tutor/` remains a support package or becomes integrated
-  with the canonical app; current deployment status is Unknown.
+- Decide whether the Node prototype remains legacy, gets archived, or is reintegrated; current operational status is Unknown.
+- Decide whether `ai_tutor/` remains a support package or becomes integrated with the canonical app; current deployment status is Unknown.
 
 ## Success criteria
 
@@ -143,14 +143,14 @@ Flask app factory (app/__init__.py)
 |---|---|
 | New contributor can identify the canonical app | README, AGENTS, this PRD, and docs index all point to `lessons_lan/` |
 | Domain entities are mapped | `docs/DOMAIN_MODEL.md` includes entities, value objects, services, relationships, data flow, integrations, and feature mapping |
-| Learner data is protected | Reset commands documented as operator-only; no student route exposes destructive reset |
-| Behavior changes are test-backed | Targeted tests run from `lessons_lan/` before behavior changes |
+| Learner data is protected | Reset commands are operator-only; backup/export and isolated restore are verified before readiness claims |
+| Behavior changes are test-backed | Targeted tests plus exact-head CI for relevant pull requests |
 | Documentation remains synchronized | Root summaries and expanded docs are updated together |
 
 ## Unknowns
 
 - Complete TEKS corpus import and coverage.
 - Active household use of the root Node prototype.
-- Active household deployment of the `ai_tutor/` Discord bot.
+- Active household deployment of the `ai_tutor/` support package.
 - Cross-runtime data synchronization.
-- Production backup/export path for canonical learner data.
+- Production-grade backup/export and restore behavior until the next readiness lane proves it.

@@ -1,7 +1,7 @@
 # Master Task Log - HomeSchool Mastery
 
 > Chronological record of completed tasks, milestones, and significant events.
-> Updated: 2026-08-13
+> Updated: 2026-08-16
 
 This file is the expanded dated evidence/history log. It answers: "What
 happened, when, and why?"
@@ -70,17 +70,8 @@ TEKS/STAAR-aligned Math and Reading/ELAR practice.
 - Marked `ai_tutor/` as a present support package, not shared canonical
   persistence for `lessons_lan/`.
 - Captured the recommended GitHub repository description in docs because the
-  current authenticated `gh` CLI is available for read-only inspection only in
-  this environment.
-
-## Current remaining work
-
-- Run and preserve `cd lessons_lan && pytest -q`.
-- Add CI for the current tests.
-- Add backup/export verification for learner data.
-- Add TEKS coverage reporting.
-- Expand admin/mastery route tests.
-- Decide future status of root Node prototype and `ai_tutor/` support package.
+  authenticated environment available at that audit could inspect but not apply
+  repository metadata.
 
 ## 2026-08-13
 
@@ -89,6 +80,62 @@ TEKS/STAAR-aligned Math and Reading/ELAR practice.
   domain-model work.
 - Standardized planning-file roles across the root summary docs and expanded
   runtime task docs.
-- Kept `NEXT_UP.md` as the immediate 3-5 item execution queue and left broader
-  backlog in the task-list files.
+- Kept `NEXT_UP.md` as the immediate execution queue and left broader backlog in
+  the task-list files.
 - No product/source/runtime behavior was changed.
+
+## 2026-08-16 - Canonical CI established
+
+- PR #6 exact head:
+  `997e4dd4402357a7d9c08d26c237be4201aa963b`.
+- `lessons_lan CI` run `31931001139` completed with conclusion `success` at
+  that exact head.
+- PR #6 was squash-merged as
+  `bad04a1d6e643663f248982678c13e40c8c93e89`.
+- The workflow installs canonical runtime/test requirements and runs
+  `python -m pytest -q` from `lessons_lan/` for relevant PR/master changes.
+- The CI task is therefore accepted and merged; operational learner-data
+  backup/export verification becomes the next readiness dependency.
+
+## 2026-08-16 - Test-runtime optimization salvaged from PR #4
+
+- Original PR #4 had one unique commit touching only
+  `lessons_lan/pytest.ini` and `lessons_lan/tests/test_app.py`.
+- Because PR #4 predated the new CI-enabled master, its unique two-file intent
+  was copied onto fresh branch `test/app-runtime-reduction-refresh-20260816`
+  rather than merging the stale branch wholesale.
+- Refreshed PR #7 exact head:
+  `681d86adc273f4fff0410445ee7eb0417a6c311b`.
+- Exact-head `lessons_lan CI` run `31934385959` completed successfully.
+- PR #7 was squash-merged as
+  `89c7c6e1cf4b908f111fa627e11577f3930e2fcf`.
+- Original PR #4 was closed without merge as superseded; its conversation
+  records the replacement PR and verification evidence.
+
+## 2026-08-16 - Branch and ownership snapshot
+
+Against canonical master `89c7c6e1cf4b908f111fa627e11577f3930e2fcf`:
+
+- `docs/family-pilot-readiness-20260816`: 1 ahead / 2 behind; PR #5 remains
+  `ACTIVE_PR / DRAFT / READINESS_HELD`; unique diff is one family-pilot
+  readiness document.
+- `docs/planning-reconciliation-20260813`: 0 ahead / 4 behind;
+  `MERGED_STALE`.
+- `feat/lessons-lan-ci-20260816`: raw ancestry 1 ahead / 2 behind because PR #6
+  was squash-merged; `MERGED_STALE_BY_PR_6`.
+- `test/app-runtime-reduction-20260813`: raw ancestry 1 ahead / 3 behind, but
+  its unique file-level value was ported through PR #7; `SUPERSEDED_BY_PR_7`.
+- `test/app-runtime-reduction-refresh-20260816`: raw ancestry 2 ahead / 1 behind
+  because PR #7 was squash-merged; `MERGED_STALE_BY_PR_7`.
+- No branch was deleted. Branch deletion remains gated on immediate current-state
+  revalidation and a branch-deletion-capable path.
+
+## Current remaining work
+
+- Maintain the canonical local + CI test gate.
+- Verify backup/export plus isolated restore/smoke for learner data.
+- Verify route boundaries and destructive-reset isolation.
+- Add TEKS coverage reporting.
+- Expand admin/mastery route tests where gaps remain.
+- Keep PR #5 readiness-held until its documented gates are proven or explicitly bounded out.
+- Decide future status of root Node prototype and `ai_tutor/` support package only after readiness foundations are stable.
