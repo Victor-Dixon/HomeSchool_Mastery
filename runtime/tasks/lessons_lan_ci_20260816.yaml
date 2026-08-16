@@ -1,5 +1,5 @@
 task_id: lessons_lan_ci_20260816
-status: ACTIVE
+status: COMPLETE
 objective: >-
   Add the canonical GitHub Actions verification gate for the lessons_lan Flask app
   so product-readiness work can receive independent exact-head test evidence.
@@ -16,12 +16,21 @@ acceptance:
 verification:
   targeted:
     command: cd lessons_lan && python -m pytest -q
-    status: PENDING_CI
+    status: CI_PROVEN
   exact_head_ci:
-    status: PENDING
+    status: SUCCESS
+    run_id: 31931001139
+    head_sha: 997e4dd4402357a7d9c08d26c237be4201aa963b
+  merge:
+    pr: 6
+    merge_sha: bad04a1d6e643663f248982678c13e40c8c93e89
+completion_evidence:
+  - PR #6 exact-head lessons_lan CI completed successfully
+  - PR #6 merged to canonical master
+  - canonical planner and task-log surfaces were reconciled in the portfolio standardization closure
 holds:
-  - do not mark the CI task complete before an exact-head workflow succeeds
-  - do not modify learner data, Revenue pilot artifacts, or product behavior
-  - do not merge while the exact-head workflow is red or absent
+  - do not weaken or bypass the canonical CI gate when changing lessons_lan behavior
+  - do not modify real learner data during verification
 next_lane: >-
-  After CI is independently green, advance backup/export verification from NEXT_UP.
+  Verify learner-data backup/export and isolated restore/smoke behavior before
+  advancing external pilot activation or adaptive/cross-runtime expansion.
