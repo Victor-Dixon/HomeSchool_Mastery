@@ -1,6 +1,6 @@
 # Master Task List - HomeSchool Mastery
 
-> Updated: 2026-08-16
+> Updated: 2026-08-22
 
 This file is the expanded backlog and strategic task inventory. It answers:
 "What work exists in this repo?"
@@ -30,7 +30,7 @@ Math and Reading/ELAR practice.
 
 - [ ] Maintain `cd lessons_lan && python -m pytest -q` as the canonical local verification gate.
 - [x] Add canonical GitHub Actions CI for the current Python tests; PR #6 exact-head CI succeeded before merge.
-- [ ] Add and verify learner-data backup/export plus isolated restore/smoke behavior.
+- [x] Add and verify learner-data backup/export plus isolated restore/smoke behavior through PR #9; exact-head CI run `31946470759` succeeded before merge.
 - [ ] Verify admin/student route boundaries, including destructive-reset isolation.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
 - [ ] Add documented household smoke-test steps where missing.
@@ -88,10 +88,10 @@ Math and Reading/ELAR practice.
 - [x] Synchronize PRD, roadmap, master task list, master task log, NEXT_UP, AGENTS, README, app docs, and runtime task docs on 2026-07-03.
 - [x] Merge PR #6 after exact-head `lessons_lan CI` success, establishing independent CI authority.
 - [x] Port PR #4's unique test/config optimization to current master as PR #7, verify exact-head CI, merge it, and close PR #4 without merge as superseded.
+- [x] Verify read-only learner-data backup, isolated non-overwriting restore, schema/row fidelity, and canonical-app readability through PR #9.
 
 ## What remains
 
-The immediate foundation is operational learner-data safety: backup/export and
-isolated restore verification. Route-boundary proof, TEKS coverage, and broader
+The immediate foundation is route-boundary and destructive-reset isolation proof. TEKS coverage and broader
 readiness follow. Adaptive diagnostics, external pilot activation, and
 cross-runtime integration should not outrun those readiness gates.
