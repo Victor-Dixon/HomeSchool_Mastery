@@ -1,0 +1,31 @@
+task_id: learner_data_backup_restore_20260816
+repo: HomeSchool_Mastery
+lane: learner-data-backup-restore
+status: ACTIVE
+objective: >-
+  Prove that the canonical lessons_lan SQLite learner database can be backed up
+  without modifying the source and restored into a new isolated location with
+  schema/row fidelity and canonical-app readability.
+scope:
+  - lessons_lan/app/backup.py
+  - lessons_lan/tests/test_backup_restore.py
+  - task-local planner synchronization
+acceptance:
+  - backup source is opened read-only
+  - backup destination must not already exist
+  - restore destination must not already exist
+  - SQLite integrity_check passes on created copies
+  - table row counts and column names match source through backup and restore
+  - restored database opens through create_app/get_db
+  - representative learner-data tables are present
+verification:
+  targeted: cd lessons_lan && python -m pytest -q tests/test_backup_restore.py
+  broad: cd lessons_lan && python -m pytest -q
+  independent: exact-head lessons_lan CI
+holds:
+  - never overwrite lessons_lan/instance/homeschool.db
+  - no learner data deletion or reset
+  - no external pilot activation
+  - no revenue artifact mutation
+  - no COMPLETE claim before exact-head CI
+next: exact-head CI decides readiness for review; Portfolio Autonomous owns canonical closeout
