@@ -1,7 +1,7 @@
 # Master Task List - Summary
 
 > Expanded task list: `runtime/tasks/master_task_list.md`
-> Updated: 2026-08-16
+> Updated: 2026-08-22
 
 This file is the root summary backlog and strategic task inventory. It answers:
 "What work exists in this repo?" Keep expanded backlog detail in
@@ -35,7 +35,7 @@ Math and Reading/ELAR practice.
 ### Production readiness
 
 - [ ] Maintain the canonical verification gate: `cd lessons_lan && python -m pytest -q`.
-- [ ] Add and verify learner-data backup/export plus isolated restore/smoke testing. **ACTIVE:** `feat/learner-data-backup-restore-20260816`; exact-head CI required before closure.
+- [x] Add and verify learner-data backup/export plus isolated restore/smoke testing through PR #9; exact-head CI run `31946470759` succeeded before squash merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987`.
 - [ ] Verify admin/student route boundaries, including that destructive reset is unavailable to student flows.
 - [ ] Expand admin/mastery dashboard tests where gaps remain.
 - [ ] Add TEKS skill/question coverage reporting.
@@ -62,10 +62,11 @@ Math and Reading/ELAR practice.
 - [x] Update PRD, roadmap, task list, task log, NEXT_UP, AGENTS, README, and app docs around the current implementation.
 - [x] Add the canonical `lessons_lan CI` workflow through PR #6 and verify its exact head successfully before merge.
 - [x] Salvage PR #4's test-runtime optimization onto current master through PR #7, verify exact-head CI, merge the refreshed lane, and close PR #4 without merge as superseded.
+- [x] Verify read-only learner-data backup, non-overwriting isolated restore, schema/row fidelity, and canonical-app readability through PR #9.
 
 ## Next operating step
 
-Use `NEXT_UP.md` for the immediate execution contract. Backup/export plus
-isolated restore verification is the next readiness lane. Do not advance
+Use `NEXT_UP.md` for the immediate execution contract. Admin/student route
+boundary and destructive-reset isolation verification is the next readiness lane. Do not advance
 external pilot activation or adaptive/cross-runtime expansion ahead of that
 proof.
