@@ -1,7 +1,7 @@
 # Master Task Log - Summary
 
 > Expanded task log: `runtime/tasks/master_task_log.md`
-> Updated: 2026-08-16
+> Updated: 2026-08-22
 
 This dated summary records completed work, decisions, blockers, and verification
 evidence. It answers: "What happened, when, and why?" Keep expanded history in
@@ -97,10 +97,17 @@ Audit-time comparisons against canonical master
 - No branch was deleted in this audit. Final branch deletion still requires
   immediate ownership/ancestry revalidation and a branch-deletion-capable path.
 
+### 2026-08-22 - Learner-data backup / restore closure
+
+- PR #9 exact head `72ecd09f261cf881581ca37f8aa429b53c46e90e` passed `lessons_lan CI` run `31946470759`.
+- PR #9 was squash-merged as `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987`.
+- Verification proves read-only backup, non-overwriting isolated restore, SQLite integrity, table row/column fidelity, representative learner-data coverage, and canonical Flask app readability.
+- `learner_data_backup_restore_20260816` advanced through `CI_VERIFIED`, `MERGED`, and `PLANNER_RECONCILED` to `COMPLETE`.
+- Admin/student route-boundary and destructive-reset isolation proof is now the highest-priority executable lane.
+
 ## What remains
 
 - Maintain the canonical test/CI gate.
-- Verify learner-data backup/export and isolated restore/smoke behavior.
 - Verify admin/student route boundaries and destructive-reset isolation.
 - Add TEKS coverage reporting.
 - Expand admin/mastery route tests where gaps remain.

@@ -1,7 +1,7 @@
 task_id: learner_data_backup_restore_20260816
 repo: HomeSchool_Mastery
 lane: learner-data-backup-restore
-status: ACTIVE
+status: COMPLETE
 objective: >-
   Prove that the canonical lessons_lan SQLite learner database can be backed up
   without modifying the source and restored into a new isolated location with
@@ -28,4 +28,10 @@ holds:
   - no external pilot activation
   - no revenue artifact mutation
   - no COMPLETE claim before exact-head CI
-next: exact-head CI decides readiness for review; Portfolio Autonomous owns canonical closeout
+completed_at: 2026-08-22
+completion_evidence:
+  exact_head: 72ecd09f261cf881581ca37f8aa429b53c46e90e
+  ci_run: 31946470759
+  merge_commit: 8ed17074e860fb8b8dfc3e9ac4c2bd0401769987
+  lifecycle: [PATCHED, CI_VERIFIED, MERGED, PLANNER_RECONCILED, COMPLETE]
+next: verify admin/student route boundaries and destructive-reset isolation

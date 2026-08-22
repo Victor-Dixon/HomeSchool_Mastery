@@ -1,7 +1,7 @@
 # Master Task Log - HomeSchool Mastery
 
 > Chronological record of completed tasks, milestones, and significant events.
-> Updated: 2026-08-16
+> Updated: 2026-08-22
 
 This file is the expanded dated evidence/history log. It answers: "What
 happened, when, and why?"
@@ -130,10 +130,17 @@ Against canonical master `89c7c6e1cf4b908f111fa627e11577f3930e2fcf`:
 - No branch was deleted. Branch deletion remains gated on immediate current-state
   revalidation and a branch-deletion-capable path.
 
+### 2026-08-22 - Learner-data backup / restore closure
+
+- PR #9 exact head `72ecd09f261cf881581ca37f8aa429b53c46e90e` passed `lessons_lan CI` run `31946470759`.
+- PR #9 was squash-merged as `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987`.
+- Verification proves read-only backup, non-overwriting isolated restore, SQLite integrity, table row/column fidelity, representative learner-data coverage, and canonical Flask app readability.
+- `learner_data_backup_restore_20260816` advanced through `CI_VERIFIED`, `MERGED`, and `PLANNER_RECONCILED` to `COMPLETE`.
+- Admin/student route-boundary and destructive-reset isolation proof is now the highest-priority executable lane.
+
 ## Current remaining work
 
 - Maintain the canonical local + CI test gate.
-- Verify backup/export plus isolated restore/smoke for learner data.
 - Verify route boundaries and destructive-reset isolation.
 - Add TEKS coverage reporting.
 - Expand admin/mastery route tests where gaps remain.
