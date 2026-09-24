@@ -39,14 +39,14 @@ A bounded pilot would evaluate whether one authorized household can operate the 
 
 ## Required readiness gate before an external pilot
 
-The repository's current `PRODUCTION_READINESS.md` still leaves the following items open, so an external paid or design-partner pilot must remain gated until they are verified or explicitly bounded out:
+Current `PRODUCTION_READINESS.md` records independent CI plus verified learner-data backup/export and isolated restore/smoke evidence. Those prerequisites no longer block the package.
 
-- canonical `lessons_lan/` test gate passes on the pilot candidate;
-- backup/export path is documented and verified;
-- restore plus smoke-test procedure is documented and verified;
-- admin/student route boundaries have targeted tests;
-- destructive reset is proven unavailable to student flows;
-- canonical test gate has CI or an equivalent repeatable verification record.
+An external paid or design-partner pilot must remain gated on the readiness items that are still open:
+
+- verify admin/student route boundaries with targeted tests;
+- prove destructive reset is unavailable to student flows.
+
+The previously required canonical test gate, backup/export path, restore/smoke procedure, and repeatable CI evidence are now recorded as verified in canonical readiness evidence.
 
 A pilot may not silently convert an unresolved readiness item into a production claim.
 
