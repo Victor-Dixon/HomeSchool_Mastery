@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: [self-hosted, linux, x64, homeschool-mastery-ci]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
       run:
