@@ -33,9 +33,10 @@ verified through PR #9. Remaining route-safety checks are not yet verified.
 - [x] Document database location.
 - [x] Document and verify backup/export path through PR #9.
 - [x] Document and verify isolated restore/smoke-test procedure after backup through PR #9.
-- [ ] Verify admin/student route boundaries with targeted tests.
+- [x] Verify admin/student route boundaries in isolated tests (PR #14, CI `45722603823`).
+- [ ] Verify non-default session-signing key and reject unsafe deployment configuration.
 - [x] Document destructive reset path as operator-only.
-- [ ] Verify no destructive reset path is exposed to students.
+- [x] Verify no destructive reset path is exposed to students in isolated tests (PR #14).
 - [x] Add CI for the canonical test gate through PR #6.
 
 ## Startup
@@ -84,7 +85,7 @@ Independent CI:
 
 ## Current readiness lane
 
-Verify admin/student route boundaries and prove destructive reset is unavailable to student flows while authorized admin behavior remains intact.
+Resolve default session-signing key and verify deployment-safe configuration. PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
 
 ## External pilot hold
 
@@ -95,6 +96,6 @@ validation. Its documented readiness and human gates remain controlling.
 
 ## What remains
 
-The next readiness work is route-boundary proof, destructive-reset isolation,
+The next readiness work is session-signing security,
 and then the remaining
 production-readiness checklist items.
