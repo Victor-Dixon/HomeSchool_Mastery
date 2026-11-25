@@ -21,12 +21,13 @@ from werkzeug.exceptions import HTTPException
 from .db import init_app as init_db
 from .logging_setup import attach_logging, install_wsgi_boundary_logger, register_request_logging
 from .plugin_loader import load_plugins
+from .session_signing import resolve_signing_key
 
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY="dev-change-me",
+        SECRET_KEY=resolve_signing_key(app.instance_path),
     )
 
     # MCQ templates expect JSON arrays; bad DB rows must not 500 the page.

@@ -17,3 +17,7 @@ lessons_lan/htmlcov/
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# Local signing secrets (including interrupted startup files)
+lessons_lan/instance/session-signing.key
+lessons_lan/instance/.session-signing-*
