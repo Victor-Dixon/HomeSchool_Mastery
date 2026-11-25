@@ -127,9 +127,10 @@ Flask app factory (app/__init__.py)
 - PR #6 established `lessons_lan CI`; exact-head run `31931001139` succeeded before merge.
 - PR #7 revalidated and merged the test-runtime optimization on current master; exact-head run `31934385959` succeeded, and old PR #4 was closed as superseded.
 
+- Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
+
 ## Remaining work
 
-- Verify and document backup/export plus isolated restore/smoke for `lessons_lan` learner data.
 - Verify admin/student route boundaries, including destructive-reset isolation.
 - Expand admin/mastery dashboard test coverage where gaps remain.
 - Add TEKS coverage reporting and clarify full standards import status.
@@ -153,4 +154,4 @@ Flask app factory (app/__init__.py)
 - Active household use of the root Node prototype.
 - Active household deployment of the `ai_tutor/` support package.
 - Cross-runtime data synchronization.
-- Production-grade backup/export and restore behavior until the next readiness lane proves it.
+- Live household database restore, sustained operation, and broader production readiness are not established by isolated backup/restore acceptance.

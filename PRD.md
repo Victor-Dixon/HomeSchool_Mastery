@@ -35,9 +35,10 @@ Math and Reading/ELAR practice. Complete TEKS corpus coverage is Unknown.
 - Canonical GitHub Actions `lessons_lan CI` established through PR #6 and independently verified at its exact head before merge.
 - Existing test-runtime optimization salvaged from stale PR #4, reverified under current CI as PR #7, merged, and the old PR closed as superseded.
 
+- Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
+
 ## Remaining
 
-- Backup/export plus isolated restore/smoke verification for learner data.
 - Expanded admin/mastery dashboard and route-boundary test coverage.
 - Verification that destructive reset cannot be exposed to student flows.
 - TEKS coverage reporting and full standards import clarity.

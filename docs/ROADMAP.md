@@ -25,7 +25,7 @@ domain model.
 - Documentation audit: completed and synchronized on 2026-07-03.
 - Canonical GitHub Actions CI: established and exact-head verified through PR #6.
 - Test-runtime optimization: revalidated on current master and merged through PR #7; old PR #4 closed as superseded.
-- Current product focus: prove learner-data backup/export and isolated restore safety before broader production-readiness or pilot claims.
+- Current product focus: prove admin/student route boundaries and destructive-reset isolation; backup/restore isolated acceptance is complete.
 
 ## Phase 1 - Canonical app baseline (Completed)
 
@@ -51,8 +51,8 @@ Goal: make the repository understandable and safe to operate from docs alone.
 | Verify canonical test gate in independent CI | Done through PR #6; exact-head run `31931001139` succeeded |
 | Add CI for current tests | Done through PR #6 |
 | Salvage/reverify prior test-runtime optimization | Done through PR #7; exact-head run `31934385959` succeeded |
-| Add backup/export verification for learner data | Open; highest-priority readiness lane |
-| Add isolated restore/smoke verification | Open |
+| Add backup/export verification for learner data | Done; PR #9, CI `31946470759` |
+| Add isolated restore/smoke verification | Done; PR #9, isolated fixture, merge `8ed17074` |
 | Complete remaining production readiness checklist | Open |
 
 Exit criteria:
@@ -108,11 +108,9 @@ gates are satisfied or explicitly bounded out.
 
 The next work should focus on operational safety and evidence:
 
-1. Verify backup/export for canonical learner data.
-2. Verify isolated restore and app/test smoke behavior.
-3. Verify route boundaries and destructive-reset isolation.
-4. Add TEKS coverage reporting.
-5. Expand admin/mastery tests where gaps remain.
+1. Verify route boundaries and destructive-reset isolation.
+2. Add TEKS coverage reporting.
+3. Expand admin/mastery tests where gaps remain.
 
 Do not advance adaptive or integration work by assuming behavior from the Node
 prototype or `ai_tutor/`; either wire it into the canonical app with tests or
