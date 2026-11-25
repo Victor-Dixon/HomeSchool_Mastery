@@ -28,15 +28,17 @@ Math and Reading/ELAR practice.
 
 - Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
 
+- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+
 ## Current
 
 - Keep the canonical app stable and test-backed through the local pytest gate and GitHub Actions CI.
 - Complete production-readiness items.
-- Preserve verified backup/restore behavior; complete route-boundary and destructive-reset isolation before broader readiness claims.
+- Preserve verified backup/restore and access boundaries; resolve session-signing security before broader readiness claims.
 
 ## Next
 
-1. Verify admin/student route boundaries and destructive-reset isolation.
+1. Verify secure session-signing configuration and reject known default keys.
 2. Expand admin/mastery tests where evidence is still missing.
 3. Add TEKS/STAAR coverage reporting.
 4. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.

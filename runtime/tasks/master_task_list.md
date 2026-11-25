@@ -31,7 +31,8 @@ Math and Reading/ELAR practice.
 - [ ] Maintain `cd lessons_lan && python -m pytest -q` as the canonical local verification gate.
 - [x] Add canonical GitHub Actions CI for the current Python tests; PR #6 exact-head CI succeeded before merge.
 - [x] Add and verify learner-data backup/export plus isolated restore/smoke behavior through PR #9; exact-head CI run `31946470759` succeeded before merge.
-- [ ] Verify admin/student route boundaries, including destructive-reset isolation.
+- [x] Verify admin/student route boundaries, including destructive-reset isolation (PR #14, CI `45722603823`).
+- [ ] Verify deployment-safe session-signing configuration.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
 - [ ] Add documented household smoke-test steps where missing.
 
@@ -92,6 +93,6 @@ Math and Reading/ELAR practice.
 
 ## What remains
 
-The immediate foundation is route-boundary and destructive-reset isolation proof. TEKS coverage and broader
+The immediate foundation is session-signing security; isolated route-boundary and reset proof completed. TEKS coverage and broader
 readiness follow. Adaptive diagnostics, external pilot activation, and
 cross-runtime integration should not outrun those readiness gates.

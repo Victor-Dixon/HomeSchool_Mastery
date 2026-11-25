@@ -36,7 +36,8 @@ Math and Reading/ELAR practice.
 
 - [ ] Maintain the canonical verification gate: `cd lessons_lan && python -m pytest -q`.
 - [x] Add and verify learner-data backup/export plus isolated restore/smoke testing through PR #9; exact-head CI run `31946470759` succeeded before squash merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987`.
-- [ ] Verify admin/student route boundaries, including that destructive reset is unavailable to student flows.
+- [x] Verify admin/student route boundaries and CLI-only destructive reset in isolated tests; PR #14, CI `45722603823`.
+- [ ] Resolve default session-signing key before deployment readiness.
 - [ ] Expand admin/mastery dashboard tests where gaps remain.
 - [ ] Add TEKS skill/question coverage reporting.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
@@ -66,7 +67,6 @@ Math and Reading/ELAR practice.
 
 ## Next operating step
 
-Use `NEXT_UP.md` for the immediate execution contract. Admin/student route
-boundary and destructive-reset isolation verification is the next readiness lane. Do not advance
+Use `NEXT_UP.md` for the immediate execution contract. Session-signing security is the next readiness lane. Do not advance
 external pilot activation or adaptive/cross-runtime expansion ahead of that
 proof.

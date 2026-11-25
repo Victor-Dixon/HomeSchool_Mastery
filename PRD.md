@@ -37,10 +37,11 @@ Math and Reading/ELAR practice. Complete TEKS corpus coverage is Unknown.
 
 - Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
 
+- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+
 ## Remaining
 
-- Expanded admin/mastery dashboard and route-boundary test coverage.
-- Verification that destructive reset cannot be exposed to student flows.
+- Expanded admin/mastery dashboard coverage and session-signing security.
 - TEKS coverage reporting and full standards import clarity.
 - Decision on whether the root Node prototype and `ai_tutor/` remain support contexts, are archived, or are integrated.
 
