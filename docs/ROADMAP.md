@@ -25,7 +25,7 @@ domain model.
 - Documentation audit: completed and synchronized on 2026-07-03.
 - Canonical GitHub Actions CI: established and exact-head verified through PR #6.
 - Test-runtime optimization: revalidated on current master and merged through PR #7; old PR #4 closed as superseded.
-- Current product focus: prove admin/student route boundaries and destructive-reset isolation; backup/restore isolated acceptance is complete.
+- Current product focus: session-signing security; backup/restore and access-boundary isolated acceptance are complete.
 
 ## Phase 1 - Canonical app baseline (Completed)
 
@@ -71,7 +71,7 @@ Goal: strengthen evidence around TEKS/STAAR practice and parent/admin workflows.
 | TEKS skill coverage report | Open |
 | Question bank expansion with TEKS tags and item types | Open |
 | Admin/mastery dashboard test expansion | Open |
-| Route-boundary / destructive-reset isolation proof | Open |
+| Route-boundary / destructive-reset isolation proof | Done in isolated CI; PR #14, run `45722603823` |
 | API/route reference for canonical app | Open |
 
 ## Phase 4 - Adaptive learning improvements (Later)
@@ -108,7 +108,7 @@ gates are satisfied or explicitly bounded out.
 
 The next work should focus on operational safety and evidence:
 
-1. Verify route boundaries and destructive-reset isolation.
+1. Verify session-signing security and preserve verified route boundaries.
 2. Add TEKS coverage reporting.
 3. Expand admin/mastery tests where gaps remain.
 
