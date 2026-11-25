@@ -23,7 +23,7 @@ Math and Reading/ELAR practice.
 The canonical app now has independently verified GitHub Actions CI in addition
 to the local pytest gate. Production readiness is still incomplete because
 learner-data backup/export and isolated restore/smoke behavior are independently
-verified through PR #9. Remaining route-safety checks are not yet verified.
+verified through PR #9. Isolated route-safety checks are verified through PR #14; deployment session-signing safety remains open.
 
 ## Required before household production
 
