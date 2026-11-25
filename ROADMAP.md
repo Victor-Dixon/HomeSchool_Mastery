@@ -26,19 +26,20 @@ Math and Reading/ELAR practice.
 - Canonical `lessons_lan CI` added and exact-head verified through PR #6.
 - Test-runtime optimization salvaged from stale PR #4, reverified on current master through PR #7, and merged; PR #4 closed as superseded.
 
+- Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
+
 ## Current
 
 - Keep the canonical app stable and test-backed through the local pytest gate and GitHub Actions CI.
 - Complete production-readiness items.
-- Preserve learner data and prove backup/export plus isolated restore behavior before broader pilot/readiness claims.
+- Preserve verified backup/restore behavior; complete route-boundary and destructive-reset isolation before broader readiness claims.
 
 ## Next
 
-1. Verify learner-data backup/export and isolated restore/smoke behavior.
-2. Verify admin/student route boundaries and destructive-reset isolation.
-3. Expand admin/mastery tests where evidence is still missing.
-4. Add TEKS/STAAR coverage reporting.
-5. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.
+1. Verify admin/student route boundaries and destructive-reset isolation.
+2. Expand admin/mastery tests where evidence is still missing.
+3. Add TEKS/STAAR coverage reporting.
+4. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.
 
 ## Later
 
