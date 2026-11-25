@@ -112,3 +112,8 @@ Audit-time comparisons against canonical master
 - Add TEKS coverage reporting.
 - Expand admin/mastery route tests where gaps remain.
 - Keep PR #5 readiness-held until its documented gates are independently met or explicitly bounded out.
+
+
+## 2026-11-25 — Access boundary acceptance
+
+PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head CI `45722603823` succeeded. Isolated Flask tests cover anonymous/student denial, unchanged fixture records, CLI-only reset and authorized admin edit. No production data touched. Default session signing key remains a deployment hold.
