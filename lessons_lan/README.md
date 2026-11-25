@@ -154,3 +154,8 @@ cd autostart
 - App tasklist: `TASKLIST.md`
 - Repository documentation index: `../docs/README.md`
 - Repository task list: `../runtime/tasks/master_task_list.md`
+
+
+## Session signing configuration
+
+The app generates a random signing key on first startup and retains it in `instance/session-signing.key`. Keep the instance directory private; on Windows restrict its ACL to the service account. The key file is ignored by Git. Alternatively set `HOMESCHOOL_SECRET_KEY` to a strong randomly generated value (at least 32 characters). Invalid values fail startup rather than falling back to a known key. Keep the same key across restarts; rotation invalidates existing sessions and signed game tokens. Do not copy the key into logs or source control. Initial upgrade from the old default requires users to sign in again. Change seeded account passwords before LAN exposure; this change does not establish HTTPS or production readiness.
