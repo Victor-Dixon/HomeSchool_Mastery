@@ -43,7 +43,7 @@ Math and Reading/ELAR practice.
 1. Assess and secure seeded account credentials; retain Windows ACL and deployment gates.
 2. Expand admin/mastery tests where evidence is still missing.
 3. Add TEKS/STAAR coverage reporting.
-4. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.
+4. Keep external family-pilot activation readiness-held (PR #5 source merged) until its documented gates are satisfied or explicitly bounded out.
 
 ## Later
 
