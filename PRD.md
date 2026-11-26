@@ -37,11 +37,14 @@ Math and Reading/ELAR practice. Complete TEKS corpus coverage is Unknown.
 
 - Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
 
-- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; live deployment remains held.
+
+- Signing-key source acceptance: PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
 ## Remaining
 
-- Expanded admin/mastery dashboard coverage and session-signing security.
+- Expanded admin/mastery dashboard coverage and seeded-account security.
+- Windows signing-key ACL and live deployment acceptance.
 - TEKS coverage reporting and full standards import clarity.
 - Decision on whether the root Node prototype and `ai_tutor/` remain support contexts, are archived, or are integrated.
 
