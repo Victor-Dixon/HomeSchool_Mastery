@@ -72,3 +72,5 @@ Math and Reading/ELAR practice.
 Use `NEXT_UP.md` for the immediate execution contract. Seeded-account security is the next readiness lane; live deployment remains held. Do not advance
 external pilot activation or adaptive/cross-runtime expansion ahead of that
 proof.
+
+Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.
