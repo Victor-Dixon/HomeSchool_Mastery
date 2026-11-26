@@ -34,7 +34,7 @@ def login(client, username, password):
 def test_today_shows_lesson_title_link_not_dead_open_button(app):
     """Open button was redundant / confusing on tablets; title is the link to full lesson."""
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.get("/today")
     assert r.status_code == 200
     body = r.data.decode("utf-8", errors="replace")
@@ -45,7 +45,7 @@ def test_today_shows_lesson_title_link_not_dead_open_button(app):
 
 def test_lesson_without_id_redirects_to_today_not_404_or_500(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.get("/lesson")
     assert r.status_code == 302
     assert "/today" in (r.headers.get("Location") or "")
@@ -65,7 +65,7 @@ def test_lesson_ai_chat_round_trip(app, monkeypatch):
     monkeypatch.setattr("app.routes.ollama_chat", fake_chat)
 
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
@@ -91,7 +91,7 @@ def test_lesson_ai_chat_round_trip(app, monkeypatch):
 
 def test_all_seeded_lessons_render_200_for_each_student(app):
     """Every lesson row for charlie/chris must render the lesson template without error."""
-    for username, password in (("charlie", "34086028"), ("chris", "0822")):
+    for username, password in (("charlie", "isolated-fixture-charlie-only"), ("chris", "isolated-fixture-chris-only")):
         c = app.test_client()
         login(c, username, password)
         with app.app_context():
@@ -145,7 +145,7 @@ def test_seeded_chris_lessons_carry_game_markers(app):
 
 def test_lesson_detail_renders_notes_and_title_from_db(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
@@ -162,7 +162,7 @@ def test_lesson_detail_renders_notes_and_title_from_db(app):
 
 def test_wrong_user_lesson_redirects_not_500(app):
     c = app.test_client()
-    login(c, "chris", "0822")
+    login(c, "chris", "isolated-fixture-chris-only")
     with app.app_context():
         from app.db import get_db
 
