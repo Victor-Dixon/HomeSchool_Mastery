@@ -42,10 +42,10 @@ Math and Reading/ELAR practice.
 ### Canonical app quality
 
 - [x] Salvage and merge the existing test-runtime optimization onto the current CI-enabled master through PR #7; original PR #4 is closed as superseded.
-- [ ] Expand pytest coverage for admin/mastery dashboard routes where gaps remain.
-- [ ] Add TEKS skill/question coverage report.
-- [ ] Expand Reading and Math question bank coverage with TEKS tags and item types.
-- [ ] Formalize mastery tier map for levels 1-100 and boss gates.
+- [x] Expand pytest coverage for admin/mastery dashboard routes (PRs #18 and #19).
+- [ ] [DEFERRED] Add TEKS skill/question coverage report.
+- [ ] [DEFERRED] Expand Reading and Math question bank coverage with TEKS tags and item types.
+- [ ] [DEFERRED] Formalize mastery tier map for levels 1-100 and boss gates.
 - [ ] Decide whether `app/generator.py` should be wired into daily lessons or remain a tested utility.
 
 ### Active/held ownership
@@ -64,7 +64,7 @@ Math and Reading/ELAR practice.
 
 - [ ] Build weekly progress report/export for each student.
 - [ ] Add weakness trend tracking from question attempts.
-- [ ] Add subject mastery visualization.
+- [ ] [DEFERRED] Add subject mastery visualization.
 - [ ] Add historical practice/boss performance reporting.
 
 ### Future/adaptive learning
@@ -72,7 +72,7 @@ Math and Reading/ELAR practice.
 - [ ] Implement adaptive difficulty ramp based on recent answers.
 - [ ] Add weak-skill prioritization from attempt history.
 - [ ] Implement timed STAAR-style practice mode.
-- [ ] Add streaks or additional rewards only after current XP/mastery behavior remains test-backed.
+- [ ] [DEFERRED] Add streaks or additional rewards only after current XP/mastery behavior remains test-backed.
 
 ### Context decisions
 
@@ -101,3 +101,9 @@ readiness follow. Adaptive diagnostics, external pilot activation, and
 cross-runtime integration should not outrun those readiness gates.
 
 PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.
+
+## 2026-11-26 — Operator priority decision: maintenance-only
+
+HomeSchool Mastery is dormant for feature delivery. The operator deprioritized the product because household learners returned to public school. Defer TEKS skill/question coverage reporting, curriculum enhancements, mastery expansion, prototype consolidation and external pilot activity until explicitly reactivated. Preserve source, existing accounts, hashes, learner records and backups; no live shutdown, data deletion, credential rotation or deployment is authorized by this decision. Retain Windows ACL, existing legacy credential rotation, deployment verification and external pilot authorization as unresolved security/operational obligations; address an actual security incident through authorized maintenance. Routine feature assignments are not eligible. Governed merged-branch retirement remains maintenance, not feature work.
+
+Verified source checkpoint: PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c` (CI `45738041920`), #18 merged `cfa745b89f95b8d9ab0ba230471d64a30aeb9c51` (CI `45738427687`), #19 merged `8c37081e5bdabb6236fa9253c754cb1d53830ab0` (CI `45739114459`). No production acceptance is claimed.
