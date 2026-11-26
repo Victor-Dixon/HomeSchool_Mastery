@@ -49,7 +49,7 @@ Math and Reading/ELAR practice.
 
 ### Active/held ownership
 
-- [ ] PR #5 family-pilot package remains `DRAFT / READINESS_HELD`; do not activate external or paid pilot work until its documented readiness gates are satisfied or explicitly bounded out.
+- [ ] PR #5 family-pilot readiness package merged; external activation remains `READINESS_HELD`; do not activate external or paid pilot work until its documented readiness gates are satisfied or explicitly bounded out.
 - [ ] Revalidate current PR ownership and branch ancestry immediately before deleting any merged-stale or superseded branch.
 
 ### Documentation
