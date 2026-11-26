@@ -316,17 +316,32 @@ def insert_emergency_lessons(db, user_id: int, today_s: str, grade, username: st
     return len(rows)
 
 
+def _bootstrap_passwords():
+    """Require explicit, distinct strong credentials for a new database only."""
+    names = ("admin", "charlie", "chris")
+    passwords = [os.environ.get("HOMESCHOOL_BOOTSTRAP_" + name.upper() + "_PASSWORD", "") for name in names]
+    if any(len(p) < 16 or not p.strip() for p in passwords) or len(set(passwords)) != len(names):
+        raise RuntimeError("First-run provisioning requires three distinct passwords of at least 16 characters: HOMESCHOOL_BOOTSTRAP_ADMIN_PASSWORD, HOMESCHOOL_BOOTSTRAP_CHARLIE_PASSWORD and HOMESCHOOL_BOOTSTRAP_CHRIS_PASSWORD.")
+    return passwords
+
+
 def seed_if_empty():
     db = get_db()
-    user_count = db.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
-    if user_count > 0:
+    if db.execute("SELECT 1 FROM users LIMIT 1").fetchone():
         return
+    # Serialize initial creation; recheck after obtaining the write lock.
+    with db:
+        db.execute("BEGIN IMMEDIATE")
+        if db.execute("SELECT 1 FROM users LIMIT 1").fetchone():
+            return
+        _seed_new_household(db, _bootstrap_passwords())
 
-    # Student passwords match scripts/set_passwords.py (home LAN — change if exposed).
+
+def _seed_new_household(db, passwords):
     users = [
-        ("admin", "Admin", None, 1, "admin123"),
-        ("charlie", "Charlie", 6, 0, "34086028"),
-        ("chris", "Chris", 7, 0, "0822"),
+        ("admin", "Admin", None, 1, passwords[0]),
+        ("charlie", "Charlie", 6, 0, passwords[1]),
+        ("chris", "Chris", 7, 0, passwords[2]),
     ]
     for username, display_name, grade, is_admin, pw in users:
         db.execute(
@@ -334,7 +349,6 @@ def seed_if_empty():
             (username, display_name, grade, is_admin, generate_password_hash(pw)),
         )
 
-    db.commit()
 
     # Add a couple of example lessons for today (must include full details payload).
     today = date.today().isoformat()
@@ -435,7 +449,6 @@ def seed_if_empty():
         "INSERT INTO lessons (user_id, lesson_date, subject, title, notes, sort_order) VALUES (?,?,?,?,?,?)",
         examples,
     )
-    db.commit()
 
     # Seed a couple of sample TEKS-like standards + a starter badge (placeholders until you import full TEKS).
     standards = [
@@ -571,7 +584,6 @@ def seed_if_empty():
         """,
         gear_rows,
     )
-    db.commit()
 
 
 @click.command("init-db")
@@ -599,6 +611,8 @@ def reset_db_command(yes: bool):
     if not yes and not click.confirm(f"Delete ALL data and reseed?\n  {db_path}"):
         click.echo("Cancelled.")
         return
+    # Validate new credentials before any destructive reset.
+    _bootstrap_passwords()
     close_db()
     try:
         if os.path.isfile(db_path):

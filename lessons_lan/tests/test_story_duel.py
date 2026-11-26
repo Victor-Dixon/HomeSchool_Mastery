@@ -41,7 +41,7 @@ def _story_duel_disable_ollama_for_deterministic_tests(monkeypatch):
 
 def test_games_hub_loads(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.get("/games")
     assert r.status_code == 200
     assert b"Story Duel" in r.data
@@ -51,7 +51,7 @@ def test_games_hub_loads(app):
 
 def test_play_alias_redirects_to_games_hub(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.get("/play", follow_redirects=False)
     assert r.status_code == 302
     assert "/games" in (r.headers.get("Location") or "")
@@ -59,7 +59,7 @@ def test_play_alias_redirects_to_games_hub(app):
 
 def test_story_duel_demo_start_and_round(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.post("/api/story-duel/demo/start")
     assert r.status_code == 200
     data = r.get_json()
@@ -91,7 +91,7 @@ def test_story_duel_demo_start_and_round(app):
 def test_story_duel_advances_round_with_signed_token(app):
     """Regression: round index must advance so prompts change (no flaky session cookie)."""
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.post("/api/story-duel/demo/start")
     d0 = r.get_json()
     tok = d0["duel_token"]
@@ -120,7 +120,7 @@ def test_story_duel_advances_round_with_signed_token(app):
 
 def test_wrong_lesson_redirects_to_games_hub(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     r = c.get("/lesson/9999", follow_redirects=False)
     assert r.status_code == 302
     assert "/games" in (r.headers.get("Location") or "")
@@ -169,7 +169,7 @@ def test_grade_round_uses_ollama_when_it_returns_verdict(monkeypatch):
 
 def test_demo_round_returns_grading_fields(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     s = c.post("/api/story-duel/demo/start").get_json()
     r = c.post(
         "/api/story-duel/demo/round",

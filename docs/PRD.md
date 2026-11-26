@@ -79,7 +79,7 @@ seeded standards and TEKS-tagged questions.
 - OAuth, email, LMS integration, or hosted analytics.
 - Treating the Node prototype or `ai_tutor/` JSON progress as shared canonical persistence for `lessons_lan/`.
 - Destructive data cleanup during normal student/admin use.
-- Treating the draft PR #5 family-pilot package as proof of market validation, customers, production readiness, or educational efficacy.
+- Treating the merged PR #5 family-pilot readiness package as proof of market validation, customers, production readiness, or educational efficacy.
 
 ## Current architecture
 
@@ -129,11 +129,13 @@ Flask app factory (app/__init__.py)
 
 - Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
 
-- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; live deployment remains held.
+
+- Signing-key source acceptance: PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
 ## Remaining work
 
-- Verify secure session-signing configuration before production readiness.
+- Assess seeded-account security and verify Windows ACL/live configuration before production readiness.
 - Expand admin/mastery dashboard test coverage where gaps remain.
 - Add TEKS coverage reporting and clarify full standards import status.
 - Expand question/content variety with TEKS tags and item types.

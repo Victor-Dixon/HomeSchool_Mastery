@@ -32,7 +32,7 @@ def login(client, username, password):
 
 
 def test_boss_victory_awards_gear_unlock(client, app):
-    login(client, "chris", "0822")
+    login(client, "chris", "isolated-fixture-chris-only")
 
     r = client.get("/boss/10")
     assert r.status_code == 200

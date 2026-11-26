@@ -37,14 +37,16 @@ Math and Reading/ELAR practice.
 - [ ] Maintain the canonical verification gate: `cd lessons_lan && python -m pytest -q`.
 - [x] Add and verify learner-data backup/export plus isolated restore/smoke testing through PR #9; exact-head CI run `31946470759` succeeded before squash merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987`.
 - [x] Verify admin/student route boundaries and CLI-only destructive reset in isolated tests; PR #14, CI `45722603823`.
-- [ ] Resolve default session-signing key before deployment readiness.
+- [x] Resolve default session-signing key in source and isolated CI (PR #16, CI `45724342656`).
+- [ ] Assess and secure seeded account credentials.
+- [ ] Verify Windows signing-key ACL and live deployment configuration.
 - [ ] Expand admin/mastery dashboard tests where gaps remain.
 - [ ] Add TEKS skill/question coverage reporting.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
 
 ### Portfolio / ownership hygiene
 
-- [ ] Keep PR #5 (`docs/revenue: gate HomeSchool Mastery family pilot`) in `DRAFT / READINESS_HELD` until its documented readiness gates are independently satisfied or explicitly bounded out.
+- [ ] Keep external family-pilot activation `READINESS_HELD` (readiness package PR #5 merged) until its documented readiness gates are independently satisfied or explicitly bounded out.
 - [ ] Delete merged-stale/superseded branches only after current PR ownership and branch ancestry are revalidated immediately before deletion.
 
 ### Context decisions
@@ -67,6 +69,8 @@ Math and Reading/ELAR practice.
 
 ## Next operating step
 
-Use `NEXT_UP.md` for the immediate execution contract. Session-signing security is the next readiness lane. Do not advance
+Use `NEXT_UP.md` for the immediate execution contract. Seeded-account security is the next readiness lane; live deployment remains held. Do not advance
 external pilot activation or adaptive/cross-runtime expansion ahead of that
 proof.
+
+Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.

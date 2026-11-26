@@ -64,8 +64,8 @@ def login(client, username, password):
 
 # Seeded students (passwords match app.db seed_if_empty — change tests if seed changes)
 SEEDED_STUDENTS = [
-    ("charlie", "34086028"),
-    ("chris", "0822"),
+    ("charlie", "isolated-fixture-charlie-only"),
+    ("chris", "isolated-fixture-chris-only"),
 ]
 
 
@@ -130,13 +130,13 @@ def test_student_adventure_page_loads(client, username, password):
 
 
 def test_login_and_today_page(client):
-    r = login(client, "charlie", "34086028")
+    r = login(client, "charlie", "isolated-fixture-charlie-only")
     assert r.status_code == 200
     assert b"Today" in r.data
 
 
 def test_lesson_without_id_redirects_with_or_without_trailing_slash(client):
-    login(client, "charlie", "34086028")
+    login(client, "charlie", "isolated-fixture-charlie-only")
     for path in ("/lesson", "/lesson/"):
         r = client.get(path, follow_redirects=False)
         assert r.status_code == 302, path
@@ -153,7 +153,7 @@ def test_stale_user_id_session_redirects_not_500(client, app):
 
 
 def test_lesson_detail_opens(client, app):
-    login(client, "charlie", "34086028")
+    login(client, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
@@ -166,21 +166,21 @@ def test_lesson_detail_opens(client, app):
 
 
 def test_feedback_submit_and_admin_inbox(client, app):
-    login(client, "charlie", "34086028")
+    login(client, "charlie", "isolated-fixture-charlie-only")
     r = client.post("/feedback", data={"rating": "5", "message": "More dragons please"}, follow_redirects=True)
     assert r.status_code == 200
     assert b"Feedback sent" in r.data
 
     # Admin can see it
     client.post("/logout")
-    login(client, "admin", "admin123")
+    login(client, "admin", "isolated-fixture-admin-only")
     r2 = client.get("/admin/feedback")
     assert r2.status_code == 200
     assert b"More dragons please" in r2.data
 
 
 def test_boss_fight_grades_and_records_assessment(client, app):
-    login(client, "chris", "0822")
+    login(client, "chris", "isolated-fixture-chris-only")
 
     # GET boss page
     r = client.get("/boss/10")
@@ -226,7 +226,7 @@ def test_seeded_lessons_have_required_details(app):
 
 
 def test_integration_attempt_saved_gate_blocks_then_allows_and_boss_loot_unlocks(client, app):
-    login(client, "chris", "0822")
+    login(client, "chris", "isolated-fixture-chris-only")
 
     with app.app_context():
         from app.db import get_db

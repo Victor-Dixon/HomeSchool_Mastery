@@ -55,13 +55,9 @@ To let tablets connect, use this PC's LAN IP (example):
 
 Do not delete the database to stop the app.
 
-## Default accounts
+## First-run accounts
 
-On first run, the app creates a local SQLite database in `instance/homeschool.db` and seeds accounts:
-
-- Admin: `admin` / `admin123`
-- Charlie: `charlie` / `34086028`
-- Chris: `chris` / `0822`
+A new empty database requires distinct, strong operator-provided passwords (at least 16 characters each) via `HOMESCHOOL_BOOTSTRAP_ADMIN_PASSWORD`, `HOMESCHOOL_BOOTSTRAP_CHARLIE_PASSWORD`, and `HOMESCHOOL_BOOTSTRAP_CHRIS_PASSWORD`. Set them in the local process environment using a secure secret-entry mechanism before first startup. Do not commit or log them. Startup fails closed if provisioning credentials are missing or invalid. Remove these environment variables after successful initialization; existing accounts, password hashes and learner records are not changed on restart. Existing households with legacy credentials must rotate them explicitly before LAN exposure.
 
 ## Database location
 
@@ -75,7 +71,7 @@ Tests use temporary database paths through Flask app configuration.
 
 ### Reset everything (operator-only; wipes local progress)
 
-`reset-db --yes` deletes and recreates the local SQLite database. Use it only for
+`reset-db --yes` deletes and recreates the local SQLite database and requires valid bootstrap credentials before deletion. Use it only for
 operator maintenance after backing up learner data.
 
 Stop the app first so the database file is not locked, then from this folder:

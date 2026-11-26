@@ -77,7 +77,7 @@ def test_spelling_lab_redirects_unauthenticated(client):
 
 
 def test_spelling_lab_renders_after_login(client):
-    _login(client, "charlie", "34086028")
+    _login(client, "charlie", "isolated-fixture-charlie-only")
     r = client.get("/spelling-lab")
     assert r.status_code == 200, r.data[:500]
     assert b"Spelling Lab" in r.data
@@ -89,14 +89,14 @@ def test_vocab_signal_breaker_redirects_unauthenticated(client):
 
 
 def test_vocab_signal_breaker_renders_after_login(client):
-    _login(client, "charlie", "34086028")
+    _login(client, "charlie", "isolated-fixture-charlie-only")
     r = client.get("/games/vocabulary-signal-breaker")
     assert r.status_code == 200, r.data[:500]
     assert b"Vocabulary" in r.data and b"Breaker" in r.data
 
 
 def test_games_hub_renders_after_login(client):
-    _login(client, "charlie", "34086028")
+    _login(client, "charlie", "isolated-fixture-charlie-only")
     r = client.get("/games")
     assert r.status_code == 200
     assert b"Spelling Lab" in r.data
@@ -104,7 +104,7 @@ def test_games_hub_renders_after_login(client):
 
 
 def test_spelling_lab_api_start_returns_json_after_login(client):
-    _login(client, "charlie", "34086028")
+    _login(client, "charlie", "isolated-fixture-charlie-only")
     r = client.post(
         "/api/spelling-lab/start",
         json={"mode": "scramble"},

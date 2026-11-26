@@ -117,3 +117,12 @@ Audit-time comparisons against canonical master
 ## 2026-11-25 — Access boundary acceptance
 
 PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head CI `45722603823` succeeded. Isolated Flask tests cover anonymous/student denial, unchanged fixture records, CLI-only reset and authorized admin edit. No production data touched. Default session signing key remains a deployment hold.
+
+
+## 2026-11-25 — Session-signing source acceptance
+
+PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` succeeded. Persistent random key, restart continuity, legacy-cookie rejection, concurrent startup and POSIX permission tests verified in isolated CI. Windows ACL, seeded account security and live deployment remain open; external pilot hold preserved.
+
+## 2026-11-26 — Family-pilot source status reconciliation
+
+PR #5 merged `c7b45290612df2cf53c21368fcaed7623a9ca3b4`. Earlier draft/open branch references above are historical observations, not current PR state. The merged readiness package does not authorize external or paid pilot activation; documented readiness and human gates remain controlling. No production mutation or pilot activation performed.
