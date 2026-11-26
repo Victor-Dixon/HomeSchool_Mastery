@@ -46,7 +46,7 @@ Math and Reading/ELAR practice.
 
 ### Portfolio / ownership hygiene
 
-- [ ] Keep PR #5 (`docs/revenue: gate HomeSchool Mastery family pilot`) in `DRAFT / READINESS_HELD` until its documented readiness gates are independently satisfied or explicitly bounded out.
+- [ ] Keep external family-pilot activation `READINESS_HELD` (readiness package PR #5 merged) until its documented readiness gates are independently satisfied or explicitly bounded out.
 - [ ] Delete merged-stale/superseded branches only after current PR ownership and branch ancestry are revalidated immediately before deletion.
 
 ### Context decisions
