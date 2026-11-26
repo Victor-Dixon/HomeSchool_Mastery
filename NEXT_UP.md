@@ -25,3 +25,5 @@ cd lessons_lan && python -m pytest -q
 ```
 
 Exact-head GitHub Actions evidence is required for `CI_VERIFIED` claims.
+
+Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.
