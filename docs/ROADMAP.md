@@ -25,7 +25,7 @@ domain model.
 - Documentation audit: completed and synchronized on 2026-07-03.
 - Canonical GitHub Actions CI: established and exact-head verified through PR #6.
 - Test-runtime optimization: revalidated on current master and merged through PR #7; old PR #4 closed as superseded.
-- Current product focus: session-signing security; backup/restore and access-boundary isolated acceptance are complete.
+- Current product focus: seeded-account security; backup/restore, access-boundary and signing-key isolated acceptance are complete. PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
 ## Phase 1 - Canonical app baseline (Completed)
 
@@ -108,7 +108,7 @@ gates are satisfied or explicitly bounded out.
 
 The next work should focus on operational safety and evidence:
 
-1. Verify session-signing security and preserve verified route boundaries.
+1. Assess seeded-account security and preserve verified route/signing boundaries.
 2. Add TEKS coverage reporting.
 3. Expand admin/mastery tests where gaps remain.
 
