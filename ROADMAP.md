@@ -28,17 +28,19 @@ Math and Reading/ELAR practice.
 
 - Learner-data backup/export and isolated restore/smoke: Verified through PR #9, exact-head CI `31946470759`, merge `8ed17074e860fb8b8dfc3e9ac4c2bd0401769987` (isolated test databases; not a live household restore).
 
-- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+- Access-boundary verification: PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; live deployment remains held.
+
+- Signing-key source acceptance: PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
 ## Current
 
 - Keep the canonical app stable and test-backed through the local pytest gate and GitHub Actions CI.
 - Complete production-readiness items.
-- Preserve verified backup/restore and access boundaries; resolve session-signing security before broader readiness claims.
+- Preserve verified backup/restore and access boundaries; preserve signing-key source acceptance and resolve seeded-account and live deployment security before broader readiness claims.
 
 ## Next
 
-1. Verify secure session-signing configuration and reject known default keys.
+1. Assess and secure seeded account credentials; retain Windows ACL and deployment gates.
 2. Expand admin/mastery tests where evidence is still missing.
 3. Add TEKS/STAAR coverage reporting.
 4. Keep PR #5 family-pilot work readiness-held until its documented gates are satisfied or explicitly bounded out.
