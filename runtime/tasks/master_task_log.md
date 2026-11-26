@@ -160,3 +160,7 @@ PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `4572434
 ## 2026-11-26 — Family-pilot source status reconciliation
 
 PR #5 merged `c7b45290612df2cf53c21368fcaed7623a9ca3b4`. Earlier draft/open branch references above are historical observations, not current PR state. The merged readiness package does not authorize external or paid pilot activation; documented readiness and human gates remain controlling. No production mutation or pilot activation performed.
+
+## 2026-11-26 — First-run provisioning integration acceptance
+
+PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.
