@@ -164,3 +164,7 @@ PR #5 merged `c7b45290612df2cf53c21368fcaed7623a9ca3b4`. Earlier draft/open bran
 ## 2026-11-26 — First-run provisioning integration acceptance
 
 PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.
+
+## 2026-11-26 — Admin regression integration acceptance
+
+PR #18 merged `cfa745b89f95b8d9ab0ba230471d64a30aeb9c51`; exact-head canonical CI `45738427687` passed. Authorized account rotation, invalid password rejection, scoped lesson lifecycle and preservation of unrelated records verified. Mastery threshold regressions committed separately on the current branch; canonical CI pending. Existing credential rotation, Windows ACL, live deployment and external pilot remain held.
