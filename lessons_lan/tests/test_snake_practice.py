@@ -34,7 +34,7 @@ def login(client, username, password):
 
 def test_snake_math_lesson_shows_equation_warden(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
@@ -60,7 +60,7 @@ def test_snake_page_requires_login(app):
 
 def test_snake_question_endpoint_logged_in(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
@@ -79,7 +79,7 @@ def test_snake_question_endpoint_logged_in(app):
 
 def test_snake_answer_records_attempt_and_xp(app):
     c = app.test_client()
-    login(c, "charlie", "34086028")
+    login(c, "charlie", "isolated-fixture-charlie-only")
     with app.app_context():
         from app.db import get_db
 
