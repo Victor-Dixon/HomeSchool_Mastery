@@ -36,7 +36,8 @@ verified through PR #9. Isolated route-safety checks are verified through PR #14
 - [x] Verify admin/student route boundaries in isolated tests (PR #14, CI `45722603823`).
 - [x] Verify non-default signing key and reject unsafe configuration in isolated CI (PR #16).
 - [ ] Verify Windows signing-key ACL and live deployment configuration.
-- [ ] Assess and secure seeded account credentials.
+- [x] Secure first-run account provisioning in isolated CI (PR #17).
+- [ ] Verify explicit rotation of existing legacy household credentials before live exposure.
 - [x] Document destructive reset path as operator-only.
 - [x] Verify no destructive reset path is exposed to students in isolated tests (PR #14).
 - [x] Add CI for the canonical test gate through PR #6.
@@ -87,7 +88,7 @@ Independent CI:
 
 ## Current readiness lane
 
-Assess seeded-account security. PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
+PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified. Next source lane: admin/mastery regression coverage.
 
 ## External pilot hold
 
@@ -98,6 +99,8 @@ validation. Its documented readiness and human gates remain controlling.
 
 ## What remains
 
-The next readiness work is seeded-account security and live deployment acceptance,
+The next readiness work is admin/mastery regression coverage, existing credential rotation and live deployment acceptance,
 and then the remaining
 production-readiness checklist items.
+
+PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.

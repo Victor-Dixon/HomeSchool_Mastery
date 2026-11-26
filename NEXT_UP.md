@@ -6,15 +6,14 @@ This is the immediate executable queue. The task lists remain the complete backl
 
 ## Highest-priority executable lane
 
-### Assess seeded-account security
+### Expand admin/mastery regression coverage
 
-PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
+PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; existing credential rotation and external pilot remain held.
 
-Acceptance: inspect first-run account seeding, login and password reset paths; determine how to eliminate predictable credentials without breaking existing household access or modifying live data. Verify any authorized repair against isolated fixtures and canonical CI. Preserve external pilot, Windows ACL and live deployment holds.
+Acceptance: verify authorized account rotation and scoped lesson lifecycle in isolated fixtures, preserving unrelated accounts and learner records. Run exact-head canonical CI; do not claim broader mastery coverage without evidence.
 
 ## Following lanes
 
-2. Expand admin/mastery route tests where coverage gaps remain.
 3. Add TEKS skill/question coverage reporting.
 4. Resolve the future status of the root Node prototype and `ai_tutor/` only after readiness foundations are proven.
 
@@ -26,4 +25,4 @@ cd lessons_lan && python -m pytest -q
 
 Exact-head GitHub Actions evidence is required for `CI_VERIFIED` claims.
 
-Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.
+PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.
