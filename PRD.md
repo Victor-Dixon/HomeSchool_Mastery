@@ -63,4 +63,4 @@ Math and Reading/ELAR practice. Complete TEKS corpus coverage is Unknown.
 - Required cloud dependency.
 - Destructive learner-data cleanup during normal use.
 - Treating legacy/support runtimes as canonical without implementation evidence.
-- Treating a draft family-pilot package as evidence of market validation, production readiness, or external adoption.
+- Treating the merged family-pilot readiness package as evidence of market validation, production readiness, or external adoption.
