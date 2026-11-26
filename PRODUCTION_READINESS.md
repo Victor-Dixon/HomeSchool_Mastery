@@ -23,7 +23,7 @@ Math and Reading/ELAR practice.
 The canonical app now has independently verified GitHub Actions CI in addition
 to the local pytest gate. Production readiness is still incomplete because
 learner-data backup/export and isolated restore/smoke behavior are independently
-verified through PR #9. Isolated route-safety checks are verified through PR #14; deployment session-signing safety remains open.
+verified through PR #9. Isolated route-safety checks are verified through PR #14; signing-key source acceptance is verified through PR #16; live deployment remains open.
 
 ## Required before household production
 
@@ -34,7 +34,9 @@ verified through PR #9. Isolated route-safety checks are verified through PR #14
 - [x] Document and verify backup/export path through PR #9.
 - [x] Document and verify isolated restore/smoke-test procedure after backup through PR #9.
 - [x] Verify admin/student route boundaries in isolated tests (PR #14, CI `45722603823`).
-- [ ] Verify non-default session-signing key and reject unsafe deployment configuration.
+- [x] Verify non-default signing key and reject unsafe configuration in isolated CI (PR #16).
+- [ ] Verify Windows signing-key ACL and live deployment configuration.
+- [ ] Assess and secure seeded account credentials.
 - [x] Document destructive reset path as operator-only.
 - [x] Verify no destructive reset path is exposed to students in isolated tests (PR #14).
 - [x] Add CI for the canonical test gate through PR #6.
@@ -85,7 +87,7 @@ Independent CI:
 
 ## Current readiness lane
 
-Resolve default session-signing key and verify deployment-safe configuration. PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+Assess seeded-account security. PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
 ## External pilot hold
 
@@ -96,6 +98,6 @@ validation. Its documented readiness and human gates remain controlling.
 
 ## What remains
 
-The next readiness work is session-signing security,
+The next readiness work is seeded-account security and live deployment acceptance,
 and then the remaining
 production-readiness checklist items.
