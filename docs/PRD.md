@@ -79,7 +79,7 @@ seeded standards and TEKS-tagged questions.
 - OAuth, email, LMS integration, or hosted analytics.
 - Treating the Node prototype or `ai_tutor/` JSON progress as shared canonical persistence for `lessons_lan/`.
 - Destructive data cleanup during normal student/admin use.
-- Treating the draft PR #5 family-pilot package as proof of market validation, customers, production readiness, or educational efficacy.
+- Treating the merged PR #5 family-pilot readiness package as proof of market validation, customers, production readiness, or educational efficacy.
 
 ## Current architecture
 
