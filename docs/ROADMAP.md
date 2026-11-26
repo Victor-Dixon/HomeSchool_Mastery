@@ -98,8 +98,7 @@ Goal: decide how non-canonical contexts should evolve.
 
 ## Active external/revenue hold
 
-PR #5 contains a bounded family-pilot readiness document and remains
-`DRAFT / READINESS_HELD`. Its existence does not prove production readiness,
+PR #5 merged the bounded family-pilot readiness document (`c7b45290612df2cf53c21368fcaed7623a9ca3b4`). External pilot activation remains `READINESS_HELD`. Its existence does not prove production readiness,
 market validation, customers, pricing, educational efficacy, or authorization to
 begin external outreach. Advance it only when its documented readiness/human
 gates are satisfied or explicitly bounded out.
