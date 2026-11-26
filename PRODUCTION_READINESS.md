@@ -91,7 +91,7 @@ Assess seeded-account security. PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa
 
 ## External pilot hold
 
-PR #5 is a draft readiness-gated family-pilot package. Do not treat the document
+The readiness-gated family-pilot package merged in PR #5 (`c7b45290612df2cf53c21368fcaed7623a9ca3b4`); external activation remains held. Do not treat the document
 as authorization to begin an external/paid pilot or as proof of production
 readiness, demand, customers, pricing, educational efficacy, or market
 validation. Its documented readiness and human gates remain controlling.
