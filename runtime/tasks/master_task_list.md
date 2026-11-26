@@ -98,3 +98,5 @@ Math and Reading/ELAR practice.
 The immediate foundation is seeded-account security; isolated route-boundary, reset and signing-key proof completed. TEKS coverage and broader
 readiness follow. Adaptive diagnostics, external pilot activation, and
 cross-runtime integration should not outrun those readiness gates.
+
+Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.
