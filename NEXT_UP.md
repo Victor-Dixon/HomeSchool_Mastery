@@ -6,11 +6,11 @@ This is the immediate executable queue. The task lists remain the complete backl
 
 ## Highest-priority executable lane
 
-### Verify secure session-signing configuration
+### Assess seeded-account security
 
-PR #14 merged `59de341d38b73b292acc7fec4dc9f91e16ebb07f`; exact-head `lessons_lan CI` run `45722603823` succeeded. Isolated Flask/SQLite regression coverage: anonymous/student admin request denial, unchanged records, CLI-only reset, positive admin edit. This does not establish production security; default session signing key remains a hold.
+PR #16 merged `3bdcb4657c72dd36ae174ddafc34ef5aa69298e6`; exact-head CI `45724342656` passed. Isolated regression tests cover persistent random signing keys, invalid configuration rejection, restart session continuity, legacy cookie rejection, concurrent startup and POSIX permissions. Windows ACL and live deployment remain unverified; seeded account password security and external pilot remain held.
 
-Acceptance: establish supported configuration, reject known/default signing keys for deployment, preserve isolated test operation and session persistence across restart, and run exact-head canonical CI. No production configuration or learner data changes without authority.
+Acceptance: inspect first-run account seeding, login and password reset paths; determine how to eliminate predictable credentials without breaking existing household access or modifying live data. Verify any authorized repair against isolated fixtures and canonical CI. Preserve external pilot, Windows ACL and live deployment holds.
 
 ## Following lanes
 
