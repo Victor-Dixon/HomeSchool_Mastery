@@ -33,7 +33,8 @@ Math and Reading/ELAR practice.
 - [x] Add and verify learner-data backup/export plus isolated restore/smoke behavior through PR #9; exact-head CI run `31946470759` succeeded before merge.
 - [x] Verify admin/student route boundaries, including destructive-reset isolation (PR #14, CI `45722603823`).
 - [x] Verify session-signing configuration in isolated CI (PR #16, CI `45724342656`).
-- [ ] Assess and secure seeded account credentials.
+- [x] Secure first-run account provisioning in isolated CI (PR #17).
+- [ ] Verify explicit rotation of existing legacy household credentials before live exposure.
 - [ ] Verify Windows signing-key ACL and live deployment configuration.
 - [ ] Complete remaining `PRODUCTION_READINESS.md` checklist items.
 - [ ] Add documented household smoke-test steps where missing.
@@ -95,8 +96,8 @@ Math and Reading/ELAR practice.
 
 ## What remains
 
-The immediate foundation is seeded-account security; isolated route-boundary, reset and signing-key proof completed. TEKS coverage and broader
+First-run provisioning source acceptance is complete; isolated route-boundary, reset and signing-key proof completed. TEKS coverage and broader
 readiness follow. Adaptive diagnostics, external pilot activation, and
 cross-runtime integration should not outrun those readiness gates.
 
-Provisioning implementation is on PR #17 pending exact-head canonical CI. Explicit bootstrap credentials, atomic seeding and isolated preservation tests are required; do not mark the security lane complete or activate the external pilot until verification passes.
+PR #17 merged `046cfaf64f124735513858cc8f2dff8d76a74a9c`; exact-head canonical CI `45738041920` passed. Secure first-run provisioning, atomic seeding and isolated preservation regressions integrated. Existing household credential rotation, Windows ACL, live deployment and external pilot authorization remain held; no production data modified.
